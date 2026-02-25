@@ -1,19 +1,27 @@
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
 import reichmanLogo from "@/assets/reichman-logo.png";
 
 const navLinks = [
   { label: "Browse", href: "/browse" },
-  { label: "Sell", href: "/create-listing" },
+  { label: "Sell", href: "/sell" },
   { label: "Messages", href: "/messages" },
 ];
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, loading, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -49,12 +57,25 @@ const Navbar = () => {
 
         {/* Desktop auth buttons */}
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/login">Log in</Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link to="/signup">Sign up</Link>
-          </Button>
+          {loading ? null : user ? (
+            <>
+              <span className="text-sm text-muted-foreground">
+                {user.user_metadata?.full_name ?? user.email}
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                Log out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link to="/signup">Sign up</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -99,12 +120,25 @@ const Navbar = () => {
               </nav>
 
               <div className="flex flex-col gap-2 border-t pt-4">
-                <Button variant="outline" asChild onClick={() => setMobileOpen(false)}>
-                  <Link to="/login">Log in</Link>
-                </Button>
-                <Button asChild onClick={() => setMobileOpen(false)}>
-                  <Link to="/signup">Sign up</Link>
-                </Button>
+                {user ? (
+                  <>
+                    <p className="px-3 text-sm font-medium">
+                      {user.user_metadata?.full_name ?? user.email}
+                    </p>
+                    <Button variant="outline" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                      Log out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" asChild onClick={() => setMobileOpen(false)}>
+                      <Link to="/login">Log in</Link>
+                    </Button>
+                    <Button asChild onClick={() => setMobileOpen(false)}>
+                      <Link to="/signup">Sign up</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </SheetContent>
