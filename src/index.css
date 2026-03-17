@@ -3,49 +3,54 @@
 @tailwind utilities;
 
 /* RUNI Market Design System
-   Primary: Reichman University Blue - RGB(16, 44, 151) / HSL(226, 81%, 33%)
+   Adapted to match runi.ac.il visual identity
+   Primary: Reichman University Blue — HSL(226, 81%, 33%)
    All colors MUST be HSL.
 */
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 226 30% 15%;
+    --foreground: 220 20% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 226 30% 15%;
+    --card-foreground: 220 20% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 226 30% 15%;
+    --popover-foreground: 220 20% 20%;
 
     --primary: 226 81% 33%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 226 30% 95%;
+    --secondary: 226 40% 96%;
     --secondary-foreground: 226 81% 33%;
 
-    --muted: 226 15% 96%;
-    --muted-foreground: 226 10% 45%;
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 226 50% 92%;
-    --accent-foreground: 226 81% 25%;
+    --accent: 226 60% 94%;
+    --accent-foreground: 226 81% 28%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 226 15% 90%;
-    --input: 226 15% 90%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
     --ring: 226 81% 33%;
 
-    --radius: 0.625rem;
+    --radius: 0.25rem;
 
-    --sidebar-background: 226 30% 97%;
-    --sidebar-foreground: 226 30% 25%;
+    /* Utility bar (top blue strip like runi.ac.il) */
+    --utility-bar: 226 81% 33%;
+    --utility-bar-foreground: 0 0% 100%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 20%;
     --sidebar-primary: 226 81% 33%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 226 20% 94%;
     --sidebar-accent-foreground: 226 30% 20%;
-    --sidebar-border: 226 15% 90%;
+    --sidebar-border: 220 15% 90%;
     --sidebar-ring: 226 81% 50%;
 
     /* Custom tokens */
@@ -102,5 +107,11 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+  }
+
+  /* Match runi.ac.il heading style — blue, clean, slightly lighter weight */
+  h1, h2, h3 {
+    @apply text-primary;
+    letter-spacing: -0.01em;
   }
 }

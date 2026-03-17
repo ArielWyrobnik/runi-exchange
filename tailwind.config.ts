@@ -16,6 +16,9 @@ export default {
       sans: ['"Open Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
     },
     extend: {
+      fontSize: {
+        '2xs': '0.625rem',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
