@@ -31,7 +31,8 @@ const Index = () => {
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Button
                 size="lg"
-                className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold"
+                variant="outline"
+                className="border-primary-foreground/50 text-primary-foreground hover:bg-primary-foreground/10 font-semibold"
                 asChild
               >
                 <Link to="/browse">
