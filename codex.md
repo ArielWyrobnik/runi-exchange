@@ -10,3 +10,8 @@
 - **Important notes / risks:**
   - Existing application queries that assumed unrestricted profile visibility may now return fewer rows and should rely on joins through listings/conversations where needed.
   - The migration uses `DROP POLICY IF EXISTS` for safer rollout across environments.
+
+## 2026-03-17
+- **What changed (files):** Updated hero CTA button text color utility from `text-primary-foreground` to `text-primary` for both "Browse Listings" and "Start Selling" in `src/pages/Index.tsx`.
+- **Why:** Both CTA labels were white on a light/white button background, making text hard to read; setting text to the site's blue primary color restores contrast and matches surrounding text styling.
+- **Important notes / risks:** Low risk, styling-only change on homepage CTA text color classes; no behavior, layout, sizing, borders, or hover behavior were changed.

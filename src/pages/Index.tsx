@@ -32,7 +32,7 @@ const Index = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-primary-foreground/50 text-primary-foreground hover:bg-primary-foreground/10 font-semibold"
+                className="border-primary-foreground/50 text-primary hover:bg-primary-foreground/10 font-semibold"
                 asChild
               >
                 <Link to="/browse">
@@ -43,7 +43,7 @@ const Index = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-primary-foreground/50 text-primary-foreground hover:bg-primary-foreground/10 font-semibold"
+                className="border-primary-foreground/50 text-primary hover:bg-primary-foreground/10 font-semibold"
                 asChild
               >
                 <Link to="/sell">
