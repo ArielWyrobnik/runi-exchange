@@ -21,8 +21,8 @@ const Index = () => {
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Button
               size="lg"
-              variant="secondary"
-              className="w-full sm:w-auto"
+              variant="outline"
+              className="w-full border-primary-foreground/30 text-secondary-foreground hover:bg-primary-foreground/10 sm:w-auto"
               asChild
             >
               <Link to="/browse">
