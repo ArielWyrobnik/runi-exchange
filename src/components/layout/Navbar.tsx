@@ -84,10 +84,10 @@ const Navbar = () => {
               <Link
                 key={link.href}
                 to={link.href}
-                className={`border-b-2 px-4 py-5 text-sm font-medium transition-colors ${
+                className={`border-b-2 px-4 py-5 text-sm font-bold transition-colors ${
                   location.pathname === link.href
                     ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    : "border-transparent text-primary hover:border-primary/40"
                 }`}
               >
                 {link.label}
