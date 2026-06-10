@@ -7,54 +7,32 @@ import { CATEGORIES } from "@/lib/constants";
 const Index = () => {
   return (
     <Layout>
-      {/* Hero Section — full-width image style like runi.ac.il */}
-      <section className="relative overflow-hidden bg-primary">
-        {/* Background image overlay */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&q=80')] bg-cover bg-center opacity-20" />
-        <div className="relative z-10 px-4 py-24 md:py-32">
-          <div className="container mx-auto max-w-3xl">
-            {/* Text block with semi-transparent blue background like runi.ac.il hero */}
-            <div className="inline-block">
-              <div className="bg-primary/80 px-6 py-4">
-                <h1 className="text-3xl font-bold tracking-tight text-primary-foreground md:text-5xl lg:text-6xl !text-primary-foreground">
-                  Buy & Sell Within Your
-                  <span className="block">Campus Community</span>
-                </h1>
-              </div>
-              <div className="mt-1 inline-block bg-background/90 px-6 py-2">
-                <p className="text-sm font-medium text-primary md:text-base">
-                  The marketplace built exclusively for Reichman University students.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-primary-foreground/50 text-primary hover:bg-primary-foreground/10 font-semibold"
-                asChild
-              >
-                <Link to="/browse">
-                  <Search className="mr-2 h-4 w-4" />
-                  Browse Listings
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-primary-foreground/50 text-primary hover:bg-primary-foreground/10 font-semibold"
-                asChild
-              >
-                <Link to="/sell">
-                  Start Selling
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
+      {/* Compact hero — text + symmetric CTAs on white */}
+      <section className="border-b bg-background">
+        <div className="container mx-auto px-4 py-12 text-center md:py-16">
+          <h1 className="text-2xl font-bold tracking-tight text-primary md:text-3xl lg:text-4xl">
+            Buy & Sell Within Your Campus Community
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground md:text-base">
+            The marketplace built exclusively for Reichman University students.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button size="lg" asChild className="w-full sm:w-56">
+              <Link to="/browse">
+                <Search className="mr-2 h-4 w-4" />
+                Browse Listings
+              </Link>
+            </Button>
+            <Button size="lg" asChild className="w-full sm:w-56">
+              <Link to="/sell">
+                Start Selling
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
+
 
       {/* Category Quick Filters */}
       <section className="container py-14">
