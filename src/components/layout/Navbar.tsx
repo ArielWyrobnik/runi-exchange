@@ -100,7 +100,8 @@ const Navbar = () => {
                   asChild
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Link to="/signup">Sign up</Link>
+                  <Link to="/signup">Sign up with RUNI Account</Link>
+
                 </Button>
               </>
             )}
