@@ -32,15 +32,15 @@ const ConversationList = ({ conversations, selectedId, onSelect }: Props) => {
               selectedId === c.id && "bg-accent"
             )}
           >
-            <div className="flex items-center justify-between">
-              <span className="font-medium">{otherName ?? t("unknown")}</span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="line-clamp-1 font-medium">{c.listings?.title ?? t("unknown")}</span>
               {c.latest_message && (
-                <span className="text-xs text-muted-foreground">
+                <span className="shrink-0 text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(c.latest_message.created_at), { addSuffix: true, locale: lang === "he" ? heLocale : undefined })}
                 </span>
               )}
             </div>
-            <span className="text-xs text-muted-foreground">{c.listings?.title}</span>
+            <span className="text-xs text-muted-foreground">{otherName ?? t("unknown")}</span>
             {c.latest_message && (
               <p className="line-clamp-1 text-sm text-muted-foreground">
                 {c.latest_message.content}

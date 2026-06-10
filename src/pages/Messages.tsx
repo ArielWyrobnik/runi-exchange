@@ -2,18 +2,27 @@ import Layout from "@/components/layout/Layout";
 import ConversationList from "@/components/messaging/ConversationList";
 import ChatWindow from "@/components/messaging/ChatWindow";
 import { useConversations } from "@/hooks/useMessages";
+import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { MessageSquare, Loader2 } from "lucide-react";
+import { MessageSquare, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Messages = () => {
   const { data: conversations, isLoading } = useConversations();
+  const { user } = useAuth();
   const location = useLocation();
   const [selectedId, setSelectedId] = useState<string | null>(
     (location.state as { conversationId?: string } | null)?.conversationId ?? null
   );
   const { t } = useLanguage();
+
+  const selectedConvo = conversations?.find((c) => c.id === selectedId);
+  const otherName = selectedConvo
+    ? (selectedConvo.buyer_id === user?.id
+        ? selectedConvo.seller?.full_name
+        : selectedConvo.buyer?.full_name) ?? t("unknown")
+    : null;
 
   return (
     <Layout>
@@ -45,13 +54,23 @@ const Messages = () => {
             <div className={`flex flex-1 flex-col ${!selectedId ? "hidden md:flex" : ""}`}>
               {selectedId ? (
                 <>
-                  <div className="border-b p-3 md:hidden">
+                  {/* Chat header — listing title first, person second (eBay style) */}
+                  <div className="flex items-center gap-3 border-b p-3">
                     <button
-                      className="text-sm font-medium text-primary"
+                      className="text-primary md:hidden"
                       onClick={() => setSelectedId(null)}
+                      aria-label={t("back")}
                     >
-                      {t("back")}
+                      <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
                     </button>
+                    <div className="min-w-0">
+                      <p className="line-clamp-1 font-semibold leading-tight">
+                        {selectedConvo?.listings?.title ?? t("unknown")}
+                      </p>
+                      {otherName && (
+                        <p className="text-xs text-muted-foreground">{otherName}</p>
+                      )}
+                    </div>
                   </div>
                   <ChatWindow conversationId={selectedId} />
                 </>
