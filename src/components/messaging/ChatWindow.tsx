@@ -75,6 +75,7 @@ const ChatWindow = ({ conversationId }: Props) => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={t("typeMessage")}
+          maxLength={2000}
           className="flex-1"
         />
         <Button type="submit" size="icon" disabled={sendMessage.isPending || !text.trim()}>
