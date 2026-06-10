@@ -37,11 +37,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = useCallback(async (email: string, password: string, fullName: string) => {
-    if (!email.endsWith(ALLOWED_EMAIL_DOMAIN)) {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail.endsWith(ALLOWED_EMAIL_DOMAIN)) {
       return { error: "Only Reichman University students can register. Please use your @post.runi.ac.il email." };
     }
     const { error } = await supabase.auth.signUp({
-      email,
+      email: normalizedEmail,
       password,
       options: {
         data: { full_name: fullName },
@@ -52,8 +53,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error?.message ?? null };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return { error: error.message };
+    // Defense in depth: even if email confirmation is disabled in the
+    // Supabase dashboard, never allow a session for an unverified address.
+    if (!data.user?.email_confirmed_at) {
+      await supabase.auth.signOut();
+      return { error: "Please verify your email first. Check your inbox for the confirmation link." };
+    }
+    return { error: null };
   }, []);
 
   const signOut = useCallback(async () => {
