@@ -28,20 +28,20 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 bg-background">
       {/* Top navbar — logo + auth */}
-      <div className="border-b bg-background">
+      <div className="bg-primary text-primary-foreground">
         <div className="container flex h-16 items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5">
             <img
               src={reichmanLogo}
               alt="Reichman University"
-              className="h-10 w-10 object-contain"
+              className="h-10 w-10 rounded-full bg-primary-foreground/10 object-contain p-0.5"
             />
             <div className="flex flex-col leading-tight">
-              <span className="text-base font-bold tracking-tight text-primary">
+              <span className="text-base font-bold tracking-tight">
                 RUNI Market
               </span>
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              <span className="text-[10px] uppercase tracking-widest text-primary-foreground/70">
                 Campus Marketplace
               </span>
             </div>
@@ -53,7 +53,7 @@ const Navbar = () => {
               size="sm"
               asChild
               variant="outline"
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground hover:text-primary"
             >
               <Link to="/sell">
                 <Tag className="mr-1 h-4 w-4" />
@@ -65,7 +65,7 @@ const Navbar = () => {
                 size="sm"
                 asChild
                 variant="ghost"
-                className="text-primary hover:bg-primary/5"
+                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
                 <Link to="/messages">
                   <MessageCircle className="mr-1 h-4 w-4" />
@@ -75,14 +75,14 @@ const Navbar = () => {
             )}
             {loading ? null : user ? (
               <>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-primary-foreground/80">
                   {user.user_metadata?.full_name ?? user.email}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleSignOut}
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground hover:text-primary"
                 >
                   Log out
                 </Button>
@@ -93,14 +93,14 @@ const Navbar = () => {
                   variant="ghost"
                   size="sm"
                   asChild
-                  className="text-primary hover:bg-primary/5"
+                  className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
                 >
                   <Link to="/login">Log in</Link>
                 </Button>
                 <Button
                   size="sm"
                   asChild
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
                 >
                   <Link to="/signup">Sign up with RUNI Account</Link>
                 </Button>
@@ -111,7 +111,7 @@ const Navbar = () => {
           {/* Mobile hamburger */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className="text-primary">
+              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Open menu</span>
               </Button>
