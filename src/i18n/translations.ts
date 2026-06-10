@@ -2,6 +2,7 @@
 
 export const en = {
   // Navbar
+  brand: "RUNI Market",
   tagline: "Campus Marketplace",
   startSelling: "Start Selling",
   messages: "Messages",
@@ -102,6 +103,7 @@ export const en = {
 
 export const he: Record<TranslationKey, string> = {
   // Navbar
+  brand: "REICHMAN Market",
   tagline: "שוק הקמפוס",
   startSelling: "התחילו למכור",
   messages: "הודעות",
@@ -117,7 +119,7 @@ export const he: Record<TranslationKey, string> = {
   madeByStudents: "נוצר על ידי סטודנטים, עבור סטודנטים.",
   footerBrowse: "עיון",
   footerSell: "מכירה",
-  footerCopyright: "RUNI Market · אוניברסיטת רייכמן, הרצליה",
+  footerCopyright: "REICHMAN Market · אוניברסיטת רייכמן, הרצליה",
 
   // Home
   heroTitle: "קונים ומוכרים בתוך קהילת הקמפוס",
@@ -167,14 +169,14 @@ export const he: Record<TranslationKey, string> = {
 
   // Auth
   welcomeBack: "ברוכים השבים",
-  loginSubtitle: "התחברו לחשבון RUNI Market שלכם",
+  loginSubtitle: "התחברו לחשבון REICHMAN Market שלכם",
   email: "אימייל",
   password: "סיסמה",
   loginFailed: "ההתחברות נכשלה",
   noAccount: "אין לכם חשבון?",
   signUp: "הרשמה",
   createAccount: "צרו חשבון",
-  signupSubtitle: "הצטרפו ל-RUNI Market עם האימייל האוניברסיטאי שלכם",
+  signupSubtitle: "הצטרפו ל-REICHMAN Market עם האימייל האוניברסיטאי שלכם",
   fullName: "שם מלא",
   fullNamePlaceholder: "השם המלא שלכם",
   universityEmail: "אימייל אוניברסיטאי",

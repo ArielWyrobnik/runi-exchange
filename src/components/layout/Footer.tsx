@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between">
           {/* Brand + tagline */}
           <div>
-            <p className="font-bold">RUNI Market</p>
+            <p className="font-bold">{t("brand")}</p>
             <p className="text-xs text-primary-foreground/70">
               {t("madeByStudents")}
             </p>

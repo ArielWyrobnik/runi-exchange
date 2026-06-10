@@ -34,8 +34,8 @@ const Navbar = () => {
       {/* Top navbar — logo + auth */}
       <div className="bg-primary text-primary-foreground">
         <div className="container flex h-16 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5">
+          {/* Logo — dir="ltr" keeps the stars left of the text in Hebrew too */}
+          <Link to="/" dir="ltr" className="flex items-center gap-2.5">
             <img
               src={reichmanStars}
               alt="Reichman University"
@@ -43,7 +43,7 @@ const Navbar = () => {
             />
             <div className="flex flex-col leading-tight">
               <span className="text-base font-bold tracking-tight">
-                RUNI Market
+                {t("brand")}
               </span>
               <span className="text-[10px] uppercase tracking-widest text-primary-foreground/70">
                 {t("tagline")}
@@ -134,6 +134,7 @@ const Navbar = () => {
               <div className="flex flex-col gap-6 pt-6">
                 <Link
                   to="/"
+                  dir="ltr"
                   className="flex items-center gap-2"
                   onClick={() => setMobileOpen(false)}
                 >
@@ -142,7 +143,7 @@ const Navbar = () => {
                     alt="Reichman University"
                     className="h-8 w-auto rounded bg-primary object-contain p-1"
                   />
-                  <span className="font-bold text-primary">RUNI Market</span>
+                  <span className="font-bold text-primary">{t("brand")}</span>
                 </Link>
 
                 <nav className="flex flex-col gap-1">
