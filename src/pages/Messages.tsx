@@ -29,9 +29,9 @@ const Messages = () => {
     .sort((a, b) => a.display_order - b.display_order)[0]?.image_url;
 
   return (
-    <Layout>
-      <div className="container py-6">
-        <h1 className="mb-4 text-2xl font-bold">{t("messages")}</h1>
+    <Layout fullHeight>
+      <div className="container flex h-full min-h-0 flex-col py-4">
+        <h1 className="mb-3 text-2xl font-bold">{t("messages")}</h1>
 
         {isLoading ? (
           <div className="flex min-h-[40vh] items-center justify-center">
@@ -44,9 +44,9 @@ const Messages = () => {
             <p className="text-muted-foreground">{t("startByContacting")}</p>
           </div>
         ) : (
-          <div className="flex h-[70vh] overflow-hidden rounded-lg border">
-            {/* Sidebar */}
-            <div className={`w-full shrink-0 overflow-y-auto border-r md:w-80 ${selectedId ? "hidden md:block" : ""}`}>
+          <div className="flex min-h-0 flex-1 overflow-hidden rounded-lg border">
+            {/* Sidebar — scrolls on its own when there are many chats */}
+            <div className={`min-h-0 w-full shrink-0 overflow-y-auto border-r md:w-80 ${selectedId ? "hidden md:block" : ""}`}>
               <ConversationList
                 conversations={conversations}
                 selectedId={selectedId}
@@ -55,7 +55,7 @@ const Messages = () => {
             </div>
 
             {/* Chat area */}
-            <div className={`flex flex-1 flex-col ${!selectedId ? "hidden md:flex" : ""}`}>
+            <div className={`flex min-h-0 flex-1 flex-col ${!selectedId ? "hidden md:flex" : ""}`}>
               {selectedId ? (
                 <>
                   {/* Chat header — listing photo, title + price, person below (eBay style) */}

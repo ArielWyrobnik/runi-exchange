@@ -44,9 +44,9 @@ const ChatWindow = ({ conversationId }: Props) => {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      {/* Messages */}
-      <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto p-4">
+    <div className="flex min-h-0 flex-1 flex-col">
+      {/* Messages — only this list scrolls, not the page */}
+      <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
         {messages?.map((msg) => {
           const isOwn = msg.sender_id === user?.id;
           return (
