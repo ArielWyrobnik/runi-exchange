@@ -18,11 +18,13 @@ const ChatWindow = ({ conversationId }: Props) => {
   const { data: messages, isLoading } = useMessages(conversationId);
   const sendMessage = useSendMessage();
   const [text, setText] = useState("");
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const { lang, t } = useLanguage();
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll only the message list, not the whole page
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
 
   const handleSend = async (e: React.FormEvent) => {
@@ -44,7 +46,7 @@ const ChatWindow = ({ conversationId }: Props) => {
   return (
     <div className="flex flex-1 flex-col">
       {/* Messages */}
-      <div className="flex-1 space-y-3 overflow-y-auto p-4">
+      <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto p-4">
         {messages?.map((msg) => {
           const isOwn = msg.sender_id === user?.id;
           return (
@@ -65,7 +67,6 @@ const ChatWindow = ({ conversationId }: Props) => {
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </div>
 
       {/* Input */}

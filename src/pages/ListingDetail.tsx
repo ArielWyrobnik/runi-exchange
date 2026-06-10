@@ -32,7 +32,7 @@ const ListingDetail = () => {
         listingId: listing.id,
         sellerId: listing.seller_id,
       });
-      navigate("/messages", { state: { conversationId: conversation.id } });
+      navigate(`/messages?c=${conversation.id}`);
     } catch (err: any) {
       toast({ title: t("error"), description: err.message, variant: "destructive" });
     }

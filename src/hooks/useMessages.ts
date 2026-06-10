@@ -9,7 +9,11 @@ export interface ConversationWithDetails {
   buyer_id: string;
   seller_id: string;
   created_at: string;
-  listings: { title: string } | null;
+  listings: {
+    title: string;
+    price: number;
+    listing_images: { image_url: string; display_order: number }[];
+  } | null;
   buyer: { full_name: string } | null;
   seller: { full_name: string } | null;
   latest_message?: { content: string; created_at: string } | null;
@@ -33,7 +37,7 @@ export const useConversations = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("conversations")
-        .select("*, listings(title), buyer:profiles!conversations_buyer_id_fkey(full_name), seller:profiles!conversations_seller_id_fkey(full_name)")
+        .select("*, listings(title, price, listing_images(image_url, display_order)), buyer:profiles!conversations_buyer_id_fkey(full_name), seller:profiles!conversations_seller_id_fkey(full_name)")
         .order("created_at", { ascending: false });
 
       if (error) throw error;

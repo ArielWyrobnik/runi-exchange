@@ -3,19 +3,20 @@ import ConversationList from "@/components/messaging/ConversationList";
 import ChatWindow from "@/components/messaging/ChatWindow";
 import { useConversations } from "@/hooks/useMessages";
 import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { MessageSquare, Loader2, ArrowLeft } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { MessageSquare, Loader2, ArrowLeft, Package } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Messages = () => {
   const { data: conversations, isLoading } = useConversations();
   const { user } = useAuth();
-  const location = useLocation();
-  const [selectedId, setSelectedId] = useState<string | null>(
-    (location.state as { conversationId?: string } | null)?.conversationId ?? null
-  );
   const { t } = useLanguage();
+  // Selection lives in the URL (?c=<id>) so it survives reloads and
+  // deep links from "Contact Seller"
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedId = searchParams.get("c");
+  const selectConversation = (id: string | null) =>
+    setSearchParams(id ? { c: id } : {});
 
   const selectedConvo = conversations?.find((c) => c.id === selectedId);
   const otherName = selectedConvo
@@ -23,6 +24,9 @@ const Messages = () => {
         ? selectedConvo.seller?.full_name
         : selectedConvo.buyer?.full_name) ?? t("unknown")
     : null;
+  const listingImage = selectedConvo?.listings?.listing_images
+    ?.slice()
+    .sort((a, b) => a.display_order - b.display_order)[0]?.image_url;
 
   return (
     <Layout>
@@ -46,7 +50,7 @@ const Messages = () => {
               <ConversationList
                 conversations={conversations}
                 selectedId={selectedId}
-                onSelect={setSelectedId}
+                onSelect={selectConversation}
               />
             </div>
 
@@ -54,23 +58,44 @@ const Messages = () => {
             <div className={`flex flex-1 flex-col ${!selectedId ? "hidden md:flex" : ""}`}>
               {selectedId ? (
                 <>
-                  {/* Chat header — listing title first, person second (eBay style) */}
+                  {/* Chat header — listing photo, title + price, person below (eBay style) */}
                   <div className="flex items-center gap-3 border-b p-3">
                     <button
                       className="text-primary md:hidden"
-                      onClick={() => setSelectedId(null)}
+                      onClick={() => selectConversation(null)}
                       aria-label={t("back")}
                     >
                       <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
                     </button>
-                    <div className="min-w-0">
-                      <p className="line-clamp-1 font-semibold leading-tight">
-                        {selectedConvo?.listings?.title ?? t("unknown")}
-                      </p>
-                      {otherName && (
-                        <p className="text-xs text-muted-foreground">{otherName}</p>
-                      )}
-                    </div>
+                    {selectedConvo && (
+                      <Link
+                        to={`/listing/${selectedConvo.listing_id}`}
+                        className="flex min-w-0 flex-1 items-center gap-3"
+                      >
+                        {listingImage ? (
+                          <img
+                            src={listingImage}
+                            alt={selectedConvo.listings?.title ?? ""}
+                            className="h-11 w-11 shrink-0 rounded-md border object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border bg-muted text-muted-foreground">
+                            <Package className="h-5 w-5" />
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="line-clamp-1 font-semibold leading-tight">
+                            {selectedConvo.listings?.title ?? t("unknown")}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{otherName}</p>
+                        </div>
+                        {selectedConvo.listings && (
+                          <span className="ms-auto shrink-0 font-bold text-primary">
+                            ₪{selectedConvo.listings.price}
+                          </span>
+                        )}
+                      </Link>
+                    )}
                   </div>
                   <ChatWindow conversationId={selectedId} />
                 </>
