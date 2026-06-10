@@ -3,9 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Search, ShoppingBag, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useListings } from "@/hooks/useListings";
+import ListingCard from "@/components/listings/ListingCard";
 
 const Index = () => {
   const { t } = useLanguage();
+  const { data: listings } = useListings();
 
   const steps = [
     { icon: ShoppingBag, title: t("listYourItem"), description: t("listYourItemDesc") },
@@ -59,15 +62,23 @@ const Index = () => {
             </Link>
           </Button>
         </div>
-        <div className="mt-6 border border-dashed bg-secondary/30 py-16 text-center">
-          <p className="text-muted-foreground">
-            {t("noListingsBeFirst")}{" "}
-            <Link to="/sell" className="font-medium text-primary underline">
-              {t("postSomething")}
-            </Link>
-            !
-          </p>
-        </div>
+        {listings && listings.length > 0 ? (
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {listings.slice(0, 8).map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 border border-dashed bg-secondary/30 py-16 text-center">
+            <p className="text-muted-foreground">
+              {t("noListingsBeFirst")}{" "}
+              <Link to="/sell" className="font-medium text-primary underline">
+                {t("postSomething")}
+              </Link>
+              !
+            </p>
+          </div>
+        )}
       </section>
     </Layout>
   );
