@@ -31,34 +31,8 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50">
-      {/* Utility bar — matches runi.ac.il top blue strip */}
-      <div className="bg-primary text-primary-foreground">
-        <div className="container flex h-9 items-center justify-end gap-6 text-xs font-semibold uppercase tracking-wider">
-          {utilityLinks.map((link) =>
-            link.external ? (
-              <a
-                key={link.label}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-80"
-              >
-                {link.label}
-              </a>
-            ) : (
-              <Link
-                key={link.label}
-                to={link.href}
-                className="transition-opacity hover:opacity-80"
-              >
-                {link.label}
-              </Link>
-            )
-          )}
-        </div>
-      </div>
-
       {/* Main navbar — white background like runi.ac.il */}
+
       <div className="border-b bg-background">
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
@@ -126,7 +100,8 @@ const Navbar = () => {
                   asChild
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Link to="/signup">Sign up</Link>
+                  <Link to="/signup">Sign up with RUNI Account</Link>
+
                 </Button>
               </>
             )}
@@ -198,7 +173,7 @@ const Navbar = () => {
                         <Link to="/login">Log in</Link>
                       </Button>
                       <Button asChild onClick={() => setMobileOpen(false)}>
-                        <Link to="/signup">Sign up</Link>
+                        <Link to="/signup">Sign up with RUNI Account</Link>
                       </Button>
                     </>
                   )}
