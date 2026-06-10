@@ -2,12 +2,11 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Search, ShoppingBag, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { CATEGORIES } from "@/lib/constants";
 
 const Index = () => {
   return (
     <Layout>
-      {/* Compact hero — text + symmetric CTAs on white */}
+      {/* Compact hero */}
       <section className="border-b bg-background">
         <div className="container mx-auto px-4 py-12 text-center md:py-16">
           <h1 className="text-2xl font-bold tracking-tight text-primary md:text-3xl lg:text-4xl">
@@ -16,44 +15,12 @@ const Index = () => {
           <p className="mt-3 text-sm text-muted-foreground md:text-base">
             The marketplace built exclusively for Reichman University students.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button size="lg" asChild className="w-full sm:w-56">
-              <Link to="/browse">
-                <Search className="mr-2 h-4 w-4" />
-                Browse Listings
-              </Link>
-            </Button>
-            <Button size="lg" asChild className="w-full sm:w-56">
-              <Link to="/sell">
-                Start Selling
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
         </div>
       </section>
 
-
-      {/* Category Quick Filters */}
-      <section className="container py-14">
-        <h2 className="mb-8 text-center text-2xl font-semibold">Shop by Category</h2>
-        <div className="flex flex-wrap justify-center gap-2">
-          {CATEGORIES.map((category) => (
-            <Link
-              key={category}
-              to={`/browse?category=${encodeURIComponent(category)}`}
-              className="rounded border border-primary/20 bg-background px-5 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-            >
-              {category}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* How It Works — clean institutional cards */}
+      {/* 3 info blocks (no heading) */}
       <section className="border-t bg-secondary/50 py-16">
         <div className="container">
-          <h2 className="mb-10 text-center text-2xl font-semibold">How It Works</h2>
           <div className="grid gap-8 md:grid-cols-3">
             {[
               {
