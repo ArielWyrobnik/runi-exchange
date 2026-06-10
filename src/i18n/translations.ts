@@ -99,6 +99,14 @@ export const en = {
   pageNotFound: "Oops! Page not found",
   returnHome: "Return to Home",
   noImage: "No image",
+
+  // Listing detail
+  contactSeller: "Contact Seller",
+  yourListing: "This is your listing",
+  postedBy: "Posted by",
+  listingNotFound: "Listing not found",
+  backToBrowse: "Back to Browse",
+  sold: "Sold",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -200,6 +208,14 @@ export const he: Record<TranslationKey, string> = {
   pageNotFound: "אופס! העמוד לא נמצא",
   returnHome: "חזרה לדף הבית",
   noImage: "אין תמונה",
+
+  // Listing detail
+  contactSeller: "צרו קשר עם המוכר",
+  yourListing: "זו המודעה שלכם",
+  postedBy: "פורסם על ידי",
+  listingNotFound: "המודעה לא נמצאה",
+  backToBrowse: "חזרה לעיון",
+  sold: "נמכר",
 };
 
 export type TranslationKey = keyof typeof en;

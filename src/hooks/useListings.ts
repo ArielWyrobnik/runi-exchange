@@ -57,6 +57,23 @@ export const useListings = (filters: ListingFilters = {}) => {
   });
 };
 
+export const useListing = (id: string | undefined) => {
+  return useQuery({
+    queryKey: ["listing", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("listings")
+        .select("*, listing_images(image_url, display_order), profiles(full_name)")
+        .eq("id", id!)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as ListingWithImages | null;
+    },
+  });
+};
+
 export const useCreateListing = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();

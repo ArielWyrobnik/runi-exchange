@@ -3,12 +3,16 @@ import ConversationList from "@/components/messaging/ConversationList";
 import ChatWindow from "@/components/messaging/ChatWindow";
 import { useConversations } from "@/hooks/useMessages";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { MessageSquare, Loader2 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Messages = () => {
   const { data: conversations, isLoading } = useConversations();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const location = useLocation();
+  const [selectedId, setSelectedId] = useState<string | null>(
+    (location.state as { conversationId?: string } | null)?.conversationId ?? null
+  );
   const { t } = useLanguage();
 
   return (
