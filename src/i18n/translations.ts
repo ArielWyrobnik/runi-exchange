@@ -103,7 +103,7 @@ export const en = {
 
 export const he: Record<TranslationKey, string> = {
   // Navbar
-  brand: "REICHMAN Market",
+  brand: "רייכמן מרקט",
   tagline: "שוק הקמפוס",
   startSelling: "התחילו למכור",
   messages: "הודעות",
@@ -119,7 +119,7 @@ export const he: Record<TranslationKey, string> = {
   madeByStudents: "נוצר על ידי סטודנטים, עבור סטודנטים.",
   footerBrowse: "עיון",
   footerSell: "מכירה",
-  footerCopyright: "REICHMAN Market · אוניברסיטת רייכמן, הרצליה",
+  footerCopyright: "רייכמן מרקט · אוניברסיטת רייכמן, הרצליה",
 
   // Home
   heroTitle: "קונים ומוכרים בתוך קהילת הקמפוס",
@@ -169,14 +169,14 @@ export const he: Record<TranslationKey, string> = {
 
   // Auth
   welcomeBack: "ברוכים השבים",
-  loginSubtitle: "התחברו לחשבון REICHMAN Market שלכם",
+  loginSubtitle: "התחברו לחשבון רייכמן מרקט שלכם",
   email: "אימייל",
   password: "סיסמה",
   loginFailed: "ההתחברות נכשלה",
   noAccount: "אין לכם חשבון?",
   signUp: "הרשמה",
   createAccount: "צרו חשבון",
-  signupSubtitle: "הצטרפו ל-REICHMAN Market עם האימייל האוניברסיטאי שלכם",
+  signupSubtitle: "הצטרפו לרייכמן מרקט עם האימייל האוניברסיטאי שלכם",
   fullName: "שם מלא",
   fullNamePlaceholder: "השם המלא שלכם",
   universityEmail: "אימייל אוניברסיטאי",
