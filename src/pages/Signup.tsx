@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const Signup = () => {
   const { signUp } = useAuth();
+  const { t } = useLanguage();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +25,7 @@ const Signup = () => {
     const { error } = await signUp(email, password, fullName);
     setLoading(false);
     if (error) {
-      toast({ title: "Sign up failed", description: error, variant: "destructive" });
+      toast({ title: t("signupFailed"), description: error, variant: "destructive" });
     } else {
       setSuccess(true);
     }
@@ -38,14 +40,14 @@ const Signup = () => {
               <div className="mx-auto mb-2">
                 <CheckCircle className="h-12 w-12 text-primary" />
               </div>
-              <CardTitle className="text-2xl">Check your email</CardTitle>
+              <CardTitle className="text-2xl">{t("checkYourEmail")}</CardTitle>
               <CardDescription>
-                We've sent a confirmation link to <span className="font-medium">{email}</span>. Click the link to activate your account.
+                {t("confirmationSentTo")} <span className="font-medium">{email}</span>. {t("clickLinkToActivate")}
               </CardDescription>
             </CardHeader>
             <CardFooter className="justify-center">
               <Link to="/login" className="text-sm font-medium text-primary hover:underline">
-                Back to login
+                {t("backToLogin")}
               </Link>
             </CardFooter>
           </Card>
@@ -59,23 +61,23 @@ const Signup = () => {
       <div className="flex min-h-[60vh] items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Create your account</CardTitle>
-            <CardDescription>Join RUNI Market with your university email</CardDescription>
+            <CardTitle className="text-2xl">{t("createAccount")}</CardTitle>
+            <CardDescription>{t("signupSubtitle")}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full name</Label>
+                <Label htmlFor="fullName">{t("fullName")}</Label>
                 <Input
                   id="fullName"
-                  placeholder="Your full name"
+                  placeholder={t("fullNamePlaceholder")}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">University email</Label>
+                <Label htmlFor="email">{t("universityEmail")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -86,11 +88,11 @@ const Signup = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("password")}</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="At least 6 characters"
+                  placeholder={t("passwordPlaceholder")}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -101,12 +103,12 @@ const Signup = () => {
             <CardFooter className="flex flex-col gap-3">
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Sign up
+                {t("signUp")}
               </Button>
               <p className="text-sm text-muted-foreground">
-                Already have an account?{" "}
+                {t("alreadyHaveAccount")}{" "}
                 <Link to="/login" className="font-medium text-primary hover:underline">
-                  Log in
+                  {t("logIn")}
                 </Link>
               </p>
             </CardFooter>

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { he as heLocale } from "date-fns/locale";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Props {
   conversationId: string;
@@ -17,6 +19,7 @@ const ChatWindow = ({ conversationId }: Props) => {
   const sendMessage = useSendMessage();
   const [text, setText] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const { lang, t } = useLanguage();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -56,7 +59,7 @@ const ChatWindow = ({ conversationId }: Props) => {
               >
                 <p>{msg.content}</p>
                 <p className={cn("mt-1 text-[10px]", isOwn ? "text-primary-foreground/70" : "text-muted-foreground")}>
-                  {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true, locale: lang === "he" ? heLocale : undefined })}
                 </p>
               </div>
             </div>
@@ -70,7 +73,7 @@ const ChatWindow = ({ conversationId }: Props) => {
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Type a message..."
+          placeholder={t("typeMessage")}
           className="flex-1"
         />
         <Button type="submit" size="icon" disabled={sendMessage.isPending || !text.trim()}>

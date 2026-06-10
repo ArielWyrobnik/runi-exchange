@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,21 +14,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import ImageUpload from "@/components/listings/ImageUpload";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
-const schema = z.object({
-  title: z.string().trim().min(1, "Title is required").max(100),
-  description: z.string().trim().min(1, "Description is required").max(2000),
-  price: z.coerce.number().min(0, "Price must be 0 or more"),
-  category: z.string().min(1, "Select a category"),
-  condition: z.string().min(1, "Select condition"),
-});
-
-type FormValues = z.infer<typeof schema>;
+type FormValues = {
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  condition: string;
+};
 
 const Sell = () => {
   const navigate = useNavigate();
   const createListing = useCreateListing();
   const [images, setImages] = useState<File[]>([]);
+  const { t, tCategory, tCondition } = useLanguage();
+
+  const schema = useMemo(() => z.object({
+    title: z.string().trim().min(1, t("titleRequired")).max(100),
+    description: z.string().trim().min(1, t("descriptionRequired")).max(2000),
+    price: z.coerce.number().min(0, t("priceMin")),
+    category: z.string().min(1, t("categoryRequired")),
+    condition: z.string().min(1, t("conditionRequired")),
+  }), [t]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -45,38 +53,38 @@ const Sell = () => {
         condition: values.condition,
         images,
       });
-      toast({ title: "Listing posted!" });
+      toast({ title: t("listingPosted") });
       navigate(`/listing/${listing.id}`);
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("error"), description: err.message, variant: "destructive" });
     }
   };
 
   return (
     <Layout>
       <div className="container max-w-2xl py-6">
-        <h1 className="mb-6 text-2xl font-bold">Post a Listing</h1>
+        <h1 className="mb-6 text-2xl font-bold">{t("postAListing")}</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField control={form.control} name="title" render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl><Input placeholder="What are you selling?" {...field} /></FormControl>
+                <FormLabel>{t("title")}</FormLabel>
+                <FormControl><Input placeholder={t("titlePlaceholder")} {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
 
             <FormField control={form.control} name="description" render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl><Textarea placeholder="Describe your item..." rows={4} {...field} /></FormControl>
+                <FormLabel>{t("description")}</FormLabel>
+                <FormControl><Textarea placeholder={t("descriptionPlaceholder")} rows={4} {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
 
             <FormField control={form.control} name="price" render={({ field }) => (
               <FormItem>
-                <FormLabel>Price (₪)</FormLabel>
+                <FormLabel>{t("priceShekel")}</FormLabel>
                 <FormControl><Input type="number" min={0} step="1" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,11 +92,11 @@ const Sell = () => {
 
             <FormField control={form.control} name="category" render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>{t("category")}</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl><SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger></FormControl>
+                  <FormControl><SelectTrigger><SelectValue placeholder={t("selectCategory")} /></SelectTrigger></FormControl>
                   <SelectContent>
-                    {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{tCategory(c)}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -97,11 +105,11 @@ const Sell = () => {
 
             <FormField control={form.control} name="condition" render={({ field }) => (
               <FormItem>
-                <FormLabel>Condition</FormLabel>
+                <FormLabel>{t("condition")}</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl><SelectTrigger><SelectValue placeholder="Select condition" /></SelectTrigger></FormControl>
+                  <FormControl><SelectTrigger><SelectValue placeholder={t("selectCondition")} /></SelectTrigger></FormControl>
                   <SelectContent>
-                    {CONDITIONS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    {CONDITIONS.map((c) => <SelectItem key={c} value={c}>{tCondition(c)}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -109,13 +117,13 @@ const Sell = () => {
             )} />
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Photos (up to 3)</label>
+              <label className="text-sm font-medium">{t("photosUpTo")}</label>
               <ImageUpload images={images} onChange={setImages} />
             </div>
 
             <Button type="submit" className="w-full" disabled={createListing.isPending}>
               {createListing.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Post Listing
+              {t("postListing")}
             </Button>
           </form>
         </Form>

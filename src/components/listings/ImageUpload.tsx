@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { X, ImagePlus } from "lucide-react";
 import { MAX_LISTING_IMAGES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface ImageUploadProps {
   images: File[];
@@ -10,6 +11,7 @@ interface ImageUploadProps {
 
 const ImageUpload = ({ images, onChange }: ImageUploadProps) => {
   const [dragOver, setDragOver] = useState(false);
+  const { t } = useLanguage();
 
   const addFiles = useCallback(
     (files: FileList | null) => {
@@ -37,7 +39,7 @@ const ImageUpload = ({ images, onChange }: ImageUploadProps) => {
         >
           <ImagePlus className="mb-2 h-8 w-8 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
-            Drop images here or click to upload ({images.length}/{MAX_LISTING_IMAGES})
+            {t("dropImages")} ({images.length}/{MAX_LISTING_IMAGES})
           </span>
           <input
             type="file"

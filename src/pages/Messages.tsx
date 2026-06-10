@@ -4,15 +4,17 @@ import ChatWindow from "@/components/messaging/ChatWindow";
 import { useConversations } from "@/hooks/useMessages";
 import { useState } from "react";
 import { MessageSquare, Loader2 } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const Messages = () => {
   const { data: conversations, isLoading } = useConversations();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   return (
     <Layout>
       <div className="container py-6">
-        <h1 className="mb-4 text-2xl font-bold">Messages</h1>
+        <h1 className="mb-4 text-2xl font-bold">{t("messages")}</h1>
 
         {isLoading ? (
           <div className="flex min-h-[40vh] items-center justify-center">
@@ -21,8 +23,8 @@ const Messages = () => {
         ) : !conversations || conversations.length === 0 ? (
           <div className="flex min-h-[40vh] flex-col items-center justify-center text-center">
             <MessageSquare className="mb-3 h-12 w-12 text-muted-foreground" />
-            <h2 className="text-lg font-semibold">No conversations yet</h2>
-            <p className="text-muted-foreground">Start by contacting a seller on a listing.</p>
+            <h2 className="text-lg font-semibold">{t("noConversations")}</h2>
+            <p className="text-muted-foreground">{t("startByContacting")}</p>
           </div>
         ) : (
           <div className="flex h-[70vh] overflow-hidden rounded-lg border">
@@ -44,14 +46,14 @@ const Messages = () => {
                       className="text-sm font-medium text-primary"
                       onClick={() => setSelectedId(null)}
                     >
-                      ← Back
+                      {t("back")}
                     </button>
                   </div>
                   <ChatWindow conversationId={selectedId} />
                 </>
               ) : (
                 <div className="flex flex-1 items-center justify-center text-muted-foreground">
-                  Select a conversation
+                  {t("selectConversation")}
                 </div>
               )}
             </div>

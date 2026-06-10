@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants";
 import { Search, Package, Loader2 } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const Browse = () => {
+  const { t, tCategory, tCondition } = useLanguage();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
@@ -27,14 +29,14 @@ const Browse = () => {
   return (
     <Layout>
       <div className="container py-6">
-        <h1 className="mb-6 text-2xl font-bold">Browse Listings</h1>
+        <h1 className="mb-6 text-2xl font-bold">{t("browseListings")}</h1>
 
         {/* Search */}
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-3" />
           <Input
-            placeholder="Search listings..."
-            className="pl-10"
+            placeholder={t("searchListings")}
+            className="pl-10 rtl:pl-3 rtl:pr-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -44,38 +46,38 @@ const Browse = () => {
         <div className="mb-6 flex flex-wrap gap-3">
           <Select value={category} onValueChange={(v) => setCategory(v === "all" ? "" : v)}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Category" />
+              <SelectValue placeholder={t("category")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">{t("allCategories")}</SelectItem>
               {CATEGORIES.map((c) => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
+                <SelectItem key={c} value={c}>{tCategory(c)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Select value={condition} onValueChange={(v) => setCondition(v === "all" ? "" : v)}>
             <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Condition" />
+              <SelectValue placeholder={t("condition")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Conditions</SelectItem>
+              <SelectItem value="all">{t("allConditions")}</SelectItem>
               {CONDITIONS.map((c) => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
+                <SelectItem key={c} value={c}>{tCondition(c)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Input
             type="number"
-            placeholder="Min ₪"
+            placeholder={t("minPrice")}
             className="w-[100px]"
             value={priceMin}
             onChange={(e) => setPriceMin(e.target.value)}
           />
           <Input
             type="number"
-            placeholder="Max ₪"
+            placeholder={t("maxPrice")}
             className="w-[100px]"
             value={priceMax}
             onChange={(e) => setPriceMax(e.target.value)}
@@ -96,8 +98,8 @@ const Browse = () => {
         ) : (
           <div className="flex min-h-[30vh] flex-col items-center justify-center text-center">
             <Package className="mb-3 h-12 w-12 text-muted-foreground" />
-            <h2 className="text-lg font-semibold">No listings yet</h2>
-            <p className="text-muted-foreground">Be the first to sell something!</p>
+            <h2 className="text-lg font-semibold">{t("noListingsYet")}</h2>
+            <p className="text-muted-foreground">{t("beFirstToSell")}</p>
           </div>
         )}
       </div>

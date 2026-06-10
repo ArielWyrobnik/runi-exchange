@@ -1,5 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
+import { he as heLocale } from "date-fns/locale";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/i18n/LanguageContext";
 import type { ConversationWithDetails } from "@/hooks/useMessages";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +13,7 @@ interface Props {
 
 const ConversationList = ({ conversations, selectedId, onSelect }: Props) => {
   const { user } = useAuth();
+  const { lang, t } = useLanguage();
 
   return (
     <div className="flex flex-col">
@@ -30,10 +33,10 @@ const ConversationList = ({ conversations, selectedId, onSelect }: Props) => {
             )}
           >
             <div className="flex items-center justify-between">
-              <span className="font-medium">{otherName ?? "Unknown"}</span>
+              <span className="font-medium">{otherName ?? t("unknown")}</span>
               {c.latest_message && (
                 <span className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(c.latest_message.created_at), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(c.latest_message.created_at), { addSuffix: true, locale: lang === "he" ? heLocale : undefined })}
                 </span>
               )}
             </div>

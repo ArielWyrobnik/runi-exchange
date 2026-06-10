@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, MessageCircle, Tag } from "lucide-react";
+import { Menu, Search, MessageCircle, Tag, Globe } from "lucide-react";
 import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
-import reichmanLogo from "@/assets/reichman-logo.png";
+import { useLanguage } from "@/i18n/LanguageContext";
+import reichmanStars from "@/assets/reichman-stars.png";
 
 const Navbar = () => {
   const location = useLocation();
@@ -13,6 +14,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { user, loading, signOut } = useAuth();
+  const { lang, setLang, t } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
@@ -25,6 +27,8 @@ const Navbar = () => {
     navigate(q ? `/browse?search=${encodeURIComponent(q)}` : "/browse");
   };
 
+  const toggleLang = () => setLang(lang === "en" ? "he" : "en");
+
   return (
     <header className="sticky top-0 z-50 bg-background">
       {/* Top navbar — logo + auth */}
@@ -33,16 +37,16 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5">
             <img
-              src={reichmanLogo}
+              src={reichmanStars}
               alt="Reichman University"
-              className="h-10 w-10 rounded-full bg-primary-foreground/10 object-contain p-0.5"
+              className="h-11 w-auto object-contain"
             />
             <div className="flex flex-col leading-tight">
               <span className="text-base font-bold tracking-tight">
                 RUNI Market
               </span>
               <span className="text-[10px] uppercase tracking-widest text-primary-foreground/70">
-                Campus Marketplace
+                {t("tagline")}
               </span>
             </div>
           </Link>
@@ -51,13 +55,22 @@ const Navbar = () => {
           <div className="hidden items-center gap-3 md:flex">
             <Button
               size="sm"
+              variant="ghost"
+              onClick={toggleLang}
+              className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            >
+              <Globe className="mr-1 h-4 w-4" />
+              {lang === "en" ? "עברית" : "English"}
+            </Button>
+            <Button
+              size="sm"
               asChild
               variant="outline"
               className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground hover:text-primary"
             >
               <Link to="/sell">
                 <Tag className="mr-1 h-4 w-4" />
-                Start Selling
+                {t("startSelling")}
               </Link>
             </Button>
             {user && (
@@ -69,7 +82,7 @@ const Navbar = () => {
               >
                 <Link to="/messages">
                   <MessageCircle className="mr-1 h-4 w-4" />
-                  Messages
+                  {t("messages")}
                 </Link>
               </Button>
             )}
@@ -84,7 +97,7 @@ const Navbar = () => {
                   onClick={handleSignOut}
                   className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground hover:text-primary"
                 >
-                  Log out
+                  {t("logOut")}
                 </Button>
               </>
             ) : (
@@ -95,14 +108,14 @@ const Navbar = () => {
                   asChild
                   className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
                 >
-                  <Link to="/login">Log in</Link>
+                  <Link to="/login">{t("logIn")}</Link>
                 </Button>
                 <Button
                   size="sm"
                   asChild
                   className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
                 >
-                  <Link to="/signup">Sign up with RUNI Account</Link>
+                  <Link to="/signup">{t("signUpRuni")}</Link>
                 </Button>
               </>
             )}
@@ -113,11 +126,11 @@ const Navbar = () => {
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t("openMenu")}</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <SheetTitle className="sr-only">Navigation menu</SheetTitle>
+              <SheetTitle className="sr-only">{t("navigationMenu")}</SheetTitle>
               <div className="flex flex-col gap-6 pt-6">
                 <Link
                   to="/"
@@ -125,9 +138,9 @@ const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                 >
                   <img
-                    src={reichmanLogo}
+                    src={reichmanStars}
                     alt="Reichman University"
-                    className="h-8 w-8 object-contain"
+                    className="h-8 w-auto rounded bg-primary object-contain p-1"
                   />
                   <span className="font-bold text-primary">RUNI Market</span>
                 </Link>
@@ -138,7 +151,7 @@ const Navbar = () => {
                     onClick={() => setMobileOpen(false)}
                     className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
                   >
-                    Start Selling
+                    {t("startSelling")}
                   </Link>
                   {user && (
                     <Link
@@ -146,9 +159,16 @@ const Navbar = () => {
                       onClick={() => setMobileOpen(false)}
                       className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
                     >
-                      Messages
+                      {t("messages")}
                     </Link>
                   )}
+                  <button
+                    onClick={toggleLang}
+                    className="flex items-center gap-2 rounded px-3 py-2.5 text-left text-sm font-medium text-primary hover:bg-accent"
+                  >
+                    <Globe className="h-4 w-4" />
+                    {lang === "en" ? "עברית" : "English"}
+                  </button>
                 </nav>
 
                 <div className="flex flex-col gap-2 border-t pt-4">
@@ -162,7 +182,7 @@ const Navbar = () => {
                         className="border-primary text-primary"
                         onClick={() => { handleSignOut(); setMobileOpen(false); }}
                       >
-                        Log out
+                        {t("logOut")}
                       </Button>
                     </>
                   ) : (
@@ -173,10 +193,10 @@ const Navbar = () => {
                         className="border-primary text-primary"
                         onClick={() => setMobileOpen(false)}
                       >
-                        <Link to="/login">Log in</Link>
+                        <Link to="/login">{t("logIn")}</Link>
                       </Button>
                       <Button asChild onClick={() => setMobileOpen(false)}>
-                        <Link to="/signup">Sign up with RUNI Account</Link>
+                        <Link to="/signup">{t("signUpRuni")}</Link>
                       </Button>
                     </>
                   )}
@@ -192,19 +212,19 @@ const Navbar = () => {
         <div className="container py-3">
           <form onSubmit={handleSearch} className="flex items-center gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-3" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search for anything"
-                className="h-11 rounded-full pl-10 pr-4 border-2 border-primary/30 focus-visible:border-primary"
+                placeholder={t("searchPlaceholder")}
+                className="h-11 rounded-full pl-10 pr-4 border-2 border-primary/30 focus-visible:border-primary rtl:pl-4 rtl:pr-10"
               />
             </div>
             <Button
               type="submit"
               className="h-11 rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              Search
+              {t("search")}
             </Button>
           </form>
         </div>
