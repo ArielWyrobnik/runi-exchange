@@ -1,27 +1,17 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search } from "lucide-react";
-import { useState } from "react";
+import { Menu, Search, MessageCircle, Tag } from "lucide-react";
+import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import reichmanLogo from "@/assets/reichman-logo.png";
-
-const navLinks = [
-  { label: "Browse", href: "/browse" },
-  { label: "Sell", href: "/sell" },
-  { label: "Messages", href: "/messages" },
-];
-
-const utilityLinks = [
-  { label: "RUNI MARKET", href: "/" },
-  { label: "MY RUNI", href: "https://my.runi.ac.il", external: true },
-  { label: "CONTACT US", href: "mailto:support@post.runi.ac.il", external: true },
-];
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const { user, loading, signOut } = useAuth();
 
   const handleSignOut = async () => {
@@ -29,12 +19,17 @@ const Navbar = () => {
     navigate("/");
   };
 
-  return (
-    <header className="sticky top-0 z-50">
-      {/* Main navbar — white background like runi.ac.il */}
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    const q = search.trim();
+    navigate(q ? `/browse?search=${encodeURIComponent(q)}` : "/browse");
+  };
 
+  return (
+    <header className="sticky top-0 z-50 bg-background">
+      {/* Top navbar — logo + auth */}
       <div className="border-b bg-background">
-        <div className="container flex h-16 items-center justify-between">
+        <div className="container flex h-16 items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5">
             <img
@@ -52,25 +47,32 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-0 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={`border-b-2 px-4 py-5 text-sm font-bold transition-colors ${
-                  location.pathname === link.href
-                    ? "border-primary text-primary"
-                    : "border-transparent text-primary hover:border-primary/40"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
           {/* Desktop auth buttons */}
           <div className="hidden items-center gap-3 md:flex">
+            <Button
+              size="sm"
+              asChild
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            >
+              <Link to="/sell">
+                <Tag className="mr-1 h-4 w-4" />
+                Start Selling
+              </Link>
+            </Button>
+            {user && (
+              <Button
+                size="sm"
+                asChild
+                variant="ghost"
+                className="text-primary hover:bg-primary/5"
+              >
+                <Link to="/messages">
+                  <MessageCircle className="mr-1 h-4 w-4" />
+                  Messages
+                </Link>
+              </Button>
+            )}
             {loading ? null : user ? (
               <>
                 <span className="text-sm text-muted-foreground">
@@ -101,7 +103,6 @@ const Navbar = () => {
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   <Link to="/signup">Sign up with RUNI Account</Link>
-
                 </Button>
               </>
             )}
@@ -132,20 +133,22 @@ const Navbar = () => {
                 </Link>
 
                 <nav className="flex flex-col gap-1">
-                  {navLinks.map((link) => (
+                  <Link
+                    to="/sell"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
+                  >
+                    Start Selling
+                  </Link>
+                  {user && (
                     <Link
-                      key={link.href}
-                      to={link.href}
+                      to="/messages"
                       onClick={() => setMobileOpen(false)}
-                      className={`rounded px-3 py-2.5 text-sm font-medium transition-colors ${
-                        location.pathname === link.href
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-accent"
-                      }`}
+                      className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
                     >
-                      {link.label}
+                      Messages
                     </Link>
-                  ))}
+                  )}
                 </nav>
 
                 <div className="flex flex-col gap-2 border-t pt-4">
@@ -181,6 +184,29 @@ const Navbar = () => {
               </div>
             </SheetContent>
           </Sheet>
+        </div>
+      </div>
+
+      {/* Search bar row — eBay style */}
+      <div className="border-b bg-background">
+        <div className="container py-3">
+          <form onSubmit={handleSearch} className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search for anything"
+                className="h-11 rounded-full pl-10 pr-4 border-2 border-primary/30 focus-visible:border-primary"
+              />
+            </div>
+            <Button
+              type="submit"
+              className="h-11 rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Search
+            </Button>
+          </form>
         </div>
       </div>
     </header>
