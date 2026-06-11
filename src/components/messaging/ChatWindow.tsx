@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useMessages, useSendMessage } from "@/hooks/useMessages";
+import { useMessages, useSendMessage, useMarkConversationRead } from "@/hooks/useMessages";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
@@ -20,6 +20,8 @@ const ChatWindow = ({ conversationId }: Props) => {
   const [text, setText] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
   const { lang, t } = useLanguage();
+
+  useMarkConversationRead(conversationId, messages);
 
   useEffect(() => {
     // Scroll only the message list, not the whole page

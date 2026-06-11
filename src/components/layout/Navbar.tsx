@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadCount } from "@/hooks/useMessages";
 import { useLanguage } from "@/i18n/LanguageContext";
 import reichmanStars from "@/assets/reichman-stars.png";
 
@@ -15,6 +16,7 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const { user, loading, signOut } = useAuth();
   const { lang, setLang, t } = useLanguage();
+  const { data: unreadCount = 0 } = useUnreadCount();
 
   const handleSignOut = async () => {
     await signOut();
@@ -103,18 +105,26 @@ const Navbar = () => {
                   variant="ghost"
                   className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
                 >
-                  <Link to="/messages">
+                  <Link to="/messages" className="relative">
                     <MessageCircle className="mr-1 h-4 w-4" />
                     {t("messages")}
+                    {unreadCount > 0 && (
+                      <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                        {unreadCount}
+                      </span>
+                    )}
                   </Link>
                 </Button>
               </>
             )}
             {loading ? null : user ? (
               <>
-                <span className="text-sm text-primary-foreground/80">
+                <Link
+                  to={`/seller/${user.id}`}
+                  className="text-sm text-primary-foreground/80 hover:text-primary-foreground hover:underline"
+                >
                   {user.user_metadata?.full_name ?? user.email}
-                </span>
+                </Link>
                 <Button
                   variant="outline"
                   size="sm"
@@ -197,9 +207,14 @@ const Navbar = () => {
                       <Link
                         to="/messages"
                         onClick={() => setMobileOpen(false)}
-                        className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
+                        className="flex items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
                       >
                         {t("messages")}
+                        {unreadCount > 0 && (
+                          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                            {unreadCount}
+                          </span>
+                        )}
                       </Link>
                     </>
                   )}
@@ -215,9 +230,13 @@ const Navbar = () => {
                 <div className="flex flex-col gap-2 border-t pt-4">
                   {user ? (
                     <>
-                      <p className="px-3 text-sm font-medium">
+                      <Link
+                        to={`/seller/${user.id}`}
+                        onClick={() => setMobileOpen(false)}
+                        className="px-3 text-sm font-medium hover:underline"
+                      >
                         {user.user_metadata?.full_name ?? user.email}
-                      </p>
+                      </Link>
                       <Button
                         variant="outline"
                         className="border-primary text-primary"

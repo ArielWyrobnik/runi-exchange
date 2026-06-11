@@ -140,6 +140,9 @@ export const en = {
   memberSince: "Member since",
   sellerListings: "Active listings",
   sellerNotFound: "Seller not found",
+  soldNotice: "This item has been sold",
+  profileUpdated: "Profile updated!",
+  editName: "Edit name",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -282,6 +285,9 @@ export const he: Record<TranslationKey, string> = {
   memberSince: "חבר מאז",
   sellerListings: "מודעות פעילות",
   sellerNotFound: "המוכר לא נמצא",
+  soldNotice: "הפריט נמכר",
+  profileUpdated: "הפרופיל עודכן!",
+  editName: "עריכת שם",
 };
 
 export type TranslationKey = keyof typeof en;

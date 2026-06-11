@@ -25,8 +25,15 @@ const Browse = () => {
     setSearch(urlSearch);
   }, [urlSearch]);
 
+  // Debounce typing so we don't fire a query per keystroke
+  const [debouncedSearch, setDebouncedSearch] = useState(urlSearch);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const filters: ListingFilters = {
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     category: category || undefined,
     condition: condition || undefined,
     priceMin: priceMin ? Number(priceMin) : undefined,

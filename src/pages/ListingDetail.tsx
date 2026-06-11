@@ -164,19 +164,25 @@ const ListingDetail = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Button
-                    size="lg"
-                    className="w-full"
-                    onClick={handleContactSeller}
-                    disabled={createConversation.isPending}
-                  >
-                    {createConversation.isPending ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <MessageCircle className="mr-2 h-4 w-4" />
-                    )}
-                    {t("contactSeller")}
-                  </Button>
+                  {listing.status === "sold" ? (
+                    <p className="rounded-md border bg-muted py-3 text-center text-sm font-medium text-muted-foreground">
+                      {t("soldNotice")}
+                    </p>
+                  ) : (
+                    <Button
+                      size="lg"
+                      className="w-full"
+                      onClick={handleContactSeller}
+                      disabled={createConversation.isPending}
+                    >
+                      {createConversation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                      )}
+                      {t("contactSeller")}
+                    </Button>
+                  )}
                   <Button
                     size="lg"
                     variant="outline"

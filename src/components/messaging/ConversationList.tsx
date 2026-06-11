@@ -60,9 +60,23 @@ const ConversationList = ({ conversations, selectedId, onSelect }: Props) => {
               </div>
               <span className="text-xs text-muted-foreground">{otherName ?? t("unknown")}</span>
               {c.latest_message && (
-                <p className="line-clamp-1 text-sm text-muted-foreground">
-                  {c.latest_message.content}
-                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p
+                    className={cn(
+                      "line-clamp-1 text-sm",
+                      c.unread_count > 0
+                        ? "font-semibold text-foreground"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {c.latest_message.content}
+                  </p>
+                  {c.unread_count > 0 && (
+                    <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-bold text-primary-foreground">
+                      {c.unread_count}
+                    </span>
+                  )}
+                </div>
               )}
             </div>
           </button>

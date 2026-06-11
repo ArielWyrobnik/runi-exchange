@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/layout/Layout";
 import ListingCard from "@/components/listings/ListingCard";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { Loader2, UserX } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2, UserX, Pencil } from "lucide-react";
 import type { ListingWithImages } from "@/hooks/useListings";
 
 const useSellerProfile = (id: string | undefined) =>
@@ -41,8 +46,38 @@ const useSellerListings = (id: string | undefined) =>
 const SellerProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { lang, t } = useLanguage();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { data: profile, isLoading: profileLoading } = useSellerProfile(id);
   const { data: listings, isLoading: listingsLoading } = useSellerListings(id);
+  const [editing, setEditing] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const isOwn = !!user && user.id === id;
+
+  const handleSaveName = async () => {
+    const newName = nameInput.trim();
+    if (!newName || !id) return;
+    setSaving(true);
+    // profiles drives the marketplace display, auth metadata drives the navbar
+    const { error } = await supabase
+      .from("profiles")
+      .update({ full_name: newName })
+      .eq("id", id);
+    if (!error) {
+      await supabase.auth.updateUser({ data: { full_name: newName } });
+    }
+    setSaving(false);
+    if (error) {
+      toast({ title: t("error"), description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: t("profileUpdated") });
+      setEditing(false);
+      queryClient.invalidateQueries({ queryKey: ["seller-profile", id] });
+      queryClient.invalidateQueries({ queryKey: ["seller-listings", id] });
+    }
+  };
 
   if (profileLoading) {
     return (
@@ -79,7 +114,40 @@ const SellerProfile = () => {
             {profile.full_name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{profile.full_name}</h1>
+            {editing ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  value={nameInput}
+                  onChange={(e) => setNameInput(e.target.value)}
+                  maxLength={100}
+                  className="h-9 w-56"
+                />
+                <Button size="sm" onClick={handleSaveName} disabled={saving || !nameInput.trim()}>
+                  {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+                  {t("saveChanges")}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
+                  {t("cancel")}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold">{profile.full_name}</h1>
+                {isOwn && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label={t("editName")}
+                    onClick={() => {
+                      setNameInput(profile.full_name);
+                      setEditing(true);
+                    }}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            )}
             <p className="text-sm text-muted-foreground">
               {t("memberSince")} {memberSince}
             </p>

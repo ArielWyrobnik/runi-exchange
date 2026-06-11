@@ -151,6 +151,19 @@ export const useDeleteListing = () => {
 
   return useMutation({
     mutationFn: async (id: string) => {
+      // Remove the image files first — the DB cascade only deletes the
+      // rows, the storage objects would be orphaned otherwise
+      const { data: images } = await supabase
+        .from("listing_images")
+        .select("image_url")
+        .eq("listing_id", id);
+      const paths = (images ?? [])
+        .map((img) => img.image_url.split("/listing-images/")[1])
+        .filter((p): p is string => !!p);
+      if (paths.length > 0) {
+        await supabase.storage.from("listing-images").remove(paths);
+      }
+
       const { error } = await supabase.from("listings").delete().eq("id", id);
       if (error) throw error;
     },
