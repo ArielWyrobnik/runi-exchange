@@ -1,8 +1,10 @@
 /** Application-wide constants for RUNI Market */
 
 export const CATEGORIES = [
+  "Tickets",
   "Furniture",
   "Electronics",
+  "Dorm Accessories",
   "Books & Study Materials",
   "Clothes",
   "Kitchen & Appliances",
