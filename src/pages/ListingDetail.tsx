@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { useListing } from "@/hooks/useListings";
 import { useCreateConversation } from "@/hooks/useMessages";
 import { useAuth } from "@/hooks/useAuth";
+import { useListingTranslation } from "@/hooks/useListingTranslation";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ const ListingDetail = () => {
   const { user } = useAuth();
   const { lang, t, tCategory, tCondition } = useLanguage();
   const { data: listing, isLoading } = useListing(id);
+  const translatedListing = useListingTranslation(listing);
   const createConversation = useCreateConversation();
   const { data: watchedIds } = useWatchlistIds();
   const toggleWatchlist = useToggleWatchlist();
@@ -58,12 +60,23 @@ const ListingDetail = () => {
     }
   };
 
-  const handleWatchlist = () => {
+  const handleWatchlist = async () => {
     if (!user) {
       navigate("/login");
       return;
     }
-    if (id) toggleWatchlist.mutate({ listingId: id, watched });
+
+    if (!id) return;
+
+    try {
+      await toggleWatchlist.mutateAsync({ listingId: id, watched });
+    } catch (err) {
+      toast({
+        title: t("error"),
+        description: err instanceof Error ? err.message : undefined,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleContactSeller = async () => {
@@ -111,6 +124,8 @@ const ListingDetail = () => {
     (a, b) => a.display_order - b.display_order
   );
   const isOwn = user?.id === listing.seller_id;
+  const displayTitle = translatedListing.title || listing.title;
+  const displayDescription = translatedListing.description || listing.description;
 
   return (
     <Layout>
@@ -122,7 +137,7 @@ const ListingDetail = () => {
               {images.length > 0 ? (
                 <img
                   src={images[selectedImage]?.image_url}
-                  alt={listing.title}
+                  alt={displayTitle}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -151,7 +166,7 @@ const ListingDetail = () => {
           {/* Details */}
           <div className="flex flex-col gap-4">
             <div>
-              <h1 className="text-2xl font-bold">{listing.title}</h1>
+              <h1 className="text-2xl font-bold">{displayTitle}</h1>
               <p className="mt-2 text-3xl font-bold text-primary">₪{listing.price}</p>
             </div>
 
@@ -162,11 +177,11 @@ const ListingDetail = () => {
             </div>
 
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-              {listing.description}
+              {displayDescription}
             </p>
 
             <div className="text-sm text-muted-foreground">
-              {t("postedBy")}{" "}
+              {t("postedBy")} {" "}
               <Link
                 to={`/seller/${listing.seller_id}`}
                 className="font-medium text-foreground hover:text-primary hover:underline"
