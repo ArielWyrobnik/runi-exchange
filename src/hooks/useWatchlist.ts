@@ -64,6 +64,10 @@ export const useToggleWatchlist = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["watchlist-ids"] });
       queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+      // watch_count lives on the listing rows — refresh them too
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["listing"] });
+      queryClient.invalidateQueries({ queryKey: ["seller-listings"] });
     },
   });
 };

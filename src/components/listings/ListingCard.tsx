@@ -1,5 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { he as heLocale } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,7 +13,7 @@ import type { ListingWithImages } from "@/hooks/useListings";
 const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { t, tCategory, tCondition } = useLanguage();
+  const { lang, t, tCategory, tCondition } = useLanguage();
   const { data: watchedIds } = useWatchlistIds();
   const toggleWatchlist = useToggleWatchlist();
 
@@ -68,6 +70,18 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Badge variant="secondary" className="text-xs">{tCondition(listing.condition)}</Badge>
             <Badge variant="outline" className="text-xs">{tCategory(listing.category)}</Badge>
+          </div>
+          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+            <span>
+              {formatDistanceToNow(new Date(listing.created_at), {
+                addSuffix: true,
+                locale: lang === "he" ? heLocale : undefined,
+              })}
+            </span>
+            <span className="flex items-center gap-1">
+              <Heart className="h-3 w-3" />
+              {listing.watch_count}
+            </span>
           </div>
         </CardContent>
       </Card>

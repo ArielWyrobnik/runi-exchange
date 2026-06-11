@@ -23,6 +23,7 @@ export interface ListingWithImages {
   status: string;
   seller_id: string;
   created_at: string;
+  watch_count: number;
   listing_images: { image_url: string; display_order: number }[];
   profiles: { full_name: string } | null;
 }

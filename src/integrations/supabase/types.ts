@@ -104,6 +104,7 @@ export type Database = {
           status: string
           title: string
           updated_at: string
+          watch_count: number
         }
         Insert: {
           category: string
@@ -116,6 +117,7 @@ export type Database = {
           status?: string
           title: string
           updated_at?: string
+          watch_count?: number
         }
         Update: {
           category?: string
@@ -128,6 +130,7 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string
+          watch_count?: number
         }
         Relationships: [
           {

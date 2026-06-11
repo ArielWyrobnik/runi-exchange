@@ -146,7 +146,12 @@ const ListingDetail = () => {
               {formatDistanceToNow(new Date(listing.created_at), {
                 addSuffix: true,
                 locale: lang === "he" ? heLocale : undefined,
-              })}
+              })}{" "}
+              ·{" "}
+              <span className="inline-flex items-center gap-1 align-middle">
+                <Heart className="h-3.5 w-3.5" />
+                {listing.watch_count}
+              </span>
             </div>
 
             <div className="mt-auto pt-4">
