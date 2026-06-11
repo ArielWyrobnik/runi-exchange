@@ -7,15 +7,15 @@ import { useListings } from "@/hooks/useListings";
 import ListingCard from "@/components/listings/ListingCard";
 
 const categoryLinks = [
-  { icon: Ticket, label: "Tickets", sublabel: "RUNI Tickets", to: "/tickets", isSpecial: true },
-  { icon: Armchair, label: "Furniture", to: "/browse?category=Furniture" },
-  { icon: Tablet, label: "Electronics", to: "/browse?category=Electronics" },
-  { icon: Package, label: "Dorm Accessories", to: "/browse?category=Dorm%20Accessories" },
-  { icon: Dumbbell, label: "Sports & Outdoors", to: "/browse?category=Sports%20%26%20Outdoors" },
+  { icon: Ticket, category: "Tickets", sublabel: "RUNI Tickets", to: "/tickets", isSpecial: true },
+  { icon: Armchair, category: "Furniture", to: "/browse?category=Furniture" },
+  { icon: Tablet, category: "Electronics", to: "/browse?category=Electronics" },
+  { icon: Package, category: "Dorm Accessories", to: "/browse?category=Dorm%20Accessories" },
+  { icon: Dumbbell, category: "Sports & Outdoors", to: "/browse?category=Sports%20%26%20Outdoors" },
 ];
 
 const Index = () => {
-  const { t } = useLanguage();
+  const { t, tCategory } = useLanguage();
   const { data: listings } = useListings({ limit: 8 });
 
   return (
@@ -38,7 +38,7 @@ const Index = () => {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {categoryLinks.map((category) => (
               <Link
-                key={category.label}
+                key={category.category}
                 to={category.to}
                 className={`group flex min-h-28 flex-col items-center justify-center border bg-card px-4 py-5 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md ${
                   category.isSpecial
@@ -56,11 +56,11 @@ const Index = () => {
                   <category.icon className="h-5 w-5" />
                 </div>
                 <span className="text-sm font-semibold leading-tight md:text-base">
-                  {category.label}
+                  {tCategory(category.category)}
                 </span>
                 {category.sublabel && (
                   <span className="mt-1 text-xs font-medium text-red-600">
-                    {category.sublabel}
+                    {tCategory(category.sublabel)}
                   </span>
                 )}
               </Link>
