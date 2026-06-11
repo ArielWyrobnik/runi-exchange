@@ -1,6 +1,17 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import Layout from "@/components/layout/Layout";
 import ListingCard from "@/components/listings/ListingCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,7 +57,8 @@ const useSellerListings = (id: string | undefined) =>
 const SellerProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { lang, t } = useLanguage();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: profile, isLoading: profileLoading } = useSellerProfile(id);
   const { data: listings, isLoading: listingsLoading } = useSellerListings(id);
@@ -55,6 +67,17 @@ const SellerProfile = () => {
   const [saving, setSaving] = useState(false);
 
   const isOwn = !!user && user.id === id;
+
+  const handleDeleteAccount = async () => {
+    const { error } = await supabase.rpc("delete_own_account");
+    if (error) {
+      toast({ title: t("error"), description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: t("accountDeleted") });
+    await signOut();
+    navigate("/");
+  };
 
   const handleSaveName = async () => {
     const newName = nameInput.trim();
@@ -153,6 +176,34 @@ const SellerProfile = () => {
             </p>
           </div>
         </div>
+
+        {/* Danger zone — own profile only */}
+        {isOwn && (
+          <div className="mb-8">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="sm" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground">
+                  {t("deleteAccount")}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t("deleteAccountConfirmTitle")}</AlertDialogTitle>
+                  <AlertDialogDescription>{t("deleteAccountConfirmDesc")}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {t("deleteAccount")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
 
         {/* Listings */}
         <h2 className="mb-4 text-lg font-semibold">

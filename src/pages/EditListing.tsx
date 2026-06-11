@@ -4,7 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Layout from "@/components/layout/Layout";
-import { useListing, useUpdateListing } from "@/hooks/useListings";
+import {
+  useListing,
+  useUpdateListing,
+  useAddListingImages,
+  useDeleteListingImage,
+} from "@/hooks/useListings";
+import { MAX_LISTING_IMAGES } from "@/lib/constants";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants";
@@ -13,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2 } from "lucide-react";
+import { Loader2, X, ImagePlus } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 type FormValues = {
@@ -30,7 +36,38 @@ const EditListing = () => {
   const { user } = useAuth();
   const { data: listing, isLoading } = useListing(id);
   const updateListing = useUpdateListing();
+  const addImages = useAddListingImages();
+  const deleteImage = useDeleteListingImage();
   const { t, tCategory, tCondition } = useLanguage();
+
+  const existingImages = [...(listing?.listing_images ?? [])].sort(
+    (a, b) => a.display_order - b.display_order
+  );
+
+  const handleAddFiles = async (files: FileList | null) => {
+    if (!files || !id) return;
+    const slots = MAX_LISTING_IMAGES - existingImages.length;
+    const newFiles = Array.from(files).slice(0, slots);
+    if (newFiles.length === 0) return;
+    const nextOrder =
+      existingImages.length > 0
+        ? Math.max(...existingImages.map((i) => i.display_order)) + 1
+        : 0;
+    try {
+      await addImages.mutateAsync({ listingId: id, files: newFiles, startOrder: nextOrder });
+    } catch (err: any) {
+      toast({ title: t("error"), description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleDeleteImage = async (imageUrl: string) => {
+    if (!id) return;
+    try {
+      await deleteImage.mutateAsync({ listingId: id, imageUrl });
+    } catch (err: any) {
+      toast({ title: t("error"), description: err.message, variant: "destructive" });
+    }
+  };
 
   const schema = useMemo(() => z.object({
     title: z.string().trim().min(1, t("titleRequired")).max(100),
@@ -144,6 +181,50 @@ const EditListing = () => {
                 <FormMessage />
               </FormItem>
             )} />
+
+            {/* Photo management — changes apply immediately */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">{t("photosUpTo")}</label>
+              <div className="grid grid-cols-3 gap-3">
+                {existingImages.map((img) => (
+                  <div
+                    key={img.image_url}
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                  >
+                    <img src={img.image_url} alt="" className="h-full w-full object-cover" />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute right-1 top-1 h-6 w-6"
+                      disabled={deleteImage.isPending}
+                      onClick={() => handleDeleteImage(img.image_url)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+                {existingImages.length < MAX_LISTING_IMAGES && (
+                  <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 text-muted-foreground transition-colors hover:border-primary/50">
+                    {addImages.isPending ? (
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                      <ImagePlus className="h-6 w-6" />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        handleAddFiles(e.target.files);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
 
             <Button type="submit" className="w-full" disabled={updateListing.isPending}>
               {updateListing.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

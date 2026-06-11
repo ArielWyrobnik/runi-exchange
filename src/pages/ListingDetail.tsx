@@ -9,8 +9,18 @@ import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useWatchlistIds, useToggleWatchlist } from "@/hooks/useWatchlist";
+import { useSubmitReport } from "@/hooks/useReports";
 import { cn } from "@/lib/utils";
-import { Loader2, MessageCircle, Package, Heart } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Loader2, MessageCircle, Package, Heart, Flag } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
 
@@ -24,8 +34,29 @@ const ListingDetail = () => {
   const { data: watchedIds } = useWatchlistIds();
   const toggleWatchlist = useToggleWatchlist();
   const [selectedImage, setSelectedImage] = useState(0);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const submitReport = useSubmitReport();
 
   const watched = !!id && (watchedIds?.has(id) ?? false);
+
+  const handleReport = async () => {
+    if (!id || !reportReason.trim()) return;
+    try {
+      await submitReport.mutateAsync({ listingId: id, reason: reportReason.trim() });
+      setReportOpen(false);
+      setReportReason("");
+      toast({ title: t("reportSubmitted") });
+    } catch (err: any) {
+      const duplicate = typeof err?.message === "string" && err.message.includes("duplicate");
+      setReportOpen(false);
+      toast({
+        title: duplicate ? t("alreadyReported") : t("error"),
+        description: duplicate ? undefined : err.message,
+        variant: duplicate ? undefined : "destructive",
+      });
+    }
+  };
 
   const handleWatchlist = () => {
     if (!user) {
@@ -195,6 +226,39 @@ const ListingDetail = () => {
                     />
                     {watched ? t("removeFromWatchlist") : t("addToWatchlist")}
                   </Button>
+                  {user && (
+                    <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+                      <DialogTrigger asChild>
+                        <button className="mx-auto flex items-center gap-1.5 pt-1 text-xs text-muted-foreground hover:text-destructive">
+                          <Flag className="h-3.5 w-3.5" />
+                          {t("report")}
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>{t("reportListing")}</DialogTitle>
+                        </DialogHeader>
+                        <Textarea
+                          value={reportReason}
+                          onChange={(e) => setReportReason(e.target.value)}
+                          placeholder={t("reportReasonPlaceholder")}
+                          maxLength={500}
+                          rows={4}
+                        />
+                        <DialogFooter>
+                          <Button
+                            onClick={handleReport}
+                            disabled={submitReport.isPending || !reportReason.trim()}
+                          >
+                            {submitReport.isPending && (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+                            {t("submitReport")}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </div>
               )}
             </div>

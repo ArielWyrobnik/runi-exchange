@@ -16,6 +16,7 @@ import MyListings from "./pages/MyListings";
 import EditListing from "./pages/EditListing";
 import Watchlist from "./pages/Watchlist";
 import SellerProfile from "./pages/SellerProfile";
+import AdminReports from "./pages/AdminReports";
 import Sell from "./pages/Sell";
 import Messages from "./pages/Messages";
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/my-listings" element={<ProtectedRoute><MyListings /></ProtectedRoute>} />
             <Route path="/watchlist" element={<ProtectedRoute><Watchlist /></ProtectedRoute>} />
             <Route path="/seller/:id" element={<SellerProfile />} />
+            <Route path="/admin/reports" element={<ProtectedRoute><AdminReports /></ProtectedRoute>} />
             <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
             <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

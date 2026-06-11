@@ -8,7 +8,7 @@ import ListingCard from "@/components/listings/ListingCard";
 
 const Index = () => {
   const { t } = useLanguage();
-  const { data: listings } = useListings();
+  const { data: listings } = useListings({ limit: 8 });
 
   const steps = [
     { icon: ShoppingBag, title: t("listYourItem"), description: t("listYourItemDesc") },
@@ -64,7 +64,7 @@ const Index = () => {
         </div>
         {listings && listings.length > 0 ? (
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {listings.slice(0, 8).map((listing) => (
+            {listings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>

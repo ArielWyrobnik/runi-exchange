@@ -143,6 +143,28 @@ export const en = {
   soldNotice: "This item has been sold",
   profileUpdated: "Profile updated!",
   editName: "Edit name",
+
+  // Pagination
+  loadMore: "Load more",
+
+  // Reporting / moderation
+  report: "Report",
+  reportListing: "Report this listing",
+  reportReasonPlaceholder: "Why are you reporting this listing?",
+  submitReport: "Submit report",
+  reportSubmitted: "Report submitted. Thank you!",
+  alreadyReported: "You already reported this listing.",
+  adminReports: "Reports",
+  noReports: "No open reports.",
+  dismiss: "Dismiss",
+  reportedBy: "Reported by",
+  viewListing: "View listing",
+
+  // Account deletion
+  deleteAccount: "Delete account",
+  deleteAccountConfirmTitle: "Delete your account?",
+  deleteAccountConfirmDesc: "All your listings, messages, watchlist and data will be permanently deleted. This cannot be undone.",
+  accountDeleted: "Your account has been deleted",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -288,6 +310,28 @@ export const he: Record<TranslationKey, string> = {
   soldNotice: "הפריט נמכר",
   profileUpdated: "הפרופיל עודכן!",
   editName: "עריכת שם",
+
+  // Pagination
+  loadMore: "טעינת עוד",
+
+  // Reporting / moderation
+  report: "דיווח",
+  reportListing: "דיווח על המודעה",
+  reportReasonPlaceholder: "מדוע אתם מדווחים על המודעה?",
+  submitReport: "שליחת דיווח",
+  reportSubmitted: "הדיווח נשלח. תודה!",
+  alreadyReported: "כבר דיווחתם על מודעה זו.",
+  adminReports: "דיווחים",
+  noReports: "אין דיווחים פתוחים.",
+  dismiss: "דחייה",
+  reportedBy: "דווח על ידי",
+  viewListing: "צפייה במודעה",
+
+  // Account deletion
+  deleteAccount: "מחיקת חשבון",
+  deleteAccountConfirmTitle: "למחוק את החשבון?",
+  deleteAccountConfirmDesc: "כל המודעות, ההודעות, רשימת המעקב והנתונים שלכם יימחקו לצמיתות. לא ניתן לבטל פעולה זו.",
+  accountDeleted: "החשבון שלכם נמחק",
 };
 
 export type TranslationKey = keyof typeof en;

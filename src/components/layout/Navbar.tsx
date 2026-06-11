@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, MessageCircle, Tag, Globe, List, Heart } from "lucide-react";
+import { Menu, Search, MessageCircle, Tag, Globe, List, Heart, ShieldCheck } from "lucide-react";
 import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadCount } from "@/hooks/useMessages";
+import { useIsAdmin } from "@/hooks/useReports";
 import { useLanguage } from "@/i18n/LanguageContext";
 import reichmanStars from "@/assets/reichman-stars.png";
 
@@ -17,6 +18,7 @@ const Navbar = () => {
   const { user, loading, signOut } = useAuth();
   const { lang, setLang, t } = useLanguage();
   const { data: unreadCount = 0 } = useUnreadCount();
+  const { data: isAdmin = false } = useIsAdmin();
 
   const handleSignOut = async () => {
     await signOut();
@@ -77,6 +79,19 @@ const Navbar = () => {
             </Button>
             {user && (
               <>
+                {isAdmin && (
+                  <Button
+                    size="sm"
+                    asChild
+                    variant="ghost"
+                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                  >
+                    <Link to="/admin/reports">
+                      <ShieldCheck className="mr-1 h-4 w-4" />
+                      {t("adminReports")}
+                    </Link>
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   asChild
@@ -190,6 +205,15 @@ const Navbar = () => {
                   </Link>
                   {user && (
                     <>
+                      {isAdmin && (
+                        <Link
+                          to="/admin/reports"
+                          onClick={() => setMobileOpen(false)}
+                          className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
+                        >
+                          {t("adminReports")}
+                        </Link>
+                      )}
                       <Link
                         to="/my-listings"
                         onClick={() => setMobileOpen(false)}

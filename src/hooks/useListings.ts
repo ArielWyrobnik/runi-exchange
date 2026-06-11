@@ -1,6 +1,36 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { compressImage, storagePathFromPublicUrl } from "@/lib/image";
+
+/** Compress and upload photos, then register them on the listing. */
+const uploadListingImages = async (
+  userId: string,
+  listingId: string,
+  files: File[],
+  startOrder = 0
+) => {
+  for (let i = 0; i < files.length; i++) {
+    const file = await compressImage(files[i]);
+    const filePath = `${userId}/${listingId}/${Date.now()}-${i}-${file.name}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("listing-images")
+      .upload(filePath, file);
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = supabase.storage
+      .from("listing-images")
+      .getPublicUrl(filePath);
+
+    const { error: insertError } = await supabase.from("listing_images").insert({
+      listing_id: listingId,
+      image_url: urlData.publicUrl,
+      display_order: startOrder + i,
+    });
+    if (insertError) throw insertError;
+  }
+};
 
 export type ListingSort = "newest" | "price_asc" | "price_desc";
 
@@ -11,6 +41,7 @@ export interface ListingFilters {
   priceMin?: number;
   priceMax?: number;
   sort?: ListingSort;
+  limit?: number;
 }
 
 export interface ListingWithImages {
@@ -59,6 +90,9 @@ export const useListings = (filters: ListingFilters = {}) => {
       }
       if (filters.priceMax !== undefined) {
         query = query.lte("price", filters.priceMax);
+      }
+      if (filters.limit !== undefined) {
+        query = query.limit(filters.limit);
       }
 
       const { data, error } = await query;
@@ -158,7 +192,7 @@ export const useDeleteListing = () => {
         .select("image_url")
         .eq("listing_id", id);
       const paths = (images ?? [])
-        .map((img) => img.image_url.split("/listing-images/")[1])
+        .map((img) => storagePathFromPublicUrl(img.image_url, "listing-images"))
         .filter((p): p is string => !!p);
       if (paths.length > 0) {
         await supabase.storage.from("listing-images").remove(paths);
@@ -168,6 +202,56 @@ export const useDeleteListing = () => {
       if (error) throw error;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    },
+  });
+};
+
+export const useAddListingImages = () => {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      listingId,
+      files,
+      startOrder,
+    }: {
+      listingId: string;
+      files: File[];
+      startOrder: number;
+    }) => {
+      if (!user) throw new Error("Must be logged in");
+      await uploadListingImages(user.id, listingId, files, startOrder);
+    },
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["listing", vars.listingId] });
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    },
+  });
+};
+
+export const useDeleteListingImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ listingId, imageUrl }: { listingId: string; imageUrl: string }) => {
+      const { error } = await supabase
+        .from("listing_images")
+        .delete()
+        .eq("listing_id", listingId)
+        .eq("image_url", imageUrl);
+      if (error) throw error;
+
+      const path = storagePathFromPublicUrl(imageUrl, "listing-images");
+      if (path) {
+        await supabase.storage.from("listing-images").remove([path]);
+      }
+    },
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["listing", vars.listingId] });
       queryClient.invalidateQueries({ queryKey: ["listings"] });
       queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     },
@@ -205,27 +289,7 @@ export const useCreateListing = () => {
 
       if (listingError) throw listingError;
 
-      // Upload images
-      for (let i = 0; i < images.length; i++) {
-        const file = images[i];
-        const filePath = `${user.id}/${listing.id}/${i}-${file.name}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("listing-images")
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from("listing-images")
-          .getPublicUrl(filePath);
-
-        await supabase.from("listing_images").insert({
-          listing_id: listing.id,
-          image_url: urlData.publicUrl,
-          display_order: i,
-        });
-      }
+      await uploadListingImages(user.id, listing.id, images);
 
       return listing;
     },

@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import ListingCard from "@/components/listings/ListingCard";
 import { useListings, type ListingFilters, type ListingSort } from "@/hooks/useListings";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants";
 import { Search, Package, Loader2 } from "lucide-react";
@@ -20,6 +21,8 @@ const Browse = () => {
   const [priceMin, setPriceMin] = useState<string>("");
   const [priceMax, setPriceMax] = useState<string>("");
   const [sort, setSort] = useState<ListingSort>("newest");
+  const PAGE_SIZE = 24;
+  const [limit, setLimit] = useState(PAGE_SIZE);
 
   useEffect(() => {
     setSearch(urlSearch);
@@ -39,6 +42,7 @@ const Browse = () => {
     priceMin: priceMin ? Number(priceMin) : undefined,
     priceMax: priceMax ? Number(priceMax) : undefined,
     sort,
+    limit,
   };
 
   const { data: listings, isLoading } = useListings(filters);
@@ -118,11 +122,20 @@ const Browse = () => {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : listings && listings.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {listings.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+            {listings.length === limit && (
+              <div className="mt-6 text-center">
+                <Button variant="outline" onClick={() => setLimit(limit + PAGE_SIZE)}>
+                  {t("loadMore")}
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="flex min-h-[30vh] flex-col items-center justify-center text-center">
             <Package className="mb-3 h-12 w-12 text-muted-foreground" />
