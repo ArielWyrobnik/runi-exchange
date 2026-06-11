@@ -129,6 +129,17 @@ export const en = {
   sortNewest: "Newest first",
   sortPriceAsc: "Price: Low to High",
   sortPriceDesc: "Price: High to Low",
+
+  // Watchlist
+  watchlist: "Watchlist",
+  addToWatchlist: "Add to Watchlist",
+  removeFromWatchlist: "Remove from Watchlist",
+  emptyWatchlist: "Your watchlist is empty.",
+
+  // Seller profile
+  memberSince: "Member since",
+  sellerListings: "Active listings",
+  sellerNotFound: "Seller not found",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -260,6 +271,17 @@ export const he: Record<TranslationKey, string> = {
   sortNewest: "החדשות ביותר",
   sortPriceAsc: "מחיר: מהנמוך לגבוה",
   sortPriceDesc: "מחיר: מהגבוה לנמוך",
+
+  // Watchlist
+  watchlist: "רשימת מעקב",
+  addToWatchlist: "הוספה לרשימת המעקב",
+  removeFromWatchlist: "הסרה מרשימת המעקב",
+  emptyWatchlist: "רשימת המעקב שלכם ריקה.",
+
+  // Seller profile
+  memberSince: "חבר מאז",
+  sellerListings: "מודעות פעילות",
+  sellerNotFound: "המוכר לא נמצא",
 };
 
 export type TranslationKey = keyof typeof en;

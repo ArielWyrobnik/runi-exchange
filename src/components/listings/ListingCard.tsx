@@ -1,18 +1,40 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { ListingWithImages } from "@/hooks/useListings";
+import { useAuth } from "@/hooks/useAuth";
+import { useWatchlistIds, useToggleWatchlist } from "@/hooks/useWatchlist";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { cn } from "@/lib/utils";
+import type { ListingWithImages } from "@/hooks/useListings";
 
 const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { t, tCategory, tCondition } = useLanguage();
+  const { data: watchedIds } = useWatchlistIds();
+  const toggleWatchlist = useToggleWatchlist();
+
   const firstImage = listing.listing_images
-    ?.sort((a, b) => a.display_order - b.display_order)[0]?.image_url;
+    ?.slice()
+    .sort((a, b) => a.display_order - b.display_order)[0]?.image_url;
+  const isOwn = user?.id === listing.seller_id;
+  const watched = watchedIds?.has(listing.id) ?? false;
+
+  const handleHeart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    toggleWatchlist.mutate({ listingId: listing.id, watched });
+  };
 
   return (
     <Link to={`/listing/${listing.id}`}>
       <Card className="overflow-hidden transition-shadow hover:shadow-md">
-        <div className="aspect-square overflow-hidden bg-muted">
+        <div className="relative aspect-square overflow-hidden bg-muted">
           {firstImage ? (
             <img
               src={firstImage}
@@ -24,6 +46,20 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
             <div className="flex h-full items-center justify-center text-muted-foreground">
               {t("noImage")}
             </div>
+          )}
+          {!isOwn && (
+            <button
+              onClick={handleHeart}
+              aria-label={watched ? t("removeFromWatchlist") : t("addToWatchlist")}
+              className="absolute right-2 top-2 rounded-full bg-background/90 p-2 shadow-sm transition-transform hover:scale-110 rtl:left-2 rtl:right-auto"
+            >
+              <Heart
+                className={cn(
+                  "h-4 w-4",
+                  watched ? "fill-red-500 text-red-500" : "text-muted-foreground"
+                )}
+              />
+            </button>
           )}
         </div>
         <CardContent className="p-3">

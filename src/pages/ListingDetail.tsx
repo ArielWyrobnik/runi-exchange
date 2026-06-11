@@ -8,7 +8,9 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, MessageCircle, Package } from "lucide-react";
+import { useWatchlistIds, useToggleWatchlist } from "@/hooks/useWatchlist";
+import { cn } from "@/lib/utils";
+import { Loader2, MessageCircle, Package, Heart } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
 
@@ -19,7 +21,19 @@ const ListingDetail = () => {
   const { lang, t, tCategory, tCondition } = useLanguage();
   const { data: listing, isLoading } = useListing(id);
   const createConversation = useCreateConversation();
+  const { data: watchedIds } = useWatchlistIds();
+  const toggleWatchlist = useToggleWatchlist();
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const watched = !!id && (watchedIds?.has(id) ?? false);
+
+  const handleWatchlist = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (id) toggleWatchlist.mutate({ listingId: id, watched });
+  };
 
   const handleContactSeller = async () => {
     if (!listing) return;
@@ -122,9 +136,12 @@ const ListingDetail = () => {
 
             <div className="text-sm text-muted-foreground">
               {t("postedBy")}{" "}
-              <span className="font-medium text-foreground">
+              <Link
+                to={`/seller/${listing.seller_id}`}
+                className="font-medium text-foreground hover:text-primary hover:underline"
+              >
                 {listing.profiles?.full_name ?? t("unknown")}
-              </span>{" "}
+              </Link>{" "}
               ·{" "}
               {formatDistanceToNow(new Date(listing.created_at), {
                 addSuffix: true,
@@ -141,19 +158,33 @@ const ListingDetail = () => {
                   </Button>
                 </div>
               ) : (
-                <Button
-                  size="lg"
-                  className="w-full"
-                  onClick={handleContactSeller}
-                  disabled={createConversation.isPending}
-                >
-                  {createConversation.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                  )}
-                  {t("contactSeller")}
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    onClick={handleContactSeller}
+                    disabled={createConversation.isPending}
+                  >
+                    {createConversation.isPending ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                    )}
+                    {t("contactSeller")}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleWatchlist}
+                    disabled={toggleWatchlist.isPending}
+                  >
+                    <Heart
+                      className={cn("mr-2 h-4 w-4", watched && "fill-red-500 text-red-500")}
+                    />
+                    {watched ? t("removeFromWatchlist") : t("addToWatchlist")}
+                  </Button>
+                </div>
               )}
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, MessageCircle, Tag, Globe, List } from "lucide-react";
+import { Menu, Search, MessageCircle, Tag, Globe, List, Heart } from "lucide-react";
 import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,6 +92,17 @@ const Navbar = () => {
                   variant="ghost"
                   className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
                 >
+                  <Link to="/watchlist">
+                    <Heart className="mr-1 h-4 w-4" />
+                    {t("watchlist")}
+                  </Link>
+                </Button>
+                <Button
+                  size="sm"
+                  asChild
+                  variant="ghost"
+                  className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                >
                   <Link to="/messages">
                     <MessageCircle className="mr-1 h-4 w-4" />
                     {t("messages")}
@@ -175,6 +186,13 @@ const Navbar = () => {
                         className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
                       >
                         {t("myListings")}
+                      </Link>
+                      <Link
+                        to="/watchlist"
+                        onClick={() => setMobileOpen(false)}
+                        className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
+                      >
+                        {t("watchlist")}
                       </Link>
                       <Link
                         to="/messages"
