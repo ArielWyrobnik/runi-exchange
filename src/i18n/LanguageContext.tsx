@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import {
   translations,
-  categoryNames,
   conditionNames,
   type Language,
   type TranslationKey,
 } from "./translations";
+import { categoryNames } from "./categoryNames";
 
 interface LanguageContextType {
   lang: Language;
