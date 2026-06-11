@@ -77,7 +77,13 @@ const Browse = () => {
             <SelectContent>
               <SelectItem value="all">{t("allCategories")}</SelectItem>
               {CATEGORIES.map((c) => (
-                <SelectItem key={c} value={c}>{tCategory(c)}</SelectItem>
+                <SelectItem
+                  key={c}
+                  value={c}
+                  className={c === "Tickets" ? "font-medium text-red-600 focus:text-red-700" : undefined}
+                >
+                  {tCategory(c)}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
