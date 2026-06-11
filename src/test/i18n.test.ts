@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { en, he, categoryNames, conditionNames } from "@/i18n/translations";
+import { en, he, conditionNames } from "@/i18n/translations";
+import { categoryNames } from "@/i18n/categoryNames";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants";
 
 describe("translations", () => {
