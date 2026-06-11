@@ -8,7 +8,7 @@ import { Heart, Loader2 } from "lucide-react";
 
 const Watchlist = () => {
   const { t } = useLanguage();
-  const { data: listings, isLoading } = useWatchlist();
+  const { data: listings, isError, error, isLoading } = useWatchlist();
 
   return (
     <Layout>
@@ -18,6 +18,14 @@ const Watchlist = () => {
         {isLoading ? (
           <div className="flex min-h-[30vh] items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : isError ? (
+          <div className="flex min-h-[30vh] flex-col items-center justify-center text-center">
+            <Heart className="mb-3 h-12 w-12 text-muted-foreground" />
+            <p className="font-medium text-destructive">{t("error")}</p>
+            <p className="mt-1 max-w-md text-sm text-muted-foreground">
+              {error instanceof Error ? error.message : t("emptyWatchlist")}
+            </p>
           </div>
         ) : !listings || listings.length === 0 ? (
           <div className="flex min-h-[30vh] flex-col items-center justify-center text-center">
