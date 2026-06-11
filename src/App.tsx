@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Browse from "./pages/Browse";
+import Tickets from "./pages/Tickets";
 import ListingDetail from "./pages/ListingDetail";
 import MyListings from "./pages/MyListings";
 import EditListing from "./pages/EditListing";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/browse" element={<Browse />} />
+            <Route path="/tickets" element={<Tickets />} />
             <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="/listing/:id/edit" element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
             <Route path="/my-listings" element={<ProtectedRoute><MyListings /></ProtectedRoute>} />

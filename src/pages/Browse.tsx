@@ -12,11 +12,12 @@ import { useLanguage } from "@/i18n/LanguageContext";
 
 const Browse = () => {
   const { t, tCategory, tCondition } = useLanguage();
-  // The navbar search navigates to /browse?search=… — pick it up here
+  // The navbar and home category links navigate to /browse?search=...&category=...
   const [searchParams] = useSearchParams();
   const urlSearch = searchParams.get("search") ?? "";
+  const urlCategory = searchParams.get("category") ?? "";
   const [search, setSearch] = useState(urlSearch);
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<string>(urlCategory);
   const [condition, setCondition] = useState<string>("");
   const [priceMin, setPriceMin] = useState<string>("");
   const [priceMax, setPriceMax] = useState<string>("");
@@ -27,6 +28,10 @@ const Browse = () => {
   useEffect(() => {
     setSearch(urlSearch);
   }, [urlSearch]);
+
+  useEffect(() => {
+    setCategory(urlCategory);
+  }, [urlCategory]);
 
   // Debounce typing so we don't fire a query per keystroke
   const [debouncedSearch, setDebouncedSearch] = useState(urlSearch);
