@@ -10,6 +10,8 @@ import { CATEGORIES, CONDITIONS } from "@/lib/constants";
 import { Search, Package, Loader2 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
+const standardCategories = CATEGORIES.filter((category) => category !== "Tickets");
+
 const Browse = () => {
   const { t, tCategory, tCondition } = useLanguage();
   // The navbar and home category links navigate to /browse?search=...&category=...
@@ -75,15 +77,12 @@ const Browse = () => {
               <SelectValue placeholder={t("category")} />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="Tickets" className="font-medium text-red-600 focus:text-red-700">
+                {tCategory("Tickets")}
+              </SelectItem>
               <SelectItem value="all">{t("allCategories")}</SelectItem>
-              {CATEGORIES.map((c) => (
-                <SelectItem
-                  key={c}
-                  value={c}
-                  className={c === "Tickets" ? "font-medium text-red-600 focus:text-red-700" : undefined}
-                >
-                  {tCategory(c)}
-                </SelectItem>
+              {standardCategories.map((c) => (
+                <SelectItem key={c} value={c}>{tCategory(c)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
