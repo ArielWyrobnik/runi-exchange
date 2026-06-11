@@ -7,6 +7,7 @@ export const categoryNames: Record<Language, Record<string, string>> = {
   he: {
     ...baseCategoryNames.he,
     "Tickets": "כרטיסים",
+    "RUNI Tickets": "כרטיסי RUNI",
     "Dorm Accessories": "אביזרים למעונות",
   },
 };
