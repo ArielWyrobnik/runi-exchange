@@ -16,6 +16,21 @@ type TargetLanguage = keyof typeof LANGUAGES;
 const isTargetLanguage = (value: unknown): value is TargetLanguage =>
   value === "en" || value === "he";
 
+const getSupabaseSecretKey = () => {
+  const legacyKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (legacyKey) return legacyKey;
+
+  const secretKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (!secretKeys) return undefined;
+
+  try {
+    const parsed = JSON.parse(secretKeys) as Record<string, string>;
+    return parsed.default ?? Object.values(parsed)[0];
+  } catch {
+    return undefined;
+  }
+};
+
 const jsonResponse = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -41,7 +56,7 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const serviceRoleKey = getSupabaseSecretKey();
     const openAiApiKey = Deno.env.get("OPENAI_API_KEY");
 
     if (!supabaseUrl || !serviceRoleKey) {
