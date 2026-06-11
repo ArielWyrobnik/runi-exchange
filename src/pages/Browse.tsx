@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ListingCard from "@/components/listings/ListingCard";
 import { useListings, type ListingFilters, type ListingSort } from "@/hooks/useListings";
@@ -14,6 +14,7 @@ const standardCategories = CATEGORIES.filter((category) => category !== "Tickets
 
 const Browse = () => {
   const { t, tCategory, tCondition } = useLanguage();
+  const navigate = useNavigate();
   // The navbar and home category links navigate to /browse?search=...&category=...
   const [searchParams] = useSearchParams();
   const urlSearch = searchParams.get("search") ?? "";
@@ -32,8 +33,20 @@ const Browse = () => {
   }, [urlSearch]);
 
   useEffect(() => {
+    if (urlCategory === "Tickets") {
+      navigate("/tickets", { replace: true });
+      return;
+    }
     setCategory(urlCategory);
-  }, [urlCategory]);
+  }, [navigate, urlCategory]);
+
+  const handleCategoryChange = (value: string) => {
+    if (value === "Tickets") {
+      navigate("/tickets");
+      return;
+    }
+    setCategory(value === "all" ? "" : value);
+  };
 
   // Debounce typing so we don't fire a query per keystroke
   const [debouncedSearch, setDebouncedSearch] = useState(urlSearch);
@@ -72,7 +85,7 @@ const Browse = () => {
 
         {/* Filters */}
         <div className="mb-6 flex flex-wrap gap-3">
-          <Select value={category} onValueChange={(v) => setCategory(v === "all" ? "" : v)}>
+          <Select value={category} onValueChange={handleCategoryChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={t("category")} />
             </SelectTrigger>
