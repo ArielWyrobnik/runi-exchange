@@ -107,6 +107,28 @@ export const en = {
   listingNotFound: "Listing not found",
   backToBrowse: "Back to Browse",
   sold: "Sold",
+
+  // My listings / management
+  myListings: "My Listings",
+  active: "Active",
+  edit: "Edit",
+  markAsSold: "Mark as Sold",
+  relist: "Relist",
+  deleteListing: "Delete",
+  deleteConfirmTitle: "Delete this listing?",
+  deleteConfirmDesc: "This will permanently remove the listing and its conversations. This cannot be undone.",
+  cancel: "Cancel",
+  listingDeleted: "Listing deleted",
+  noMyListings: "You haven't posted anything yet.",
+  editListing: "Edit Listing",
+  saveChanges: "Save Changes",
+  listingUpdated: "Listing updated!",
+
+  // Sorting
+  sortBy: "Sort by",
+  sortNewest: "Newest first",
+  sortPriceAsc: "Price: Low to High",
+  sortPriceDesc: "Price: High to Low",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -216,6 +238,28 @@ export const he: Record<TranslationKey, string> = {
   listingNotFound: "המודעה לא נמצאה",
   backToBrowse: "חזרה לעיון",
   sold: "נמכר",
+
+  // My listings / management
+  myListings: "המודעות שלי",
+  active: "פעיל",
+  edit: "עריכה",
+  markAsSold: "סמן כנמכר",
+  relist: "פרסם מחדש",
+  deleteListing: "מחיקה",
+  deleteConfirmTitle: "למחוק את המודעה?",
+  deleteConfirmDesc: "המודעה והשיחות שלה יימחקו לצמיתות. לא ניתן לבטל פעולה זו.",
+  cancel: "ביטול",
+  listingDeleted: "המודעה נמחקה",
+  noMyListings: "עוד לא פרסמתם כלום.",
+  editListing: "עריכת מודעה",
+  saveChanges: "שמירת שינויים",
+  listingUpdated: "המודעה עודכנה!",
+
+  // Sorting
+  sortBy: "מיון לפי",
+  sortNewest: "החדשות ביותר",
+  sortPriceAsc: "מחיר: מהנמוך לגבוה",
+  sortPriceDesc: "מחיר: מהגבוה לנמוך",
 };
 
 export type TranslationKey = keyof typeof en;

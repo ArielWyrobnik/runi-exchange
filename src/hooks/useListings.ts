@@ -2,12 +2,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+export type ListingSort = "newest" | "price_asc" | "price_desc";
+
 export interface ListingFilters {
   search?: string;
   category?: string;
   condition?: string;
   priceMin?: number;
   priceMax?: number;
+  sort?: ListingSort;
 }
 
 export interface ListingWithImages {
@@ -31,8 +34,15 @@ export const useListings = (filters: ListingFilters = {}) => {
       let query = supabase
         .from("listings")
         .select("*, listing_images(image_url, display_order), profiles(full_name)")
-        .eq("status", "active")
-        .order("created_at", { ascending: false });
+        .eq("status", "active");
+
+      if (filters.sort === "price_asc") {
+        query = query.order("price", { ascending: true });
+      } else if (filters.sort === "price_desc") {
+        query = query.order("price", { ascending: false });
+      } else {
+        query = query.order("created_at", { ascending: false });
+      }
 
       if (filters.search) {
         query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
@@ -70,6 +80,82 @@ export const useListing = (id: string | undefined) => {
 
       if (error) throw error;
       return data as ListingWithImages | null;
+    },
+  });
+};
+
+export const useMyListings = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ["my-listings", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("listings")
+        .select("*, listing_images(image_url, display_order), profiles(full_name)")
+        .eq("seller_id", user!.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as ListingWithImages[];
+    },
+  });
+};
+
+export const useUpdateListing = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...fields
+    }: {
+      id: string;
+      title: string;
+      description: string;
+      price: number;
+      category: string;
+      condition: string;
+    }) => {
+      const { error } = await supabase.from("listings").update(fields).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["listing", vars.id] });
+    },
+  });
+};
+
+export const useSetListingStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: "active" | "sold" }) => {
+      const { error } = await supabase.from("listings").update({ status }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["listing", vars.id] });
+    },
+  });
+};
+
+export const useDeleteListing = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("listings").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     },
   });
 };

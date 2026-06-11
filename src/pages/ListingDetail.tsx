@@ -134,7 +134,12 @@ const ListingDetail = () => {
 
             <div className="mt-auto pt-4">
               {isOwn ? (
-                <p className="text-sm font-medium text-muted-foreground">{t("yourListing")}</p>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-medium text-muted-foreground">{t("yourListing")}</p>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={`/listing/${listing.id}/edit`}>{t("edit")}</Link>
+                  </Button>
+                </div>
               ) : (
                 <Button
                   size="lg"

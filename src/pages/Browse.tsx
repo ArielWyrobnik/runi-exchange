@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ListingCard from "@/components/listings/ListingCard";
-import { useListings, type ListingFilters } from "@/hooks/useListings";
+import { useListings, type ListingFilters, type ListingSort } from "@/hooks/useListings";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants";
@@ -10,11 +11,19 @@ import { useLanguage } from "@/i18n/LanguageContext";
 
 const Browse = () => {
   const { t, tCategory, tCondition } = useLanguage();
-  const [search, setSearch] = useState("");
+  // The navbar search navigates to /browse?search=… — pick it up here
+  const [searchParams] = useSearchParams();
+  const urlSearch = searchParams.get("search") ?? "";
+  const [search, setSearch] = useState(urlSearch);
   const [category, setCategory] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
   const [priceMin, setPriceMin] = useState<string>("");
   const [priceMax, setPriceMax] = useState<string>("");
+  const [sort, setSort] = useState<ListingSort>("newest");
+
+  useEffect(() => {
+    setSearch(urlSearch);
+  }, [urlSearch]);
 
   const filters: ListingFilters = {
     search: search || undefined,
@@ -22,6 +31,7 @@ const Browse = () => {
     condition: condition || undefined,
     priceMin: priceMin ? Number(priceMin) : undefined,
     priceMax: priceMax ? Number(priceMax) : undefined,
+    sort,
   };
 
   const { data: listings, isLoading } = useListings(filters);
@@ -82,6 +92,17 @@ const Browse = () => {
             value={priceMax}
             onChange={(e) => setPriceMax(e.target.value)}
           />
+
+          <Select value={sort} onValueChange={(v) => setSort(v as ListingSort)}>
+            <SelectTrigger className="w-[190px]">
+              <SelectValue placeholder={t("sortBy")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">{t("sortNewest")}</SelectItem>
+              <SelectItem value="price_asc">{t("sortPriceAsc")}</SelectItem>
+              <SelectItem value="price_desc">{t("sortPriceDesc")}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Results */}
