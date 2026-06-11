@@ -1,10 +1,13 @@
+import type { MouseEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useListingTranslation } from "@/hooks/useListingTranslation";
 import { useWatchlistIds, useToggleWatchlist } from "@/hooks/useWatchlist";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { cn } from "@/lib/utils";
@@ -14,6 +17,7 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { lang, t, tCategory, tCondition } = useLanguage();
+  const { title } = useListingTranslation(listing);
   const { data: watchedIds } = useWatchlistIds();
   const toggleWatchlist = useToggleWatchlist();
 
@@ -23,14 +27,23 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
   const isOwn = user?.id === listing.seller_id;
   const watched = watchedIds?.has(listing.id) ?? false;
 
-  const handleHeart = (e: React.MouseEvent) => {
+  const handleHeart = async (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!user) {
       navigate("/login");
       return;
     }
-    toggleWatchlist.mutate({ listingId: listing.id, watched });
+
+    try {
+      await toggleWatchlist.mutateAsync({ listingId: listing.id, watched });
+    } catch (err) {
+      toast({
+        title: t("error"),
+        description: err instanceof Error ? err.message : undefined,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -40,7 +53,7 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
           {firstImage ? (
             <img
               src={firstImage}
-              alt={listing.title}
+              alt={title}
               className="h-full w-full object-cover"
               loading="lazy"
             />
@@ -52,8 +65,9 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
           {!isOwn && (
             <button
               onClick={handleHeart}
+              disabled={toggleWatchlist.isPending}
               aria-label={watched ? t("removeFromWatchlist") : t("addToWatchlist")}
-              className="absolute right-2 top-2 rounded-full bg-background/90 p-2 shadow-sm transition-transform hover:scale-110 rtl:left-2 rtl:right-auto"
+              className="absolute right-2 top-2 rounded-full bg-background/90 p-2 shadow-sm transition-transform hover:scale-110 disabled:opacity-60 rtl:left-2 rtl:right-auto"
             >
               <Heart
                 className={cn(
@@ -65,7 +79,7 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
           )}
         </div>
         <CardContent className="p-3">
-          <h3 className="line-clamp-1 font-medium">{listing.title}</h3>
+          <h3 className="line-clamp-1 font-medium">{title}</h3>
           <p className="mt-1 text-lg font-bold text-primary">₪{listing.price}</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Badge variant="secondary" className="text-xs">{tCondition(listing.condition)}</Badge>
