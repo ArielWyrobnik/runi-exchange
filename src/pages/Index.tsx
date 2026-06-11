@@ -9,9 +9,9 @@ import ListingCard from "@/components/listings/ListingCard";
 const categoryLinks = [
   { icon: Ticket, label: "Tickets", sublabel: "RUNI Tickets", to: "/tickets", isSpecial: true },
   { icon: Armchair, label: "Furniture", to: "/browse?category=Furniture" },
-  { icon: Tablet, label: "iPads", to: "/browse?category=Electronics&search=iPad" },
+  { icon: Tablet, label: "Electronic Devices", to: "/browse?category=Electronics" },
   { icon: Package, label: "Dorm Accessories", to: "/browse?category=Other&search=dorm" },
-  { icon: Dumbbell, label: "Sports", to: "/browse?category=Sports%20%26%20Outdoors" },
+  { icon: Dumbbell, label: "Sports & Outdoor", to: "/browse?category=Sports%20%26%20Outdoors" },
 ];
 
 const Index = () => {
