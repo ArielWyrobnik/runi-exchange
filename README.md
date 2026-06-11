@@ -8,9 +8,9 @@ The home page uses a compact hero followed by five category shortcuts:
 
 - Tickets, highlighted as a special RUNI Tickets entry
 - Furniture
-- Electronic Devices
+- Electronics
 - Dorm Accessories
-- Sports & Outdoor
+- Sports & Outdoors
 
 The non-ticket shortcuts link into the existing `/browse` filters. The Tickets shortcut links to `/tickets`, a placeholder page for the future RUNI Tickets product area.
 
