@@ -200,8 +200,6 @@ export const en = {
   marketBalanceTitle: "Live market view",
   marketBalanceDesc:
     "Compare public asks and bids so supply and demand can converge, StockX-style.",
-  bidNameLabel: "Your name",
-  bidNamePlaceholder: "e.g. Dana Cohen",
   bidPriceLabel: "Bid price (₪)",
   bidQtyLabel: "Quantity",
   bidNoteLabel: "Note",
@@ -412,8 +410,6 @@ export const he: Record<TranslationKey, string> = {
   marketBalanceTitle: "תמונת שוק חיה",
   marketBalanceDesc:
     "השוו בין הצעות מכירה וקנייה ציבוריות כדי שהיצע וביקוש יתכנסו, בסגנון StockX.",
-  bidNameLabel: "השם שלכם",
-  bidNamePlaceholder: "לדוגמה: דנה כהן",
   bidPriceLabel: "מחיר הצעת קנייה (₪)",
   bidQtyLabel: "כמות",
   bidNoteLabel: "הערה",
