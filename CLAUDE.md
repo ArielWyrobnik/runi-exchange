@@ -29,7 +29,7 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 ## Design System
 - **Primary color**: HSL(226, 81%, 33%) — Reichman blue, RGB(16, 44, 151)
 - **RUNI Market Navbar**: blue (`bg-primary`) with inverted (white) text/buttons; white search bar row below (eBay style); blue footer — blue frame around white content.
-- **RUNI Tickets Navbar**: red (`bg-red-700`) with white text/buttons; red-tinted sub-bar with quick links; shows "RUNI Tickets" branding. Uses `TicketsNavbar` + `TicketsLayout` components (separate from the main `Navbar`/`Layout`).
+- **RUNI Tickets Navbar/Footer**: red (`bg-red-700`) with white text/buttons; red-tinted sub-bar with quick links; shows "RUNI Tickets" branding. Uses `TicketsNavbar` + `TicketsLayout` components and `Footer variant="tickets"` (separate from the main `Navbar`/`Layout`).
 - **Logo**: `src/assets/reichman-stars.png` — white star crescent on transparent background (extracted programmatically from the official wordmark; the bottom star group was repositioned to close the gap where the wordmark text sat). Blends seamlessly into the blue bar. On Tickets navbar the same PNG is shown with `filter: brightness(0) invert(1)` to stay white on red.
 - Mobile-first; mobile nav is a Sheet (hamburger).
 
@@ -39,7 +39,7 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 | `/` | Index — compact hero, 3 info cards, Recent Listings (8 newest) | public |
 | `/browse` | Browse — search (reads `?search=` from navbar, 300ms debounce), category/condition/price filters, sort (newest/price asc/desc), pagination (24 + Load more) | public |
 | `/tickets` | Tickets — red-themed event overview grid (date, venue, offer count, lowest price); uses `TicketsLayout` | public |
-| `/tickets/:id` | TicketEvent — event detail + ticket offers table (seller name, price, qty, note), cheapest first; uses `TicketsLayout` | public |
+| `/tickets/:id` | TicketEvent — event detail + StockX-style market view (lowest ask, highest bid), public offers and public bids; viewing is public, placing bids/selling tickets requires login | public view; actions require auth |
 | `/listing/:id` | ListingDetail — gallery w/ thumbnails, badges, watch heart, watch count, posted-by (links to seller), Contact Seller (hidden when sold), Report dialog, Edit button for owner | public |
 | `/listing/:id/edit` | EditListing — fields + photo add/remove (instant) | owner |
 | `/sell` | Sell — create listing (zod, ≤3 photos) | protected |
@@ -86,14 +86,15 @@ Lovable security scan addressed (see migrations `*_security_hardening.sql`, `*_p
 
 ## RUNI Tickets (separate sub-product, red theme)
 Ticket exchange for RUNI campus events — distinct visual identity (red) from the blue marketplace.
-- **Data layer scaffold** (`src/data/ticketEvents.ts`, `src/hooks/useTicketEvents.ts`): typed static data today; designed to swap 1:1 to Supabase `events` + `ticket_offers` tables without UI changes.
+- **Data layer scaffold** (`src/data/ticketEvents.ts`, `src/hooks/useTicketEvents.ts`): typed static data today with event offers and public buy bids; designed to swap 1:1 to Supabase `events`, `ticket_offers`, and `ticket_bids` tables without UI changes.
 - **Events are admin-curated** — no user-created events; new events added by editing `ticketEvents.ts` (scaffold) or via future admin UI.
-- **Next steps not yet built**: separate `events`/`ticket_offers` DB tables + migrations, Admin event management UI, ticket-posting flow for students.
+- **Market view** (`src/pages/TicketEvent.tsx`): shows lowest ask, highest bid, sorted public sell offers, and sorted public buy bids. Signed-in users can add a local/public bid in the scaffold UI; anonymous visitors see read-only market data plus login/signup CTA. Future ticket-selling UI must be auth-gated too.
+- **Next steps not yet built**: separate `events`/`ticket_offers`/`ticket_bids` DB tables + migrations, Admin event management UI, persistent ticket-posting/bid flows for students.
 - `src/lib/email.ts` (pure email helpers) and `src/lib/conversations.ts` (pure aggregation) are testable pure functions extracted from hooks.
 
 ## Known Open Items / Next Ideas
 - **Email notifications for new messages** — deliberately not built: needs an external provider (e.g. Resend) API key + Supabase Edge Function. User would need to create the account first.
-- No reviews/ratings, no offers/bidding (decided against for campus context — negotiate in chat).
+- No reviews/ratings. Marketplace item offers/bidding remain intentionally out of scope; RUNI Tickets now has a scaffolded public bid/ask market view only.
 - ~16 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper); no E2E yet.
 
 ## Constraints
