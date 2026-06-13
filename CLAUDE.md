@@ -28,8 +28,9 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 
 ## Design System
 - **Primary color**: HSL(226, 81%, 33%) — Reichman blue, RGB(16, 44, 151)
-- **Navbar**: blue (`bg-primary`) with inverted (white) text/buttons; white search bar row below (eBay style); blue footer — blue frame around white content.
-- **Logo**: `src/assets/reichman-stars.png` — white star crescent on transparent background (extracted programmatically from the official wordmark; the bottom star group was repositioned to close the gap where the wordmark text sat). Blends seamlessly into the blue bar.
+- **RUNI Market Navbar**: blue (`bg-primary`) with inverted (white) text/buttons; white search bar row below (eBay style); blue footer — blue frame around white content.
+- **RUNI Tickets Navbar**: red (`bg-red-700`) with white text/buttons; red-tinted sub-bar with quick links; shows "RUNI Tickets" branding. Uses `TicketsNavbar` + `TicketsLayout` components (separate from the main `Navbar`/`Layout`).
+- **Logo**: `src/assets/reichman-stars.png` — white star crescent on transparent background (extracted programmatically from the official wordmark; the bottom star group was repositioned to close the gap where the wordmark text sat). Blends seamlessly into the blue bar. On Tickets navbar the same PNG is shown with `filter: brightness(0) invert(1)` to stay white on red.
 - Mobile-first; mobile nav is a Sheet (hamburger).
 
 ## Pages & Routes (src/pages/)
@@ -37,6 +38,8 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 |---|---|---|
 | `/` | Index — compact hero, 3 info cards, Recent Listings (8 newest) | public |
 | `/browse` | Browse — search (reads `?search=` from navbar, 300ms debounce), category/condition/price filters, sort (newest/price asc/desc), pagination (24 + Load more) | public |
+| `/tickets` | Tickets — red-themed event overview grid (date, venue, offer count, lowest price); uses `TicketsLayout` | public |
+| `/tickets/:id` | TicketEvent — event detail + ticket offers table (seller name, price, qty, note), cheapest first; uses `TicketsLayout` | public |
 | `/listing/:id` | ListingDetail — gallery w/ thumbnails, badges, watch heart, watch count, posted-by (links to seller), Contact Seller (hidden when sold), Report dialog, Edit button for owner | public |
 | `/listing/:id/edit` | EditListing — fields + photo add/remove (instant) | owner |
 | `/sell` | Sell — create listing (zod, ≤3 photos) | protected |
@@ -49,6 +52,7 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 
 ## Key Components & Hooks
 - `Layout` (`fullHeight` prop pins to viewport, hides footer), `Navbar` (lang toggle EN/עברית, unread badge on Messages — realtime, admin Reports link, user name links to own profile), `Footer` (no logo).
+- `TicketsLayout` + `TicketsNavbar` — red-themed layout for all `/tickets/*` routes; brand shows "RUNI Tickets"; no search bar (events are browsed, not searched).
 - `ListingCard`: image, heart toggle (top corner, hidden on own listings), title, price ₪, badges, relative upload time + watch count.
 - `hooks/useListings.ts`: `useListings(filters{search,category,condition,priceMin/Max,sort,limit})`, `useListing(id)`, `useMyListings`, `useCreateListing`, `useUpdateListing`, `useSetListingStatus`, `useDeleteListing` (also removes storage files), `useAddListingImages`, `useDeleteListingImage`. Shared `uploadListingImages` compresses via `lib/image.ts` (max 1200px, JPEG 80%).
 - `hooks/useMessages.ts`: `useConversations` (single batched messages query → latest_message + unread_count per convo), `useMessages` (realtime INSERT subscription), `useUnreadCount` (global badge, realtime), `useMarkConversationRead` (marks incoming read when chat open), `useSendMessage`, `useCreateConversation` (dedupes existing).
@@ -79,6 +83,13 @@ Lovable security scan addressed (see migrations `*_security_hardening.sql`, `*_p
 - Realtime "any user can subscribe" finding = false positive (postgres_changes respects RLS).
 - Raw Supabase error messages shown in toasts (accepted for now).
 - "Confirm email" is ON in the Supabase dashboard (required — signIn also checks client-side).
+
+## RUNI Tickets (separate sub-product, red theme)
+Ticket exchange for RUNI campus events — distinct visual identity (red) from the blue marketplace.
+- **Data layer scaffold** (`src/data/ticketEvents.ts`, `src/hooks/useTicketEvents.ts`): typed static data today; designed to swap 1:1 to Supabase `events` + `ticket_offers` tables without UI changes.
+- **Events are admin-curated** — no user-created events; new events added by editing `ticketEvents.ts` (scaffold) or via future admin UI.
+- **Next steps not yet built**: separate `events`/`ticket_offers` DB tables + migrations, Admin event management UI, ticket-posting flow for students.
+- `src/lib/email.ts` (pure email helpers) and `src/lib/conversations.ts` (pure aggregation) are testable pure functions extracted from hooks.
 
 ## Known Open Items / Next Ideas
 - **Email notifications for new messages** — deliberately not built: needs an external provider (e.g. Resend) API key + Supabase Edge Function. User would need to create the account first.

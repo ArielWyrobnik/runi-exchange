@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
-import { ArrowRight, Calendar, MapPin, Ticket } from "lucide-react";
-import Layout from "@/components/layout/Layout";
+import { ArrowRight, Calendar, MapPin } from "lucide-react";
+import TicketsLayout from "@/components/layout/TicketsLayout";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useTicketEvents } from "@/hooks/useTicketEvents";
 import { lowestOfferPrice } from "@/data/ticketEvents";
@@ -13,22 +13,7 @@ const Tickets = () => {
   const dateLocale = lang === "he" ? heLocale : undefined;
 
   return (
-    <Layout>
-      {/* Red hero — the Tickets counterpart to the blue marketplace */}
-      <section className="border-b border-red-200 bg-red-50/70">
-        <div className="container mx-auto px-4 py-9 text-center md:py-12">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-700">
-            <Ticket className="h-7 w-7" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-red-700 md:text-3xl lg:text-4xl">
-            {t("ticketsHeroTitle")}
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground md:text-base">
-            {t("ticketsHeroSubtitle")}
-          </p>
-        </div>
-      </section>
-
+    <TicketsLayout>
       <section className="container py-8">
         <h2 className="mb-6 text-2xl font-semibold text-red-700">{t("upcomingEvents")}</h2>
 
@@ -85,7 +70,7 @@ const Tickets = () => {
           </div>
         )}
       </section>
-    </Layout>
+    </TicketsLayout>
   );
 };
 

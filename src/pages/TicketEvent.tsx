@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
 import { ArrowLeft, Calendar, Loader2, MapPin, User } from "lucide-react";
-import Layout from "@/components/layout/Layout";
+import TicketsLayout from "@/components/layout/TicketsLayout";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useTicketEvent } from "@/hooks/useTicketEvents";
@@ -15,24 +15,24 @@ const TicketEvent = () => {
 
   if (isLoading) {
     return (
-      <Layout>
+      <TicketsLayout>
         <div className="flex min-h-[50vh] items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-red-600" />
         </div>
-      </Layout>
+      </TicketsLayout>
     );
   }
 
   if (!event) {
     return (
-      <Layout>
+      <TicketsLayout>
         <div className="container flex min-h-[50vh] flex-col items-center justify-center text-center">
           <h1 className="text-xl font-semibold text-red-700">{t("eventNotFound")}</h1>
           <Link to="/tickets" className="mt-4 font-medium text-red-600 underline">
             {t("backToTickets")}
           </Link>
         </div>
-      </Layout>
+      </TicketsLayout>
     );
   }
 
@@ -40,7 +40,7 @@ const TicketEvent = () => {
   const offers = [...event.offers].sort((a, b) => a.price - b.price);
 
   return (
-    <Layout>
+    <TicketsLayout>
       <div className="container max-w-3xl py-6">
         <Link
           to="/tickets"
@@ -117,7 +117,7 @@ const TicketEvent = () => {
           )}
         </div>
       </div>
-    </Layout>
+    </TicketsLayout>
   );
 };
 
