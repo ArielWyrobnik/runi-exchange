@@ -2,7 +2,15 @@ import { FormEvent, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
-import { ArrowLeft, Calendar, Loader2, MapPin, TrendingDown, TrendingUp, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Loader2,
+  MapPin,
+  TrendingDown,
+  TrendingUp,
+  User,
+} from "lucide-react";
 import TicketsLayout from "@/components/layout/TicketsLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,15 +19,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useTicketEvent } from "@/hooks/useTicketEvents";
+import { useAuth } from "@/hooks/useAuth";
 import type { TicketBid } from "@/data/ticketEvents";
 
 const TicketEvent = () => {
   const { id } = useParams<{ id: string }>();
   const { t, lang } = useLanguage();
   const { data: event, isLoading } = useTicketEvent(id);
+  const { user } = useAuth();
   const dateLocale = lang === "he" ? heLocale : undefined;
   const [localBids, setLocalBids] = useState<TicketBid[]>([]);
-  const [buyerName, setBuyerName] = useState("");
   const [bidPrice, setBidPrice] = useState("");
   const [bidQuantity, setBidQuantity] = useState("1");
   const [bidNote, setBidNote] = useState("");
@@ -38,8 +47,13 @@ const TicketEvent = () => {
     return (
       <TicketsLayout>
         <div className="container flex min-h-[50vh] flex-col items-center justify-center text-center">
-          <h1 className="text-xl font-semibold text-red-700">{t("eventNotFound")}</h1>
-          <Link to="/tickets" className="mt-4 font-medium text-red-600 underline">
+          <h1 className="text-xl font-semibold text-red-700">
+            {t("eventNotFound")}
+          </h1>
+          <Link
+            to="/tickets"
+            className="mt-4 font-medium text-red-600 underline"
+          >
             {t("backToTickets")}
           </Link>
         </div>
@@ -57,10 +71,15 @@ const TicketEvent = () => {
 
     const price = Number(bidPrice);
     const quantity = Number(bidQuantity);
-    const trimmedName = buyerName.trim();
     const trimmedNote = bidNote.trim();
 
-    if (!trimmedName || !Number.isFinite(price) || price <= 0 || !Number.isFinite(quantity) || quantity < 1) {
+    if (
+      !user ||
+      !Number.isFinite(price) ||
+      price <= 0 ||
+      !Number.isFinite(quantity) ||
+      quantity < 1
+    ) {
       return;
     }
 
@@ -68,13 +87,13 @@ const TicketEvent = () => {
       ...current,
       {
         id: `local-${Date.now()}`,
-        buyerName: trimmedName,
+        buyerName:
+          user.user_metadata?.full_name ?? user.email ?? t("runiStudent"),
         price,
         quantity,
         note: trimmedNote || undefined,
       },
     ]);
-    setBuyerName("");
     setBidPrice("");
     setBidQuantity("1");
     setBidNote("");
@@ -102,7 +121,9 @@ const TicketEvent = () => {
               <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 shrink-0" />
-                  {format(new Date(event.date), "d MMM yyyy", { locale: dateLocale })}
+                  {format(new Date(event.date), "d MMM yyyy", {
+                    locale: dateLocale,
+                  })}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <MapPin className="h-4 w-4 shrink-0" />
@@ -124,18 +145,26 @@ const TicketEvent = () => {
               <TrendingDown className="h-4 w-4 text-red-600" />
               {t("lowestAsk")}
             </p>
-            <p className="mt-2 text-2xl font-bold text-red-700">{lowestAsk ? `₪${lowestAsk}` : "—"}</p>
+            <p className="mt-2 text-2xl font-bold text-red-700">
+              {lowestAsk ? `₪${lowestAsk}` : "—"}
+            </p>
           </div>
           <div className="rounded-lg border border-red-200 bg-white p-4">
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
               <TrendingUp className="h-4 w-4 text-red-600" />
               {t("highestBid")}
             </p>
-            <p className="mt-2 text-2xl font-bold text-red-700">{highestBid ? `₪${highestBid}` : "—"}</p>
+            <p className="mt-2 text-2xl font-bold text-red-700">
+              {highestBid ? `₪${highestBid}` : "—"}
+            </p>
           </div>
           <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-sm font-medium text-red-700">{t("marketBalanceTitle")}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{t("marketBalanceDesc")}</p>
+            <p className="text-sm font-medium text-red-700">
+              {t("marketBalanceTitle")}
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("marketBalanceDesc")}
+            </p>
           </div>
         </div>
 
@@ -145,7 +174,9 @@ const TicketEvent = () => {
             <h2 className="mb-1 text-xl font-semibold text-red-700">
               {t("ticketOffersHeading")} ({offers.length})
             </h2>
-            <p className="mb-4 text-xs text-muted-foreground">{t("ticketOffersDesc")}</p>
+            <p className="mb-4 text-xs text-muted-foreground">
+              {t("ticketOffersDesc")}
+            </p>
 
             {offers.length > 0 ? (
               <ul className="space-y-3">
@@ -162,11 +193,19 @@ const TicketEvent = () => {
                           {t("qtyLabel")}: {offer.quantity}
                         </Badge>
                       </div>
-                      {offer.note && <p className="mt-1 text-sm text-muted-foreground">{offer.note}</p>}
+                      {offer.note && (
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {offer.note}
+                        </p>
+                      )}
                     </div>
                     <div className="shrink-0 text-right rtl:text-left">
-                      <p className="text-lg font-bold text-red-700">₪{offer.price}</p>
-                      <p className="text-xs text-muted-foreground">{t("perTicket")}</p>
+                      <p className="text-lg font-bold text-red-700">
+                        ₪{offer.price}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {t("perTicket")}
+                      </p>
                     </div>
                   </li>
                 ))}
@@ -183,59 +222,86 @@ const TicketEvent = () => {
             <h2 className="mb-1 text-xl font-semibold text-red-700">
               {t("ticketBidsHeading")} ({bids.length})
             </h2>
-            <p className="mb-4 text-xs text-muted-foreground">{t("ticketBidsDesc")}</p>
+            <p className="mb-4 text-xs text-muted-foreground">
+              {t("ticketBidsDesc")}
+            </p>
 
-            <form onSubmit={handleBidSubmit} className="mb-4 rounded-lg border border-red-200 bg-red-50/60 p-4">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="buyerName">{t("bidNameLabel")}</Label>
-                  <Input
-                    id="buyerName"
-                    value={buyerName}
-                    onChange={(e) => setBuyerName(e.target.value)}
-                    placeholder={t("bidNamePlaceholder")}
-                    required
-                  />
+            {user ? (
+              <form
+                onSubmit={handleBidSubmit}
+                className="mb-4 rounded-lg border border-red-200 bg-red-50/60 p-4"
+              >
+                <p className="mb-3 text-sm text-muted-foreground">
+                  {t("postingAs")} {user.user_metadata?.full_name ?? user.email}
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="bidPrice">{t("bidPriceLabel")}</Label>
+                    <Input
+                      id="bidPrice"
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={bidPrice}
+                      onChange={(e) => setBidPrice(e.target.value)}
+                      placeholder="₪"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="bidQuantity">{t("bidQtyLabel")}</Label>
+                    <Input
+                      id="bidQuantity"
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={bidQuantity}
+                      onChange={(e) => setBidQuantity(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor="bidNote">{t("bidNoteLabel")}</Label>
+                    <Textarea
+                      id="bidNote"
+                      value={bidNote}
+                      onChange={(e) => setBidNote(e.target.value)}
+                      placeholder={t("bidNotePlaceholder")}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="bidPrice">{t("bidPriceLabel")}</Label>
-                  <Input
-                    id="bidPrice"
-                    type="number"
-                    min="1"
-                    step="1"
-                    value={bidPrice}
-                    onChange={(e) => setBidPrice(e.target.value)}
-                    placeholder="₪"
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="bidQuantity">{t("bidQtyLabel")}</Label>
-                  <Input
-                    id="bidQuantity"
-                    type="number"
-                    min="1"
-                    step="1"
-                    value={bidQuantity}
-                    onChange={(e) => setBidQuantity(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="bidNote">{t("bidNoteLabel")}</Label>
-                  <Textarea
-                    id="bidNote"
-                    value={bidNote}
-                    onChange={(e) => setBidNote(e.target.value)}
-                    placeholder={t("bidNotePlaceholder")}
-                  />
+                <Button
+                  type="submit"
+                  className="mt-4 w-full bg-red-700 text-white hover:bg-red-800 sm:w-auto"
+                >
+                  {t("placeBid")}
+                </Button>
+              </form>
+            ) : (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50/60 p-4">
+                <p className="font-medium text-red-700">
+                  {t("ticketAuthRequiredTitle")}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("ticketAuthRequiredDesc")}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Button
+                    asChild
+                    className="bg-red-700 text-white hover:bg-red-800"
+                  >
+                    <Link to="/login">{t("logIn")}</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-red-700 text-red-700 hover:bg-red-50"
+                  >
+                    <Link to="/signup">{t("signUpRuni")}</Link>
+                  </Button>
                 </div>
               </div>
-              <Button type="submit" className="mt-4 w-full bg-red-700 text-white hover:bg-red-800 sm:w-auto">
-                {t("placeBid")}
-              </Button>
-            </form>
+            )}
 
             {bids.length > 0 ? (
               <ul className="space-y-3">
@@ -252,11 +318,19 @@ const TicketEvent = () => {
                           {t("qtyLabel")}: {bid.quantity}
                         </Badge>
                       </div>
-                      {bid.note && <p className="mt-1 text-sm text-muted-foreground">{bid.note}</p>}
+                      {bid.note && (
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {bid.note}
+                        </p>
+                      )}
                     </div>
                     <div className="shrink-0 text-right rtl:text-left">
-                      <p className="text-lg font-bold text-red-700">₪{bid.price}</p>
-                      <p className="text-xs text-muted-foreground">{t("bidPerTicket")}</p>
+                      <p className="text-lg font-bold text-red-700">
+                        ₪{bid.price}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {t("bidPerTicket")}
+                      </p>
                     </div>
                   </li>
                 ))}

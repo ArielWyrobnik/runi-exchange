@@ -24,13 +24,17 @@ export const en = {
 
   // Home
   heroTitle: "Buy & Sell Within Your Campus Community",
-  heroSubtitle: "The marketplace built exclusively for Reichman University students.",
+  heroSubtitle:
+    "The marketplace built exclusively for Reichman University students.",
   listYourItem: "List Your Item",
-  listYourItemDesc: "Snap a few photos, set your price, and your listing is live in seconds.",
+  listYourItemDesc:
+    "Snap a few photos, set your price, and your listing is live in seconds.",
   findWhatYouNeed: "Find What You Need",
-  findWhatYouNeedDesc: "Browse by category or search for exactly what you're looking for.",
+  findWhatYouNeedDesc:
+    "Browse by category or search for exactly what you're looking for.",
   meetOnCampus: "Meet on Campus",
-  meetOnCampusDesc: "Message the seller, agree on a spot, and make the exchange in person.",
+  meetOnCampusDesc:
+    "Message the seller, agree on a spot, and make the exchange in person.",
   recentListings: "Recent Listings",
   viewAll: "View all",
   noListingsBeFirst: "No listings yet. Be the first to",
@@ -118,7 +122,8 @@ export const en = {
   relist: "Relist",
   deleteListing: "Delete",
   deleteConfirmTitle: "Delete this listing?",
-  deleteConfirmDesc: "This will permanently remove the listing and its conversations. This cannot be undone.",
+  deleteConfirmDesc:
+    "This will permanently remove the listing and its conversations. This cannot be undone.",
   cancel: "Cancel",
   listingDeleted: "Listing deleted",
   noMyListings: "You haven't posted anything yet.",
@@ -165,12 +170,14 @@ export const en = {
   // Account deletion
   deleteAccount: "Delete account",
   deleteAccountConfirmTitle: "Delete your account?",
-  deleteAccountConfirmDesc: "All your listings, messages, watchlist and data will be permanently deleted. This cannot be undone.",
+  deleteAccountConfirmDesc:
+    "All your listings, messages, watchlist and data will be permanently deleted. This cannot be undone.",
   accountDeleted: "Your account has been deleted",
 
   // Tickets
   ticketsHeroTitle: "RUNI Tickets",
-  ticketsHeroSubtitle: "Buy and sell tickets to RUNI events — student to student.",
+  ticketsHeroSubtitle:
+    "Buy and sell tickets to RUNI events — student to student.",
   upcomingEvents: "Upcoming Events",
   viewTickets: "View tickets",
   fromPrice: "from",
@@ -183,22 +190,18 @@ export const en = {
   qtyLabel: "Qty",
   perTicket: "per ticket",
   sellTicketsSoon: "Listing your own tickets is coming soon.",
-  ticketOffersDesc: "Lowest asks first — these are tickets students are offering to sell.",
-  ticketBidsHeading: "Open Bids",
-  ticketBidsDesc: "Highest bids first — visible demand helps sellers and buyers meet at a fair price.",
-  lowestAsk: "Lowest ask",
-  highestBid: "Highest bid",
-  marketBalanceTitle: "Live market view",
-  marketBalanceDesc: "Compare public asks and bids so supply and demand can converge, StockX-style.",
-  bidNameLabel: "Your name",
-  bidNamePlaceholder: "e.g. Dana Cohen",
-  bidPriceLabel: "Bid price (₪)",
-  bidQtyLabel: "Quantity",
-  bidNoteLabel: "Note",
-  bidNotePlaceholder: "Optional: meeting spot, timing, constraints...",
-  placeBid: "Place public bid",
-  bidPerTicket: "bid per ticket",
-  noBidsYet: "No public bids for this event yet.",
+bidPriceLabel: "Bid price (₪)",
+bidQtyLabel: "Quantity",
+bidNoteLabel: "Note",
+bidNotePlaceholder: "Optional: meeting spot, timing, constraints...",
+postingAs: "Posting as",
+runiStudent: "RUNI student",
+ticketAuthRequiredTitle: "Log in to trade tickets",
+ticketAuthRequiredDesc:
+  "Only signed-in Reichman students can place public bids or list tickets for sale.",
+placeBid: "Place public bid",
+bidPerTicket: "bid per ticket",
+noBidsYet: "No public bids for this event yet.",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -227,7 +230,8 @@ export const he: Record<TranslationKey, string> = {
   heroTitle: "קונים ומוכרים בתוך קהילת הקמפוס",
   heroSubtitle: "השוק שנבנה במיוחד לסטודנטים של אוניברסיטת רייכמן.",
   listYourItem: "פרסמו את הפריט שלכם",
-  listYourItemDesc: "צלמו כמה תמונות, קבעו מחיר, והמודעה שלכם באוויר תוך שניות.",
+  listYourItemDesc:
+    "צלמו כמה תמונות, קבעו מחיר, והמודעה שלכם באוויר תוך שניות.",
   findWhatYouNeed: "מצאו את מה שאתם צריכים",
   findWhatYouNeedDesc: "עיינו לפי קטגוריה או חפשו בדיוק את מה שאתם מחפשים.",
   meetOnCampus: "נפגשים בקמפוס",
@@ -319,7 +323,8 @@ export const he: Record<TranslationKey, string> = {
   relist: "פרסם מחדש",
   deleteListing: "מחיקה",
   deleteConfirmTitle: "למחוק את המודעה?",
-  deleteConfirmDesc: "המודעה והשיחות שלה יימחקו לצמיתות. לא ניתן לבטל פעולה זו.",
+  deleteConfirmDesc:
+    "המודעה והשיחות שלה יימחקו לצמיתות. לא ניתן לבטל פעולה זו.",
   cancel: "ביטול",
   listingDeleted: "המודעה נמחקה",
   noMyListings: "עוד לא פרסמתם כלום.",
@@ -366,7 +371,8 @@ export const he: Record<TranslationKey, string> = {
   // Account deletion
   deleteAccount: "מחיקת חשבון",
   deleteAccountConfirmTitle: "למחוק את החשבון?",
-  deleteAccountConfirmDesc: "כל המודעות, ההודעות, רשימת המעקב והנתונים שלכם יימחקו לצמיתות. לא ניתן לבטל פעולה זו.",
+  deleteAccountConfirmDesc:
+    "כל המודעות, ההודעות, רשימת המעקב והנתונים שלכם יימחקו לצמיתות. לא ניתן לבטל פעולה זו.",
   accountDeleted: "החשבון שלכם נמחק",
 
   // Tickets
@@ -384,51 +390,50 @@ export const he: Record<TranslationKey, string> = {
   qtyLabel: "כמות",
   perTicket: "לכרטיס",
   sellTicketsSoon: "פרסום כרטיסים משלכם יתאפשר בקרוב.",
-  ticketOffersDesc: "מחירי מכירה מהנמוך לגבוה — כרטיסים שסטודנטים מציעים למכור.",
-  ticketBidsHeading: "הצעות קנייה פתוחות",
-  ticketBidsDesc: "הצעות הקנייה הגבוהות מוצגות ראשונות — ביקוש גלוי עוזר למוכרים ולקונים להגיע למחיר הוגן.",
-  lowestAsk: "מחיר מכירה נמוך ביותר",
-  highestBid: "הצעת קנייה גבוהה ביותר",
-  marketBalanceTitle: "תמונת שוק חיה",
-  marketBalanceDesc: "השוו בין הצעות מכירה וקנייה ציבוריות כדי שהיצע וביקוש יתכנסו, בסגנון StockX.",
-  bidNameLabel: "השם שלכם",
-  bidNamePlaceholder: "לדוגמה: דנה כהן",
-  bidPriceLabel: "מחיר הצעת קנייה (₪)",
-  bidQtyLabel: "כמות",
-  bidNoteLabel: "הערה",
-  bidNotePlaceholder: "אופציונלי: מקום מפגש, זמן, מגבלות...",
-  placeBid: "פרסום הצעת קנייה",
-  bidPerTicket: "הצעת קנייה לכרטיס",
-  noBidsYet: "עדיין אין הצעות קנייה ציבוריות לאירוע זה.",
+bidPriceLabel: "מחיר הצעת קנייה (₪)",
+bidQtyLabel: "כמות",
+bidNoteLabel: "הערה",
+bidNotePlaceholder: "אופציונלי: מקום מפגש, זמן, מגבלות...",
+postingAs: "מפרסמים בתור",
+runiStudent: "סטודנט/ית רייכמן",
+ticketAuthRequiredTitle: "התחברו כדי לסחור בכרטיסים",
+ticketAuthRequiredDesc:
+  "רק סטודנטים מחוברים של רייכמן יכולים לפרסם הצעות קנייה ציבוריות או להציע כרטיסים למכירה.",
+placeBid: "פרסום הצעת קנייה",
+bidPerTicket: "הצעת קנייה לכרטיס",
+noBidsYet: "עדיין אין הצעות קנייה ציבוריות לאירוע זה.",
 };
 
 export type TranslationKey = keyof typeof en;
 export type Language = "en" | "he";
 
-export const translations: Record<Language, Record<TranslationKey, string>> = { en, he };
+export const translations: Record<Language, Record<TranslationKey, string>> = {
+  en,
+  he,
+};
 
 /** Category/condition values are stored in English in the database;
  *  these maps translate them for display only. */
 export const categoryNames: Record<Language, Record<string, string>> = {
   en: {},
   he: {
-    "Furniture": "רהיטים",
-    "Electronics": "אלקטרוניקה",
+    Furniture: "רהיטים",
+    Electronics: "אלקטרוניקה",
     "Books & Study Materials": "ספרים וחומרי לימוד",
-    "Clothes": "בגדים",
+    Clothes: "בגדים",
     "Kitchen & Appliances": "מטבח ומכשירי חשמל",
     "Sports & Outdoors": "ספורט ופנאי",
-    "Other": "אחר",
+    Other: "אחר",
   },
 };
 
 export const conditionNames: Record<Language, Record<string, string>> = {
   en: {},
   he: {
-    "New": "חדש",
+    New: "חדש",
     "Like New": "כמו חדש",
-    "Good": "טוב",
-    "Fair": "סביר",
-    "Poor": "במצב ירוד",
+    Good: "טוב",
+    Fair: "סביר",
+    Poor: "במצב ירוד",
   },
 };
