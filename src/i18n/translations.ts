@@ -19,6 +19,8 @@ export const en = {
   footerBrowse: "Browse",
   footerSell: "Sell",
   footerCopyright: "RUNI Market · Reichman University, Herzliya",
+  ticketsFooterTagline: "Campus events, student to student.",
+  ticketsFooterCopyright: "RUNI Tickets · Reichman University, Herzliya",
 
   // Home
   heroTitle: "Buy & Sell Within Your Campus Community",
@@ -181,6 +183,22 @@ export const en = {
   qtyLabel: "Qty",
   perTicket: "per ticket",
   sellTicketsSoon: "Listing your own tickets is coming soon.",
+  ticketOffersDesc: "Lowest asks first — these are tickets students are offering to sell.",
+  ticketBidsHeading: "Open Bids",
+  ticketBidsDesc: "Highest bids first — visible demand helps sellers and buyers meet at a fair price.",
+  lowestAsk: "Lowest ask",
+  highestBid: "Highest bid",
+  marketBalanceTitle: "Live market view",
+  marketBalanceDesc: "Compare public asks and bids so supply and demand can converge, StockX-style.",
+  bidNameLabel: "Your name",
+  bidNamePlaceholder: "e.g. Dana Cohen",
+  bidPriceLabel: "Bid price (₪)",
+  bidQtyLabel: "Quantity",
+  bidNoteLabel: "Note",
+  bidNotePlaceholder: "Optional: meeting spot, timing, constraints...",
+  placeBid: "Place public bid",
+  bidPerTicket: "bid per ticket",
+  noBidsYet: "No public bids for this event yet.",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -202,6 +220,8 @@ export const he: Record<TranslationKey, string> = {
   footerBrowse: "עיון",
   footerSell: "מכירה",
   footerCopyright: "רייכמן מרקט · אוניברסיטת רייכמן, הרצליה",
+  ticketsFooterTagline: "אירועי קמפוס, מסטודנט לסטודנט.",
+  ticketsFooterCopyright: "כרטיסי RUNI · אוניברסיטת רייכמן, הרצליה",
 
   // Home
   heroTitle: "קונים ומוכרים בתוך קהילת הקמפוס",
@@ -364,6 +384,22 @@ export const he: Record<TranslationKey, string> = {
   qtyLabel: "כמות",
   perTicket: "לכרטיס",
   sellTicketsSoon: "פרסום כרטיסים משלכם יתאפשר בקרוב.",
+  ticketOffersDesc: "מחירי מכירה מהנמוך לגבוה — כרטיסים שסטודנטים מציעים למכור.",
+  ticketBidsHeading: "הצעות קנייה פתוחות",
+  ticketBidsDesc: "הצעות הקנייה הגבוהות מוצגות ראשונות — ביקוש גלוי עוזר למוכרים ולקונים להגיע למחיר הוגן.",
+  lowestAsk: "מחיר מכירה נמוך ביותר",
+  highestBid: "הצעת קנייה גבוהה ביותר",
+  marketBalanceTitle: "תמונת שוק חיה",
+  marketBalanceDesc: "השוו בין הצעות מכירה וקנייה ציבוריות כדי שהיצע וביקוש יתכנסו, בסגנון StockX.",
+  bidNameLabel: "השם שלכם",
+  bidNamePlaceholder: "לדוגמה: דנה כהן",
+  bidPriceLabel: "מחיר הצעת קנייה (₪)",
+  bidQtyLabel: "כמות",
+  bidNoteLabel: "הערה",
+  bidNotePlaceholder: "אופציונלי: מקום מפגש, זמן, מגבלות...",
+  placeBid: "פרסום הצעת קנייה",
+  bidPerTicket: "הצעת קנייה לכרטיס",
+  noBidsYet: "עדיין אין הצעות קנייה ציבוריות לאירוע זה.",
 };
 
 export type TranslationKey = keyof typeof en;
