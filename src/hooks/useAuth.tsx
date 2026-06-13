@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ALLOWED_EMAIL_DOMAIN } from "@/lib/constants";
+import { isAllowedReichmanEmail, normalizeEmail } from "@/lib/email";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
@@ -37,8 +37,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = useCallback(async (email: string, password: string, fullName: string) => {
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail.endsWith(ALLOWED_EMAIL_DOMAIN)) {
+    const normalizedEmail = normalizeEmail(email);
+    if (!isAllowedReichmanEmail(normalizedEmail)) {
       return { error: "Only Reichman University students can register. Please use your @post.runi.ac.il email." };
     }
     const { error } = await supabase.auth.signUp({

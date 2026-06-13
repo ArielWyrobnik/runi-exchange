@@ -165,6 +165,22 @@ export const en = {
   deleteAccountConfirmTitle: "Delete your account?",
   deleteAccountConfirmDesc: "All your listings, messages, watchlist and data will be permanently deleted. This cannot be undone.",
   accountDeleted: "Your account has been deleted",
+
+  // Tickets
+  ticketsHeroTitle: "RUNI Tickets",
+  ticketsHeroSubtitle: "Buy and sell tickets to RUNI events — student to student.",
+  upcomingEvents: "Upcoming Events",
+  viewTickets: "View tickets",
+  fromPrice: "from",
+  offersCount: "offers",
+  noEventsYet: "No events yet — check back soon.",
+  eventNotFound: "Event not found",
+  backToTickets: "Back to Tickets",
+  ticketOffersHeading: "Ticket Offers",
+  noOffersYet: "No tickets are being offered for this event yet.",
+  qtyLabel: "Qty",
+  perTicket: "per ticket",
+  sellTicketsSoon: "Listing your own tickets is coming soon.",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -332,6 +348,22 @@ export const he: Record<TranslationKey, string> = {
   deleteAccountConfirmTitle: "למחוק את החשבון?",
   deleteAccountConfirmDesc: "כל המודעות, ההודעות, רשימת המעקב והנתונים שלכם יימחקו לצמיתות. לא ניתן לבטל פעולה זו.",
   accountDeleted: "החשבון שלכם נמחק",
+
+  // Tickets
+  ticketsHeroTitle: "כרטיסי RUNI",
+  ticketsHeroSubtitle: "קנו ומכרו כרטיסים לאירועי RUNI — מסטודנט לסטודנט.",
+  upcomingEvents: "אירועים קרובים",
+  viewTickets: "צפייה בכרטיסים",
+  fromPrice: "החל מ-",
+  offersCount: "הצעות",
+  noEventsYet: "אין עדיין אירועים — בקרו שוב בקרוב.",
+  eventNotFound: "האירוע לא נמצא",
+  backToTickets: "חזרה לכרטיסים",
+  ticketOffersHeading: "הצעות כרטיסים",
+  noOffersYet: "עדיין לא מוצעים כרטיסים לאירוע זה.",
+  qtyLabel: "כמות",
+  perTicket: "לכרטיס",
+  sellTicketsSoon: "פרסום כרטיסים משלכם יתאפשר בקרוב.",
 };
 
 export type TranslationKey = keyof typeof en;
