@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { summarizeConversations, type MessageSummaryInput } from "@/lib/conversations";
 
 export interface ConversationWithDetails {
   id: string;
@@ -44,42 +45,18 @@ export const useConversations = () => {
       if (error) throw error;
 
       const convos = data as ConversationWithDetails[];
+      if (convos.length === 0) return convos;
 
       // One query for all conversations: derive latest message and
       // unread count client-side instead of N+1 round trips
-      if (convos.length > 0) {
-        const { data: msgs, error: msgsError } = await supabase
-          .from("messages")
-          .select("conversation_id, content, created_at, sender_id, is_read")
-          .in("conversation_id", convos.map((c) => c.id))
-          .order("created_at", { ascending: false });
-        if (msgsError) throw msgsError;
+      const { data: msgs, error: msgsError } = await supabase
+        .from("messages")
+        .select("conversation_id, content, created_at, sender_id, is_read")
+        .in("conversation_id", convos.map((c) => c.id))
+        .order("created_at", { ascending: false });
+      if (msgsError) throw msgsError;
 
-        for (const c of convos) {
-          c.latest_message = null;
-          c.unread_count = 0;
-        }
-        const byId = new Map(convos.map((c) => [c.id, c]));
-        for (const m of msgs ?? []) {
-          const c = byId.get(m.conversation_id);
-          if (!c) continue;
-          if (!c.latest_message) {
-            c.latest_message = { content: m.content, created_at: m.created_at };
-          }
-          if (!m.is_read && m.sender_id !== user!.id) {
-            c.unread_count++;
-          }
-        }
-      }
-
-      // Sort by latest message
-      convos.sort((a, b) => {
-        const aTime = a.latest_message?.created_at ?? a.created_at;
-        const bTime = b.latest_message?.created_at ?? b.created_at;
-        return new Date(bTime).getTime() - new Date(aTime).getTime();
-      });
-
-      return convos;
+      return summarizeConversations(convos, (msgs ?? []) as MessageSummaryInput[], user!.id);
     },
   });
 };

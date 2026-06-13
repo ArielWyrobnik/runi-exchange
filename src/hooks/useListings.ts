@@ -185,8 +185,10 @@ export const useDeleteListing = () => {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      // Remove the image files first — the DB cascade only deletes the
-      // rows, the storage objects would be orphaned otherwise
+      // Eagerly remove the owner's image files. A DB trigger on
+      // listing_images also cleans storage on delete (covering admin
+      // deletes and account-deletion cascades, where this owner-folder
+      // remove() is not permitted); the two are idempotent.
       const { data: images } = await supabase
         .from("listing_images")
         .select("image_url")

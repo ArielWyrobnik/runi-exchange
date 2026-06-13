@@ -70,6 +70,7 @@ Key server-side rules (all enforced by migrations, not just frontend):
 - **Roles**: `user_roles` has no client write policies (no self-promotion); `is_admin(uid)` SECURITY DEFINER. Seed admin: `ariel.wyrobnik@post.runi.ac.il`. Admins can SELECT/DELETE any listing and read/delete reports.
 - **Account deletion**: `delete_own_account()` RPC (SECURITY DEFINER, deletes own auth.users row, cascades).
 - **Storage**: `listing-images` public bucket; per-user folder (`<uid>/...`) for insert/update/delete; bucket-wide listing/enumeration policy removed; trigger functions' EXECUTE revoked from client roles; GraphQL endpoint revoked.
+- **Storage cleanup**: AFTER DELETE trigger `delete_listing_image_object` on `listing_images` (SECURITY DEFINER) removes the matching `storage.objects` row whenever an image row is deleted — covers admin deletes and account-deletion cascades where the owner-folder RLS policy blocks the client `remove()`. Idempotent with the eager client-side removal in `useDeleteListing`/`useDeleteListingImage`.
 - Realtime publication includes `messages` (RLS-filtered delivery).
 
 ## Security Status
@@ -81,9 +82,8 @@ Lovable security scan addressed (see migrations `*_security_hardening.sql`, `*_p
 
 ## Known Open Items / Next Ideas
 - **Email notifications for new messages** — deliberately not built: needs an external provider (e.g. Resend) API key + Supabase Edge Function. User would need to create the account first.
-- Admin deleting another user's listing leaves its storage files orphaned (storage delete policy is owner-folder only; DB rows cascade fine).
 - No reviews/ratings, no offers/bidding (decided against for campus context — negotiate in chat).
-- Only ~6 unit tests; no E2E.
+- ~16 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper); no E2E yet.
 
 ## Constraints
 - English + Hebrew interface (full parity enforced by test)
