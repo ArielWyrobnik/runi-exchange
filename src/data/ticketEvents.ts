@@ -8,6 +8,15 @@
  * the data source swapped for real queries later without touching the UI.
  */
 
+export interface TicketBid {
+  id: string;
+  /** Maps to a profiles row (buyer_id) once wired to the backend. */
+  buyerName: string;
+  price: number;
+  quantity: number;
+  note?: string;
+}
+
 export interface TicketOffer {
   id: string;
   /** Maps to a profiles row (seller_id) once wired to the backend. */
@@ -27,6 +36,7 @@ export interface TicketEvent {
   /** ISO date string. */
   date: string;
   offers: TicketOffer[];
+  bids: TicketBid[];
 }
 
 export const TICKET_EVENTS: TicketEvent[] = [
@@ -43,6 +53,10 @@ export const TICKET_EVENTS: TicketEvent[] = [
       { id: "o2", sellerName: "Daniel Levi", price: 95, quantity: 1 },
       { id: "o3", sellerName: "Noa Friedman", price: 110, quantity: 4, note: "Group of 4, selling together." },
     ],
+    bids: [
+      { id: "b1", buyerName: "Ariel Ben-David", price: 70, quantity: 1, note: "Can meet near the library." },
+      { id: "b2", buyerName: "Lior Katz", price: 65, quantity: 2 },
+    ],
   },
   {
     id: "faculty-cup-final",
@@ -56,6 +70,9 @@ export const TICKET_EVENTS: TicketEvent[] = [
       { id: "o4", sellerName: "Itay Bar", price: 30, quantity: 2 },
       { id: "o5", sellerName: "Shira Azulay", price: 25, quantity: 1, note: "Can't make it anymore, cheap." },
     ],
+    bids: [
+      { id: "b3", buyerName: "Yuval Mor", price: 20, quantity: 1 },
+    ],
   },
   {
     id: "graduation-gala",
@@ -68,6 +85,10 @@ export const TICKET_EVENTS: TicketEvent[] = [
     offers: [
       { id: "o6", sellerName: "Tom Shapira", price: 200, quantity: 1 },
     ],
+    bids: [
+      { id: "b4", buyerName: "Neta Cohen", price: 160, quantity: 2, note: "Looking for two seats together." },
+      { id: "b5", buyerName: "Eden Levi", price: 150, quantity: 1 },
+    ],
   },
   {
     id: "welcome-week-2026",
@@ -78,6 +99,7 @@ export const TICKET_EVENTS: TicketEvent[] = [
     venue: "Main Campus Plaza",
     date: "2026-09-01",
     offers: [],
+    bids: [],
   },
 ];
 
