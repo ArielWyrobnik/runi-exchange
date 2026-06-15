@@ -212,6 +212,35 @@ export const en = {
   placeBid: "Place public bid",
   bidPerTicket: "bid per ticket",
   noBidsYet: "No public bids for this event yet.",
+
+  // Admin: event management / import
+  adminEvents: "Manage Events",
+  addEvent: "Add event",
+  importEventTitle: "Import an event",
+  importEventDesc:
+    "Paste a go-out.co event link. We read the title, date, venue and cover image so you can review and publish it.",
+  importBtn: "Import",
+  importing: "Importing…",
+  eventImported: "Event details loaded — review and publish below.",
+  reviewBeforeSaving: "Check the details — especially the end time — then publish.",
+  eventTitleLabel: "Title",
+  eventVenueLabel: "Venue",
+  eventStartLabel: "Starts",
+  eventEndLabel: "Ends",
+  eventEmojiLabel: "Emoji (used when no image)",
+  eventDescLabel: "Description",
+  endTimeHint: "The event is removed automatically at this time.",
+  saveEvent: "Publish event",
+  eventSaved: "Event published.",
+  eventMissingFields: "Title, start and end time are required.",
+  eventEndAfterStart: "The end time must be after the start time.",
+  existingEvents: "Published events",
+  noEventsAdmin: "No events yet. Import one from a link above.",
+  deleteEvent: "Delete",
+  deleteEventConfirmTitle: "Delete this event?",
+  deleteEventConfirmDesc: "This removes the event and its cover image. This cannot be undone.",
+  eventDeleted: "Event deleted.",
+  eventEnded: "ended",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -422,6 +451,35 @@ export const he: Record<TranslationKey, string> = {
   placeBid: "פרסום הצעת קנייה",
   bidPerTicket: "הצעת קנייה לכרטיס",
   noBidsYet: "עדיין אין הצעות קנייה ציבוריות לאירוע זה.",
+
+  // Admin: event management / import
+  adminEvents: "ניהול אירועים",
+  addEvent: "הוספת אירוע",
+  importEventTitle: "ייבוא אירוע",
+  importEventDesc:
+    "הדביקו קישור לאירוע מ-go-out.co. נשלוף את הכותרת, התאריך, המיקום ותמונת הנושא כדי שתוכלו לבדוק ולפרסם.",
+  importBtn: "ייבוא",
+  importing: "מייבא…",
+  eventImported: "פרטי האירוע נטענו — בדקו ופרסמו למטה.",
+  reviewBeforeSaving: "בדקו את הפרטים — במיוחד את שעת הסיום — ואז פרסמו.",
+  eventTitleLabel: "כותרת",
+  eventVenueLabel: "מיקום",
+  eventStartLabel: "התחלה",
+  eventEndLabel: "סיום",
+  eventEmojiLabel: "אימוג'י (מוצג כשאין תמונה)",
+  eventDescLabel: "תיאור",
+  endTimeHint: "האירוע יימחק אוטומטית בשעה זו.",
+  saveEvent: "פרסום אירוע",
+  eventSaved: "האירוע פורסם.",
+  eventMissingFields: "כותרת, שעת התחלה ושעת סיום הן שדות חובה.",
+  eventEndAfterStart: "שעת הסיום חייבת להיות אחרי שעת ההתחלה.",
+  existingEvents: "אירועים שפורסמו",
+  noEventsAdmin: "אין עדיין אירועים. ייבאו אירוע מקישור למעלה.",
+  deleteEvent: "מחיקה",
+  deleteEventConfirmTitle: "למחוק את האירוע?",
+  deleteEventConfirmDesc: "פעולה זו מסירה את האירוע ואת תמונת הנושא שלו. לא ניתן לבטל.",
+  eventDeleted: "האירוע נמחק.",
+  eventEnded: "הסתיים",
 };
 
 export type TranslationKey = keyof typeof en;

@@ -29,8 +29,8 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 ## Design System
 - **Primary color**: HSL(226, 81%, 33%) — Reichman blue, RGB(16, 44, 151)
 - **RUNI Market Navbar**: blue (`bg-primary`) with inverted (white) text/buttons; white search bar row below (eBay style); blue footer — blue frame around white content.
-- **RUNI Tickets Navbar/Footer**: red (`bg-red-700`) with white text/buttons; red-tinted sub-bar with quick links; shows "RUNI Tickets" branding. Uses `TicketsNavbar` + `TicketsLayout` components and `Footer variant="tickets"` (separate from the main `Navbar`/`Layout`).
-- **Logo**: `src/assets/reichman-stars.png` — white star crescent on transparent background (extracted programmatically from the official wordmark; the bottom star group was repositioned to close the gap where the wordmark text sat). Blends seamlessly into the blue bar. On Tickets navbar the same PNG is shown with `filter: brightness(0) invert(1)` to stay white on red.
+- **RUNI Tickets Navbar/Footer**: same Reichman blue (`bg-primary`) with white text/buttons; blue-tinted sub-bar (`bg-blue-50/60`) with quick links; shows "RUNI Tickets" branding. Uses `TicketsNavbar` + `TicketsLayout` components and `Footer variant="tickets"` (separate from the main `Navbar`/`Layout`; the variant now differs only in copy, not color).
+- **Logo**: `src/assets/reichman-stars.png` — white star crescent on transparent background (extracted programmatically from the official wordmark; the bottom star group was repositioned to close the gap where the wordmark text sat). Blends seamlessly into the blue bar. On the Tickets navbar the same PNG is shown with `filter: brightness(0) invert(1)` to stay crisp white on blue.
 - Mobile-first; mobile nav is a Sheet (hamburger).
 
 ## Pages & Routes (src/pages/)
@@ -48,21 +48,25 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 | `/seller/:id` | SellerProfile — avatar initial, member since, active listings; own profile: inline name edit (syncs profiles + auth metadata), Delete account | public |
 | `/messages` | Messages — `?c=<id>` selects conversation (survives reloads; do NOT use router state, it gets lost in the Lovable preview). Viewport-pinned layout (`<Layout fullHeight>`): no page scroll, no footer; sidebar and thread scroll independently. Chat header: listing photo + title + price (links to listing), person name in gray below | protected |
 | `/admin/reports` | AdminReports — open reports w/ dismiss + delete-listing | admin |
+| `/admin/events` | AdminEvents — import an event from a go-out.co link (parse → review form → publish), list + delete events | admin |
 | `/login`, `/signup` | Auth pages | public |
 
 ## Key Components & Hooks
-- `Layout` (`fullHeight` prop pins to viewport, hides footer), `Navbar` (lang toggle EN/עברית, unread badge on Messages — realtime, admin Reports link, user name links to own profile), `Footer` (`variant="market" | "tickets"`; no logo; tickets variant is red with RUNI Tickets copy).
-- `TicketsLayout` + `TicketsNavbar` — red-themed layout for all `/tickets/*` routes; brand shows "RUNI Tickets"; no search bar (events are browsed, not searched); layout renders `Footer variant="tickets"`.
+- `Layout` (`fullHeight` prop pins to viewport, hides footer), `Navbar` (lang toggle EN/עברית, unread badge on Messages — realtime, admin Reports + Events links, user name links to own profile), `Footer` (`variant="market" | "tickets"`; no logo; tickets variant differs only in copy — both use the same Reichman-blue styling).
+- `TicketsLayout` + `TicketsNavbar` — blue-themed layout for all `/tickets/*` routes (same Reichman blue as RUNI Market); brand shows "RUNI Tickets"; no search bar (events are browsed, not searched); layout renders `Footer variant="tickets"`.
 - `ListingCard`: image, heart toggle (top corner, hidden on own listings), title, price ₪, badges, relative upload time + watch count.
 - `hooks/useListings.ts`: `useListings(filters{search,category,condition,priceMin/Max,sort,limit})`, `useListing(id)`, `useMyListings`, `useCreateListing`, `useUpdateListing`, `useSetListingStatus`, `useDeleteListing` (also removes storage files), `useAddListingImages`, `useDeleteListingImage`. Shared `uploadListingImages` compresses via `lib/image.ts` (max 1200px, JPEG 80%).
 - `hooks/useMessages.ts`: `useConversations` (single batched messages query → latest_message + unread_count per convo), `useMessages` (realtime INSERT subscription), `useUnreadCount` (global badge, realtime), `useMarkConversationRead` (marks incoming read when chat open), `useSendMessage`, `useCreateConversation` (dedupes existing).
 - `hooks/useWatchlist.ts`: `useWatchlistIds` (Set for heart state), `useWatchlist`, `useToggleWatchlist` (invalidates listing queries — watch_count lives on listings).
 - `hooks/useReports.ts`: `useIsAdmin`, `useReports`, `useSubmitReport`, `useDismissReport`.
+- `hooks/useTicketEvents.ts`: DB-backed (Supabase `events`). `useTicketEvents` (public, only `ends_at > now()`), `useTicketEvent(id)`, `useAdminEvents` (all events, admin), `useParseEvent` (calls `import-event` edge fn, action `parse`), `useCreateEvent` (action `create`), `useDeleteEvent`. `data/ticketEvents.ts` keeps the `TicketEvent`/`TicketOffer`/`TicketBid` types, `mapEventRow` (row→UI), and `lowestOfferPrice`; offers/bids are still UI-local scaffold (no tables yet) so imported events start empty.
+- `lib/eventTime.ts` (pure, tested): `suggestEndsAt` (evening start → next-day 04:00; after-midnight → same-day 04:00; daytime → +4h), `toDatetimeLocal`/`fromDatetimeLocal` for `<input type="datetime-local">`.
+- Edge function `supabase/functions/import-event`: admin-only (verifies JWT + `user_roles`). `action:"parse"` fetches a go-out.co link server-side and extracts title/description/venue/start/end/image from OpenGraph + JSON-LD (schema.org/Event), returns fields (no DB write). `action:"create"` downloads the cover image into the `event-images` bucket and inserts the `events` row. Host is restricted to `go-out.co`.
 - `hooks/useAuth.tsx`: signUp restricted to `@post.runi.ac.il` (normalized lowercase), signIn refuses unverified emails (defense in depth).
 - ChatWindow scrolls only its own list (`scrollTop`), never `scrollIntoView` (that scrolled the whole page).
 
 ## Database (supabase/migrations/ — chronological)
-Tables: `profiles`, `listings` (+`watch_count`), `listing_images`, `conversations`, `messages`, `watchlist`, `reports`, `user_roles`.
+Tables: `profiles`, `listings` (+`watch_count`), `listing_images`, `conversations`, `messages`, `watchlist`, `reports`, `user_roles`, `events`.
 
 Key server-side rules (all enforced by migrations, not just frontend):
 - **Signup domain**: trigger on `auth.users` rejects non-`@post.runi.ac.il` emails (insert + email change).
@@ -75,6 +79,7 @@ Key server-side rules (all enforced by migrations, not just frontend):
 - **Account deletion**: `delete_own_account()` RPC (SECURITY DEFINER, deletes own auth.users row, cascades).
 - **Storage**: `listing-images` public bucket; per-user folder (`<uid>/...`) for insert/update/delete; bucket-wide listing/enumeration policy removed; trigger functions' EXECUTE revoked from client roles; GraphQL endpoint revoked.
 - **Storage cleanup**: AFTER DELETE trigger `delete_listing_image_object` on `listing_images` (SECURITY DEFINER) removes the matching `storage.objects` row whenever an image row is deleted — covers admin deletes and account-deletion cascades where the owner-folder RLS policy blocks the client `remove()`. Idempotent with the eager client-side removal in `useDeleteListing`/`useDeleteListingImage`.
+- **Events (RUNI Tickets)**: `events` table (`title`, `description`, `venue`, `emoji`, `image_url`, `starts_at`, `ends_at`, `source_url`, `created_by`). Public SELECT is just `ends_at > now()` — deliberately **no `is_admin()`** in this anon-facing policy (anon lacks EXECUTE on the SECURITY DEFINER fn and it isn't inlinable; same lesson as the listings fix). INSERT/UPDATE/DELETE are admin-only (`is_admin`, only ever hit by authenticated, which retains EXECUTE). Ended events are purged within minutes so admins don't need a "see ended" SELECT branch. **Auto-deletion**: a `pg_cron` job (`purge-expired-ticket-events`, every 15 min) hard-deletes rows past `ends_at`; the RLS predicate already hides them instantly, so the UI behaves correctly even if pg_cron is unavailable (wrapped in a defensive `DO`/exception block). `event-images` public bucket holds cover images (written only by the `import-event` edge fn via service role); AFTER DELETE trigger `delete_event_image_object` frees the storage object on event delete/purge.
 - Realtime publication includes `messages` (RLS-filtered delivery).
 
 ## Security Status
@@ -84,18 +89,18 @@ Lovable security scan addressed (see migrations `*_security_hardening.sql`, `*_p
 - Raw Supabase error messages shown in toasts (accepted for now).
 - "Confirm email" is ON in the Supabase dashboard (required — signIn also checks client-side).
 
-## RUNI Tickets (separate sub-product, red theme)
-Ticket exchange for RUNI campus events — distinct visual identity (red) from the blue marketplace.
-- **Data layer scaffold** (`src/data/ticketEvents.ts`, `src/hooks/useTicketEvents.ts`): typed static data today with admin-curated events, seller offers, and public buyer bids; designed to swap 1:1 to Supabase `events`, `ticket_offers`, and `ticket_bids` tables without UI changes.
-- **Events are admin-curated** — no user-created events; new events added by editing `ticketEvents.ts` (scaffold) or via future admin UI. Ticket offers and bids currently live in the static scaffold; no persistent ticket writes exist yet.
-- **Market view** (`src/pages/TicketEvent.tsx`): shows lowest ask, highest bid, sorted public sell offers, and sorted public buy bids. Signed-in users can add a local/public bid in the scaffold UI; anonymous visitors see read-only market data plus login/signup CTA. Bids use the authenticated user's `full_name`/email, not a free-text buyer name. Future ticket-selling UI must be auth-gated too.
-- **Next steps not yet built**: separate `events`/`ticket_offers`/`ticket_bids` DB tables + migrations, Admin event management UI, persistent ticket-posting/bid flows for students.
+## RUNI Tickets (separate sub-product, same Reichman-blue theme)
+Ticket exchange for RUNI campus events. Shares the marketplace's Reichman-blue identity (it used to be red; switched to blue for brand consistency — `TicketsNavbar`/`TicketsLayout`/`Footer variant="tickets"` are all blue now).
+- **Events are real DB rows** (`events` table) — admin-curated, **imported from an external link** (e.g. go-out.co) and **auto-expiring** at `ends_at`. The admin pastes a link on `/admin/events`; the `import-event` edge fn parses the page (OpenGraph + JSON-LD) and pre-fills a review form (title, venue, start/end, cover image), the admin checks/adjusts (esp. the end time) and publishes; the cover image is copied into the `event-images` bucket. Hooks/edge fn details under Key Components & Hooks; table/cron/storage details under Database.
+- **Auto-deletion**: an event disappears the moment `ends_at` passes (RLS predicate) and is hard-deleted by `pg_cron` shortly after (e.g. a Fri 22:00→Sat 04:00 party is gone at Sat 04:00).
+- **Ticket offers/bids are still UI-local scaffold** — no `ticket_offers`/`ticket_bids` tables yet, so a freshly imported event starts with empty offers/bids. **Market view** (`src/pages/TicketEvent.tsx`): shows lowest ask, highest bid, sorted public sell offers and buy bids. Signed-in users can add a local/public bid in the scaffold UI; anonymous visitors see read-only market data plus login/signup CTA. Bids use the authenticated user's `full_name`/email, not a free-text buyer name. Future ticket-selling UI must be auth-gated too.
+- **Next steps not yet built**: `ticket_offers`/`ticket_bids` DB tables + persistent ticket-posting/bid flows for students; parser currently scoped to `go-out.co` only.
 - `src/lib/email.ts` (pure email helpers) and `src/lib/conversations.ts` (pure aggregation) are testable pure functions extracted from hooks.
 
 ## Known Open Items / Next Ideas
 - **Email notifications for new messages** — deliberately not built: needs an external provider (e.g. Resend) API key + Supabase Edge Function. User would need to create the account first.
 - No reviews/ratings. Marketplace item offers/bidding remain intentionally out of scope; RUNI Tickets now has a scaffolded public bid/ask market view only.
-- ~16 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper); no E2E yet.
+- ~23 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper, event end-time/`datetime-local` helpers in `src/lib/eventTime.ts`); no E2E yet.
 
 ## Constraints
 - English + Hebrew interface (full parity enforced by test)

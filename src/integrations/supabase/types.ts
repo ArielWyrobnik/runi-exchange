@@ -60,6 +60,48 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          emoji: string
+          ends_at: string
+          id: string
+          image_url: string | null
+          source_url: string | null
+          starts_at: string
+          title: string
+          venue: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          emoji?: string
+          ends_at: string
+          id?: string
+          image_url?: string | null
+          source_url?: string | null
+          starts_at: string
+          title: string
+          venue?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          emoji?: string
+          ends_at?: string
+          id?: string
+          image_url?: string | null
+          source_url?: string | null
+          starts_at?: string
+          title?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
       listing_images: {
         Row: {
           created_at: string

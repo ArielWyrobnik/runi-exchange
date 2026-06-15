@@ -1,21 +1,34 @@
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
-import { ArrowRight, Calendar, MapPin } from "lucide-react";
+import { ArrowRight, Calendar, CalendarPlus, MapPin } from "lucide-react";
 import TicketsLayout from "@/components/layout/TicketsLayout";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useTicketEvents } from "@/hooks/useTicketEvents";
+import { useIsAdmin } from "@/hooks/useReports";
 import { lowestOfferPrice } from "@/data/ticketEvents";
 
 const Tickets = () => {
   const { t, lang } = useLanguage();
   const { data: events } = useTicketEvents();
+  const { data: isAdmin } = useIsAdmin();
   const dateLocale = lang === "he" ? heLocale : undefined;
 
   return (
     <TicketsLayout>
       <section className="container py-8">
-        <h2 className="mb-6 text-2xl font-semibold text-primary">{t("upcomingEvents")}</h2>
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <h2 className="text-2xl font-semibold text-primary">{t("upcomingEvents")}</h2>
+          {isAdmin && (
+            <Button asChild size="sm">
+              <Link to="/admin/events">
+                <CalendarPlus className="mr-1 h-4 w-4" />
+                {t("addEvent")}
+              </Link>
+            </Button>
+          )}
+        </div>
 
         {events && events.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -27,9 +40,18 @@ const Tickets = () => {
                   to={`/tickets/${event.id}`}
                   className="group flex flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md"
                 >
-                  <div className="flex h-32 items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800 text-5xl">
-                    <span aria-hidden>{event.emoji}</span>
-                  </div>
+                  {event.imageUrl ? (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.title}
+                      loading="lazy"
+                      className="h-32 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-32 items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800 text-5xl">
+                      <span aria-hidden>{event.emoji}</span>
+                    </div>
+                  )}
                   <div className="flex flex-1 flex-col p-4">
                     <h3 className="text-lg font-semibold text-primary">{event.title}</h3>
                     <div className="mt-2 space-y-1 text-sm text-muted-foreground">

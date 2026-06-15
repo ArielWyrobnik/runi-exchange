@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, MessageCircle, Tag, Globe, List, Heart, ShieldCheck } from "lucide-react";
+import { Menu, Search, MessageCircle, Tag, Globe, List, Heart, ShieldCheck, CalendarPlus } from "lucide-react";
 import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,6 +89,19 @@ const Navbar = () => {
                     <Link to="/admin/reports">
                       <ShieldCheck className="mr-1 h-4 w-4" />
                       {t("adminReports")}
+                    </Link>
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button
+                    size="sm"
+                    asChild
+                    variant="ghost"
+                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                  >
+                    <Link to="/admin/events">
+                      <CalendarPlus className="mr-1 h-4 w-4" />
+                      {t("adminEvents")}
                     </Link>
                   </Button>
                 )}
@@ -212,6 +225,15 @@ const Navbar = () => {
                           className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
                         >
                           {t("adminReports")}
+                        </Link>
+                      )}
+                      {isAdmin && (
+                        <Link
+                          to="/admin/events"
+                          onClick={() => setMobileOpen(false)}
+                          className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-accent"
+                        >
+                          {t("adminEvents")}
                         </Link>
                       )}
                       <Link

@@ -112,18 +112,29 @@ const TicketEvent = () => {
 
         {/* Event header */}
         <div className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/60">
+          {event.imageUrl && (
+            <img
+              src={event.imageUrl}
+              alt={event.title}
+              className="h-48 w-full object-cover sm:h-64"
+            />
+          )}
           <div className="flex items-center gap-4 p-5">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 text-4xl">
-              <span aria-hidden>{event.emoji}</span>
-            </div>
+            {!event.imageUrl && (
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 text-4xl">
+                <span aria-hidden>{event.emoji}</span>
+              </div>
+            )}
             <div className="min-w-0">
               <h1 className="text-2xl font-bold text-primary">{event.title}</h1>
               <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 shrink-0" />
-                  {format(new Date(event.date), "d MMM yyyy", {
+                  {format(new Date(event.date), "d MMM yyyy, HH:mm", {
                     locale: dateLocale,
                   })}
+                  {" – "}
+                  {format(new Date(event.endsAt), "HH:mm", { locale: dateLocale })}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <MapPin className="h-4 w-4 shrink-0" />

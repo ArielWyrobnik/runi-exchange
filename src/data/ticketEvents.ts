@@ -1,12 +1,15 @@
 /**
- * RUNI Tickets — scaffold data layer.
+ * RUNI Tickets — event types + DB row mapping.
  *
- * Events are admin-curated and tickets are offered against an event. The
- * full feature will live in dedicated Supabase tables (`events` and
- * `ticket_offers`, separate from `listings`). For now this module returns
- * static curated data with the same shape, so the pages can be built and
- * the data source swapped for real queries later without touching the UI.
+ * Events live in the Supabase `events` table (admin-curated, imported from
+ * external links such as go-out.co and auto-expiring at `ends_at`). Ticket
+ * offers and buy bids are still a UI-local scaffold — there are no
+ * `ticket_offers` / `ticket_bids` tables yet — so a freshly imported event
+ * starts with empty offers/bids until that backend is built.
  */
+import type { Database } from "@/integrations/supabase/types";
+
+export type EventRow = Database["public"]["Tables"]["events"]["Row"];
 
 export interface TicketBid {
   id: string;
@@ -29,79 +32,36 @@ export interface TicketOffer {
 export interface TicketEvent {
   id: string;
   title: string;
-  /** Decorative — stands in for an event image in the scaffold. */
+  /** Decorative fallback shown when there is no cover image. */
   emoji: string;
   description: string;
   venue: string;
-  /** ISO date string. */
+  /** ISO timestamp of when the event starts. */
   date: string;
+  /** ISO timestamp of when the event ends (drives auto-deletion). */
+  endsAt: string;
+  /** Cover image URL (Supabase storage), or null → fall back to emoji. */
+  imageUrl: string | null;
+  /** Original import link (e.g. go-out.co), if any. */
+  sourceUrl: string | null;
   offers: TicketOffer[];
   bids: TicketBid[];
 }
 
-export const TICKET_EVENTS: TicketEvent[] = [
-  {
-    id: "summer-beach-bash",
-    title: "Summer Beach Bash",
-    emoji: "🏖️",
-    description:
-      "The end-of-semester open-air party on Herzliya beach. Live DJ sets, food trucks and the whole campus in one place.",
-    venue: "Herzliya Beach",
-    date: "2026-06-20",
-    offers: [
-      { id: "o1", sellerName: "Maya Cohen", price: 80, quantity: 2, note: "Early-bird tickets, can meet on campus." },
-      { id: "o2", sellerName: "Daniel Levi", price: 95, quantity: 1 },
-      { id: "o3", sellerName: "Noa Friedman", price: 110, quantity: 4, note: "Group of 4, selling together." },
-    ],
-    bids: [
-      { id: "b1", buyerName: "Ariel Ben-David", price: 70, quantity: 1, note: "Can meet near the library." },
-      { id: "b2", buyerName: "Lior Katz", price: 65, quantity: 2 },
-    ],
-  },
-  {
-    id: "faculty-cup-final",
-    title: "Faculty Cup Final",
-    emoji: "⚽",
-    description:
-      "The annual inter-faculty football final. Computer Science defends the title against Business.",
-    venue: "RUNI Sports Hall",
-    date: "2026-06-27",
-    offers: [
-      { id: "o4", sellerName: "Itay Bar", price: 30, quantity: 2 },
-      { id: "o5", sellerName: "Shira Azulay", price: 25, quantity: 1, note: "Can't make it anymore, cheap." },
-    ],
-    bids: [
-      { id: "b3", buyerName: "Yuval Mor", price: 20, quantity: 1 },
-    ],
-  },
-  {
-    id: "graduation-gala",
-    title: "Graduation Gala",
-    emoji: "🎓",
-    description:
-      "Black-tie celebration for the graduating class. Dinner, awards and an after-party.",
-    venue: "Ivcher Auditorium",
-    date: "2026-07-04",
-    offers: [
-      { id: "o6", sellerName: "Tom Shapira", price: 200, quantity: 1 },
-    ],
-    bids: [
-      { id: "b4", buyerName: "Neta Cohen", price: 160, quantity: 2, note: "Looking for two seats together." },
-      { id: "b5", buyerName: "Eden Levi", price: 150, quantity: 1 },
-    ],
-  },
-  {
-    id: "welcome-week-2026",
-    title: "Welcome Week Kickoff",
-    emoji: "🎉",
-    description:
-      "Kick off the new academic year. Meet your cohort, clubs fair and an evening concert.",
-    venue: "Main Campus Plaza",
-    date: "2026-09-01",
-    offers: [],
-    bids: [],
-  },
-];
+/** Map a raw `events` row to the shape the Tickets UI consumes. */
+export const mapEventRow = (row: EventRow): TicketEvent => ({
+  id: row.id,
+  title: row.title,
+  emoji: row.emoji || "🎟️",
+  description: row.description ?? "",
+  venue: row.venue ?? "",
+  date: row.starts_at,
+  endsAt: row.ends_at,
+  imageUrl: row.image_url,
+  sourceUrl: row.source_url,
+  offers: [],
+  bids: [],
+});
 
 /** Lowest ticket price across an event's offers, or null if none. */
 export const lowestOfferPrice = (event: TicketEvent): number | null =>
