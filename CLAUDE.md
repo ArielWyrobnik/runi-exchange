@@ -51,8 +51,8 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 | `/login`, `/signup` | Auth pages | public |
 
 ## Key Components & Hooks
-- `Layout` (`fullHeight` prop pins to viewport, hides footer), `Navbar` (lang toggle EN/עברית, unread badge on Messages — realtime, admin Reports link, user name links to own profile), `Footer` (no logo).
-- `TicketsLayout` + `TicketsNavbar` — red-themed layout for all `/tickets/*` routes; brand shows "RUNI Tickets"; no search bar (events are browsed, not searched).
+- `Layout` (`fullHeight` prop pins to viewport, hides footer), `Navbar` (lang toggle EN/עברית, unread badge on Messages — realtime, admin Reports link, user name links to own profile), `Footer` (`variant="market" | "tickets"`; no logo; tickets variant is red with RUNI Tickets copy).
+- `TicketsLayout` + `TicketsNavbar` — red-themed layout for all `/tickets/*` routes; brand shows "RUNI Tickets"; no search bar (events are browsed, not searched); layout renders `Footer variant="tickets"`.
 - `ListingCard`: image, heart toggle (top corner, hidden on own listings), title, price ₪, badges, relative upload time + watch count.
 - `hooks/useListings.ts`: `useListings(filters{search,category,condition,priceMin/Max,sort,limit})`, `useListing(id)`, `useMyListings`, `useCreateListing`, `useUpdateListing`, `useSetListingStatus`, `useDeleteListing` (also removes storage files), `useAddListingImages`, `useDeleteListingImage`. Shared `uploadListingImages` compresses via `lib/image.ts` (max 1200px, JPEG 80%).
 - `hooks/useMessages.ts`: `useConversations` (single batched messages query → latest_message + unread_count per convo), `useMessages` (realtime INSERT subscription), `useUnreadCount` (global badge, realtime), `useMarkConversationRead` (marks incoming read when chat open), `useSendMessage`, `useCreateConversation` (dedupes existing).
@@ -86,9 +86,9 @@ Lovable security scan addressed (see migrations `*_security_hardening.sql`, `*_p
 
 ## RUNI Tickets (separate sub-product, red theme)
 Ticket exchange for RUNI campus events — distinct visual identity (red) from the blue marketplace.
-- **Data layer scaffold** (`src/data/ticketEvents.ts`, `src/hooks/useTicketEvents.ts`): typed static data today with event offers and public buy bids; designed to swap 1:1 to Supabase `events`, `ticket_offers`, and `ticket_bids` tables without UI changes.
-- **Events are admin-curated** — no user-created events; new events added by editing `ticketEvents.ts` (scaffold) or via future admin UI.
-- **Market view** (`src/pages/TicketEvent.tsx`): shows lowest ask, highest bid, sorted public sell offers, and sorted public buy bids. Signed-in users can add a local/public bid in the scaffold UI; anonymous visitors see read-only market data plus login/signup CTA. Future ticket-selling UI must be auth-gated too.
+- **Data layer scaffold** (`src/data/ticketEvents.ts`, `src/hooks/useTicketEvents.ts`): typed static data today with admin-curated events, seller offers, and public buyer bids; designed to swap 1:1 to Supabase `events`, `ticket_offers`, and `ticket_bids` tables without UI changes.
+- **Events are admin-curated** — no user-created events; new events added by editing `ticketEvents.ts` (scaffold) or via future admin UI. Ticket offers and bids currently live in the static scaffold; no persistent ticket writes exist yet.
+- **Market view** (`src/pages/TicketEvent.tsx`): shows lowest ask, highest bid, sorted public sell offers, and sorted public buy bids. Signed-in users can add a local/public bid in the scaffold UI; anonymous visitors see read-only market data plus login/signup CTA. Bids use the authenticated user's `full_name`/email, not a free-text buyer name. Future ticket-selling UI must be auth-gated too.
 - **Next steps not yet built**: separate `events`/`ticket_offers`/`ticket_bids` DB tables + migrations, Admin event management UI, persistent ticket-posting/bid flows for students.
 - `src/lib/email.ts` (pure email helpers) and `src/lib/conversations.ts` (pure aggregation) are testable pure functions extracted from hooks.
 

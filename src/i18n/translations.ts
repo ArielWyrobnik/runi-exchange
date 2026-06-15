@@ -190,18 +190,28 @@ export const en = {
   qtyLabel: "Qty",
   perTicket: "per ticket",
   sellTicketsSoon: "Listing your own tickets is coming soon.",
-bidPriceLabel: "Bid price (₪)",
-bidQtyLabel: "Quantity",
-bidNoteLabel: "Note",
-bidNotePlaceholder: "Optional: meeting spot, timing, constraints...",
-postingAs: "Posting as",
-runiStudent: "RUNI student",
-ticketAuthRequiredTitle: "Log in to trade tickets",
-ticketAuthRequiredDesc:
-  "Only signed-in Reichman students can place public bids or list tickets for sale.",
-placeBid: "Place public bid",
-bidPerTicket: "bid per ticket",
-noBidsYet: "No public bids for this event yet.",
+  ticketOffersDesc:
+    "Lowest asks first — these are tickets students are offering to sell.",
+  ticketBidsHeading: "Open Bids",
+  ticketBidsDesc:
+    "Highest bids first — visible demand helps sellers and buyers meet at a fair price.",
+  lowestAsk: "Lowest ask",
+  highestBid: "Highest bid",
+  marketBalanceTitle: "Live market view",
+  marketBalanceDesc:
+    "Compare public asks and bids so supply and demand can converge, StockX-style.",
+  bidPriceLabel: "Bid price (₪)",
+  bidQtyLabel: "Quantity",
+  bidNoteLabel: "Note",
+  bidNotePlaceholder: "Optional: meeting spot, timing, constraints...",
+  postingAs: "Posting as",
+  runiStudent: "RUNI student",
+  ticketAuthRequiredTitle: "Log in to trade tickets",
+  ticketAuthRequiredDesc:
+    "Only signed-in Reichman students can place public bids or list tickets for sale.",
+  placeBid: "Place public bid",
+  bidPerTicket: "bid per ticket",
+  noBidsYet: "No public bids for this event yet.",
 };
 
 export const he: Record<TranslationKey, string> = {
@@ -390,18 +400,28 @@ export const he: Record<TranslationKey, string> = {
   qtyLabel: "כמות",
   perTicket: "לכרטיס",
   sellTicketsSoon: "פרסום כרטיסים משלכם יתאפשר בקרוב.",
-bidPriceLabel: "מחיר הצעת קנייה (₪)",
-bidQtyLabel: "כמות",
-bidNoteLabel: "הערה",
-bidNotePlaceholder: "אופציונלי: מקום מפגש, זמן, מגבלות...",
-postingAs: "מפרסמים בתור",
-runiStudent: "סטודנט/ית רייכמן",
-ticketAuthRequiredTitle: "התחברו כדי לסחור בכרטיסים",
-ticketAuthRequiredDesc:
-  "רק סטודנטים מחוברים של רייכמן יכולים לפרסם הצעות קנייה ציבוריות או להציע כרטיסים למכירה.",
-placeBid: "פרסום הצעת קנייה",
-bidPerTicket: "הצעת קנייה לכרטיס",
-noBidsYet: "עדיין אין הצעות קנייה ציבוריות לאירוע זה.",
+  ticketOffersDesc:
+    "מחירי מכירה מהנמוך לגבוה — כרטיסים שסטודנטים מציעים למכור.",
+  ticketBidsHeading: "הצעות קנייה פתוחות",
+  ticketBidsDesc:
+    "הצעות הקנייה הגבוהות מוצגות ראשונות — ביקוש גלוי עוזר למוכרים ולקונים להגיע למחיר הוגן.",
+  lowestAsk: "מחיר מכירה נמוך ביותר",
+  highestBid: "הצעת קנייה גבוהה ביותר",
+  marketBalanceTitle: "תמונת שוק חיה",
+  marketBalanceDesc:
+    "השוו בין הצעות מכירה וקנייה ציבוריות כדי שהיצע וביקוש יתכנסו, בסגנון StockX.",
+  bidPriceLabel: "מחיר הצעת קנייה (₪)",
+  bidQtyLabel: "כמות",
+  bidNoteLabel: "הערה",
+  bidNotePlaceholder: "אופציונלי: מקום מפגש, זמן, מגבלות...",
+  postingAs: "מפרסמים בתור",
+  runiStudent: "סטודנט/ית רייכמן",
+  ticketAuthRequiredTitle: "התחברו כדי לסחור בכרטיסים",
+  ticketAuthRequiredDesc:
+    "רק סטודנטים מחוברים של רייכמן יכולים לפרסם הצעות קנייה ציבוריות או להציע כרטיסים למכירה.",
+  placeBid: "פרסום הצעת קנייה",
+  bidPerTicket: "הצעת קנייה לכרטיס",
+  noBidsYet: "עדיין אין הצעות קנייה ציבוריות לאירוע זה.",
 };
 
 export type TranslationKey = keyof typeof en;
