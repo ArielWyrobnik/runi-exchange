@@ -42,14 +42,14 @@ const Index = () => {
                 to={category.to}
                 className={`group flex min-h-28 flex-col items-center justify-center border bg-card px-4 py-5 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md ${
                   category.isSpecial
-                    ? "border-red-500 bg-red-50/60 text-red-700 hover:border-red-600 hover:bg-red-50"
+                    ? "border-primary/40 bg-blue-50/60 text-primary hover:border-primary/60 hover:bg-blue-50"
                     : ""
                 }`}
               >
                 <div
                   className={`mb-3 flex h-12 w-12 items-center justify-center rounded-full ${
                     category.isSpecial
-                      ? "bg-red-100 text-red-700"
+                      ? "bg-blue-100 text-primary"
                       : "bg-primary text-primary-foreground"
                   }`}
                 >
@@ -59,7 +59,7 @@ const Index = () => {
                   {tCategory(category.category)}
                 </span>
                 {category.sublabel && (
-                  <span className="mt-1 text-xs font-medium text-red-600">
+                  <span className="mt-1 text-xs font-medium text-primary">
                     {tCategory(category.sublabel)}
                   </span>
                 )}

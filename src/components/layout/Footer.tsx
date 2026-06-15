@@ -10,13 +10,13 @@ const Footer = ({ variant = "market" }: FooterProps) => {
   const isTickets = variant === "tickets";
 
   return (
-    <footer className={`border-t ${isTickets ? "bg-red-700 text-white" : "bg-primary text-primary-foreground"}`}>
+    <footer className="border-t bg-primary text-primary-foreground">
       <div className="container py-10">
         <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between">
           {/* Brand + tagline */}
           <div>
             <p className="font-bold">{isTickets ? t("ticketsHeroTitle") : t("brand")}</p>
-            <p className={`text-xs ${isTickets ? "text-white/70" : "text-primary-foreground/70"}`}>
+            <p className="text-xs text-primary-foreground/70">
               {isTickets ? t("ticketsFooterTagline") : t("madeByStudents")}
             </p>
           </div>
@@ -35,7 +35,7 @@ const Footer = ({ variant = "market" }: FooterProps) => {
           </nav>
         </div>
 
-        <div className={`mt-8 border-t pt-6 text-center text-xs ${isTickets ? "border-white/20 text-white/60" : "border-primary-foreground/20 text-primary-foreground/60"}`}>
+        <div className="mt-8 border-t border-primary-foreground/20 pt-6 text-center text-xs text-primary-foreground/60">
           © {new Date().getFullYear()} {isTickets ? t("ticketsFooterCopyright") : t("footerCopyright")}
         </div>
       </div>

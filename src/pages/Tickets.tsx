@@ -15,7 +15,7 @@ const Tickets = () => {
   return (
     <TicketsLayout>
       <section className="container py-8">
-        <h2 className="mb-6 text-2xl font-semibold text-red-700">{t("upcomingEvents")}</h2>
+        <h2 className="mb-6 text-2xl font-semibold text-primary">{t("upcomingEvents")}</h2>
 
         {events && events.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -25,13 +25,13 @@ const Tickets = () => {
                 <Link
                   key={event.id}
                   to={`/tickets/${event.id}`}
-                  className="group flex flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition hover:-translate-y-0.5 hover:border-red-400 hover:shadow-md"
+                  className="group flex flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md"
                 >
-                  <div className="flex h-32 items-center justify-center bg-gradient-to-br from-red-500 to-red-700 text-5xl">
+                  <div className="flex h-32 items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800 text-5xl">
                     <span aria-hidden>{event.emoji}</span>
                   </div>
                   <div className="flex flex-1 flex-col p-4">
-                    <h3 className="text-lg font-semibold text-red-700">{event.title}</h3>
+                    <h3 className="text-lg font-semibold text-primary">{event.title}</h3>
                     <div className="mt-2 space-y-1 text-sm text-muted-foreground">
                       <p className="flex items-center gap-1.5">
                         <Calendar className="h-4 w-4 shrink-0" />
@@ -48,13 +48,13 @@ const Tickets = () => {
                         {minPrice !== null && (
                           <>
                             {" · "}
-                            <span className="font-semibold text-red-700">
+                            <span className="font-semibold text-primary">
                               {t("fromPrice")} ₪{minPrice}
                             </span>
                           </>
                         )}
                       </span>
-                      <span className="flex items-center gap-1 text-sm font-medium text-red-600 group-hover:underline">
+                      <span className="flex items-center gap-1 text-sm font-medium text-primary group-hover:underline">
                         {t("viewTickets")}
                         <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                       </span>

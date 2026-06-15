@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/i18n/LanguageContext";
 import reichmanStars from "@/assets/reichman-stars.png";
 
-/** Red-themed navbar used exclusively on /tickets pages. */
+/** Blue-themed navbar used exclusively on /tickets pages. */
 const TicketsNavbar = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -23,8 +23,8 @@ const TicketsNavbar = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-background">
-      {/* Red top bar — mirrors the blue RUNI Market bar */}
-      <div className="bg-red-700 text-white">
+      {/* Blue top bar — matches the RUNI Market bar */}
+      <div className="bg-primary text-white">
         <div className="container flex h-16 items-center justify-between gap-4">
           {/* Logo — dir="ltr" keeps stars left of text in Hebrew too */}
           <Link to="/tickets" dir="ltr" className="flex items-center gap-2.5">
@@ -58,7 +58,7 @@ const TicketsNavbar = () => {
               size="sm"
               asChild
               variant="outline"
-              className="border-white bg-transparent text-white hover:bg-white hover:text-red-700"
+              className="border-white bg-transparent text-white hover:bg-white hover:text-primary"
             >
               <Link to="/">
                 <Tag className="mr-1 h-4 w-4" />
@@ -78,7 +78,7 @@ const TicketsNavbar = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleSignOut}
-                  className="border-white bg-transparent text-white hover:bg-white hover:text-red-700"
+                  className="border-white bg-transparent text-white hover:bg-white hover:text-primary"
                 >
                   {t("logOut")}
                 </Button>
@@ -96,7 +96,7 @@ const TicketsNavbar = () => {
                 <Button
                   size="sm"
                   asChild
-                  className="bg-white text-red-700 hover:bg-white/90"
+                  className="bg-white text-primary hover:bg-white/90"
                 >
                   <Link to="/signup">{t("signUpRuni")}</Link>
                 </Button>
@@ -121,23 +121,23 @@ const TicketsNavbar = () => {
                   className="flex items-center gap-2"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded bg-red-700">
+                  <div className="flex h-8 w-8 items-center justify-center rounded bg-primary">
                     <Ticket className="h-4 w-4 text-white" />
                   </div>
-                  <span className="font-bold text-red-700">RUNI Tickets</span>
+                  <span className="font-bold text-primary">RUNI Tickets</span>
                 </Link>
 
                 <nav className="flex flex-col gap-1">
                   <Link
                     to="/"
                     onClick={() => setMobileOpen(false)}
-                    className="rounded px-3 py-2.5 text-sm font-medium text-red-700 hover:bg-red-50"
+                    className="rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-blue-50"
                   >
                     {t("brand")}
                   </Link>
                   <button
                     onClick={toggleLang}
-                    className="flex items-center gap-2 rounded px-3 py-2.5 text-left text-sm font-medium text-red-700 hover:bg-red-50"
+                    className="flex items-center gap-2 rounded px-3 py-2.5 text-left text-sm font-medium text-primary hover:bg-blue-50"
                   >
                     <Globe className="h-4 w-4" />
                     {lang === "en" ? "עברית" : "English"}
@@ -156,7 +156,7 @@ const TicketsNavbar = () => {
                       </Link>
                       <Button
                         variant="outline"
-                        className="border-red-700 text-red-700"
+                        className="border-primary text-primary"
                         onClick={() => { handleSignOut(); setMobileOpen(false); }}
                       >
                         {t("logOut")}
@@ -167,14 +167,14 @@ const TicketsNavbar = () => {
                       <Button
                         variant="outline"
                         asChild
-                        className="border-red-700 text-red-700"
+                        className="border-primary text-primary"
                         onClick={() => setMobileOpen(false)}
                       >
                         <Link to="/login">{t("logIn")}</Link>
                       </Button>
                       <Button
                         asChild
-                        className="bg-red-700 text-white hover:bg-red-800"
+                        className="bg-primary text-white hover:bg-primary/90"
                         onClick={() => setMobileOpen(false)}
                       >
                         <Link to="/signup">{t("signUpRuni")}</Link>
@@ -188,10 +188,10 @@ const TicketsNavbar = () => {
         </div>
       </div>
 
-      {/* Red-tinted search/nav bar row */}
-      <div className="border-b border-red-200 bg-red-50/60">
+      {/* Blue-tinted nav bar row */}
+      <div className="border-b border-blue-200 bg-blue-50/60">
         <div className="container flex h-10 items-center gap-4">
-          <Link to="/tickets" className="text-sm font-medium text-red-700 hover:underline">
+          <Link to="/tickets" className="text-sm font-medium text-primary hover:underline">
             {lang === "he" ? "כל האירועים" : "All Events"}
           </Link>
           <Link to="/" className="text-sm text-muted-foreground hover:text-foreground hover:underline">

@@ -37,7 +37,7 @@ const TicketEvent = () => {
     return (
       <TicketsLayout>
         <div className="flex min-h-[50vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </TicketsLayout>
     );
@@ -47,12 +47,12 @@ const TicketEvent = () => {
     return (
       <TicketsLayout>
         <div className="container flex min-h-[50vh] flex-col items-center justify-center text-center">
-          <h1 className="text-xl font-semibold text-red-700">
+          <h1 className="text-xl font-semibold text-primary">
             {t("eventNotFound")}
           </h1>
           <Link
             to="/tickets"
-            className="mt-4 font-medium text-red-600 underline"
+            className="mt-4 font-medium text-primary underline"
           >
             {t("backToTickets")}
           </Link>
@@ -104,20 +104,20 @@ const TicketEvent = () => {
       <div className="container max-w-5xl py-6">
         <Link
           to="/tickets"
-          className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:underline"
+          className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
           <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
           {t("backToTickets")}
         </Link>
 
         {/* Event header */}
-        <div className="overflow-hidden rounded-lg border border-red-200 bg-red-50/60">
+        <div className="overflow-hidden rounded-lg border border-blue-200 bg-blue-50/60">
           <div className="flex items-center gap-4 p-5">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-red-700 text-4xl">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 text-4xl">
               <span aria-hidden>{event.emoji}</span>
             </div>
             <div className="min-w-0">
-              <h1 className="text-2xl font-bold text-red-700">{event.title}</h1>
+              <h1 className="text-2xl font-bold text-primary">{event.title}</h1>
               <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 shrink-0" />
@@ -133,33 +133,33 @@ const TicketEvent = () => {
             </div>
           </div>
           {event.description && (
-            <p className="border-t border-red-200 px-5 py-4 text-sm text-foreground/80">
+            <p className="border-t border-blue-200 px-5 py-4 text-sm text-foreground/80">
               {event.description}
             </p>
           )}
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-lg border border-red-200 bg-white p-4">
+          <div className="rounded-lg border border-blue-200 bg-white p-4">
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <TrendingDown className="h-4 w-4 text-red-600" />
+              <TrendingDown className="h-4 w-4 text-primary" />
               {t("lowestAsk")}
             </p>
-            <p className="mt-2 text-2xl font-bold text-red-700">
+            <p className="mt-2 text-2xl font-bold text-primary">
               {lowestAsk ? `₪${lowestAsk}` : "—"}
             </p>
           </div>
-          <div className="rounded-lg border border-red-200 bg-white p-4">
+          <div className="rounded-lg border border-blue-200 bg-white p-4">
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <TrendingUp className="h-4 w-4 text-red-600" />
+              <TrendingUp className="h-4 w-4 text-primary" />
               {t("highestBid")}
             </p>
-            <p className="mt-2 text-2xl font-bold text-red-700">
+            <p className="mt-2 text-2xl font-bold text-primary">
               {highestBid ? `₪${highestBid}` : "—"}
             </p>
           </div>
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-sm font-medium text-red-700">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p className="text-sm font-medium text-primary">
               {t("marketBalanceTitle")}
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -171,7 +171,7 @@ const TicketEvent = () => {
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1fr]">
           {/* Ticket offers */}
           <section>
-            <h2 className="mb-1 text-xl font-semibold text-red-700">
+            <h2 className="mb-1 text-xl font-semibold text-primary">
               {t("ticketOffersHeading")} ({offers.length})
             </h2>
             <p className="mb-4 text-xs text-muted-foreground">
@@ -183,7 +183,7 @@ const TicketEvent = () => {
                 {offers.map((offer) => (
                   <li
                     key={offer.id}
-                    className="flex items-center justify-between gap-4 rounded-lg border p-4 transition hover:border-red-300"
+                    className="flex items-center justify-between gap-4 rounded-lg border p-4 transition hover:border-blue-300"
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 font-medium">
@@ -200,7 +200,7 @@ const TicketEvent = () => {
                       )}
                     </div>
                     <div className="shrink-0 text-right rtl:text-left">
-                      <p className="text-lg font-bold text-red-700">
+                      <p className="text-lg font-bold text-primary">
                         ₪{offer.price}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -219,7 +219,7 @@ const TicketEvent = () => {
 
           {/* Ticket bids */}
           <section>
-            <h2 className="mb-1 text-xl font-semibold text-red-700">
+            <h2 className="mb-1 text-xl font-semibold text-primary">
               {t("ticketBidsHeading")} ({bids.length})
             </h2>
             <p className="mb-4 text-xs text-muted-foreground">
@@ -229,7 +229,7 @@ const TicketEvent = () => {
             {user ? (
               <form
                 onSubmit={handleBidSubmit}
-                className="mb-4 rounded-lg border border-red-200 bg-red-50/60 p-4"
+                className="mb-4 rounded-lg border border-blue-200 bg-blue-50/60 p-4"
               >
                 <p className="mb-3 text-sm text-muted-foreground">
                   {t("postingAs")} {user.user_metadata?.full_name ?? user.email}
@@ -272,14 +272,14 @@ const TicketEvent = () => {
                 </div>
                 <Button
                   type="submit"
-                  className="mt-4 w-full bg-red-700 text-white hover:bg-red-800 sm:w-auto"
+                  className="mt-4 w-full bg-primary text-white hover:bg-primary/90 sm:w-auto"
                 >
                   {t("placeBid")}
                 </Button>
               </form>
             ) : (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50/60 p-4">
-                <p className="font-medium text-red-700">
+              <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/60 p-4">
+                <p className="font-medium text-primary">
                   {t("ticketAuthRequiredTitle")}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -288,14 +288,14 @@ const TicketEvent = () => {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Button
                     asChild
-                    className="bg-red-700 text-white hover:bg-red-800"
+                    className="bg-primary text-white hover:bg-primary/90"
                   >
                     <Link to="/login">{t("logIn")}</Link>
                   </Button>
                   <Button
                     asChild
                     variant="outline"
-                    className="border-red-700 text-red-700 hover:bg-red-50"
+                    className="border-primary text-primary hover:bg-blue-50"
                   >
                     <Link to="/signup">{t("signUpRuni")}</Link>
                   </Button>
@@ -308,7 +308,7 @@ const TicketEvent = () => {
                 {bids.map((bid) => (
                   <li
                     key={bid.id}
-                    className="flex items-center justify-between gap-4 rounded-lg border p-4 transition hover:border-red-300"
+                    className="flex items-center justify-between gap-4 rounded-lg border p-4 transition hover:border-blue-300"
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 font-medium">
@@ -325,7 +325,7 @@ const TicketEvent = () => {
                       )}
                     </div>
                     <div className="shrink-0 text-right rtl:text-left">
-                      <p className="text-lg font-bold text-red-700">
+                      <p className="text-lg font-bold text-primary">
                         ₪{bid.price}
                       </p>
                       <p className="text-xs text-muted-foreground">

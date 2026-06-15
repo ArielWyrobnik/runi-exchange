@@ -90,7 +90,7 @@ const Browse = () => {
               <SelectValue placeholder={t("category")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Tickets" className="font-medium text-red-600 focus:text-red-700">
+              <SelectItem value="Tickets" className="font-medium text-primary focus:text-primary">
                 {tCategory("Tickets")}
               </SelectItem>
               <SelectItem value="all">{t("allCategories")}</SelectItem>
