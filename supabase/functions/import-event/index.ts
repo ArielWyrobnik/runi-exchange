@@ -206,8 +206,9 @@ const BROWSER_HEADERS = {
 /**
  * Download a cover image server-side (sending a Referer that satisfies the
  * source CDN's hotlink protection) and copy it into the public event-images
- * bucket. Returns the stable public bucket URL, or the original URL as a
- * last-resort fallback if the copy fails.
+ * bucket. Returns the stable public bucket URL, or null if the copy fails
+ * (callers then fall back to the emoji placeholder — better than storing a
+ * hotlink-protected URL that breaks in the browser).
  */
 const copyCoverImage = async (
   admin: ReturnType<typeof createClient>,
@@ -220,15 +221,24 @@ const copyCoverImage = async (
       ...BROWSER_HEADERS,
       Accept: "image/avif,image/webp,image/png,image/jpeg,*/*;q=0.8",
       Referer: referer,
+      Origin: new URL(referer).origin,
+      "Sec-Fetch-Site": "same-origin",
+      "Sec-Fetch-Mode": "no-cors",
+      "Sec-Fetch-Dest": "image",
     };
     const imgRes = await fetch(sourceImageUrl, { headers: imageHeaders, redirect: "follow" });
     if (!imgRes.ok) {
       console.error("Cover image fetch failed", imgRes.status, sourceImageUrl);
-      return sourceImageUrl;
+      return null;
     }
     const buf = new Uint8Array(await imgRes.arrayBuffer());
-    if (buf.byteLength === 0 || buf.byteLength > MAX_IMAGE_BYTES) return sourceImageUrl;
+    if (buf.byteLength === 0 || buf.byteLength > MAX_IMAGE_BYTES) return null;
     const contentType = imgRes.headers.get("content-type") ?? "image/jpeg";
+    // Reject non-image responses (e.g. HTML error pages returned with 200)
+    if (!contentType.startsWith("image/")) {
+      console.error("Cover image response is not an image", contentType);
+      return null;
+    }
     const ext = contentType.includes("png")
       ? "png"
       : contentType.includes("webp")
@@ -237,17 +247,19 @@ const copyCoverImage = async (
           ? "gif"
           : "jpg";
     const path = `${crypto.randomUUID()}.${ext}`;
+    // Ensure the bucket exists (defensive — should be created by migration).
+    await admin.storage.createBucket("event-images", { public: true }).catch(() => {});
     const { error: uploadErr } = await admin.storage
       .from("event-images")
       .upload(path, buf, { contentType, upsert: false });
     if (uploadErr) {
-      console.error("Cover image upload failed", uploadErr);
-      return sourceImageUrl;
+      console.error("Cover image upload failed", uploadErr.message);
+      return null;
     }
     return admin.storage.from("event-images").getPublicUrl(path).data.publicUrl;
   } catch (err) {
     console.error("Cover image copy error", err);
-    return sourceImageUrl;
+    return null;
   }
 };
 
@@ -339,48 +351,12 @@ serve(async (req) => {
     }
 
     // Copy the cover image into our own storage so it stays stable.
-    // Falls back to the original URL if the copy fails (e.g. CDN hotlink protection).
-    let imageUrl: string | null = sourceImageUrl || null;
-    if (sourceImageUrl) {
-      try {
-        const imgSourceUrl = new URL(sourceImageUrl);
-        const imageHeaders = {
-          ...BROWSER_HEADERS,
-          Referer: `${imgSourceUrl.protocol}//${imgSourceUrl.hostname}/`,
-          Origin: `${imgSourceUrl.protocol}//${imgSourceUrl.hostname}`,
-        };
-        const imgRes = await fetch(sourceImageUrl, { headers: imageHeaders, redirect: "follow" });
-        if (imgRes.ok) {
-          const buf = new Uint8Array(await imgRes.arrayBuffer());
-          if (buf.byteLength > 0 && buf.byteLength <= MAX_IMAGE_BYTES) {
-            const contentType = imgRes.headers.get("content-type") ?? "image/jpeg";
-            const ext = contentType.includes("png")
-              ? "png"
-              : contentType.includes("webp")
-                ? "webp"
-                : contentType.includes("gif")
-                  ? "gif"
-                  : "jpg";
-            const path = `${crypto.randomUUID()}.${ext}`;
-            const { error: uploadErr } = await admin.storage
-              .from("event-images")
-              .upload(path, buf, { contentType, upsert: false });
-            if (!uploadErr) {
-              imageUrl = admin.storage.from("event-images").getPublicUrl(path).data.publicUrl;
-            } else {
-              console.error("Event image upload failed", uploadErr);
-              // imageUrl stays as the original source URL (fallback)
-            }
-          }
-        } else {
-          console.error("Event image fetch failed with status", imgRes.status);
-          // imageUrl stays as the original source URL (fallback)
-        }
-      } catch (err) {
-        console.error("Event image fetch/upload error", err);
-        // imageUrl stays as the original source URL (fallback)
-      }
-    }
+    const sourceReferer = sourceImageUrl
+      ? (() => { try { const u = new URL(sourceImageUrl); return `${u.protocol}//${u.hostname}/`; } catch { return ""; } })()
+      : "";
+    const imageUrl: string | null = sourceImageUrl
+      ? await copyCoverImage(admin, sourceImageUrl, sourceReferer)
+      : null;
 
     const { data: inserted, error: insertErr } = await admin
       .from("events")
