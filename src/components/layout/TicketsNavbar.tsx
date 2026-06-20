@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, Globe, Tag, Ticket } from "lucide-react";
+import { Menu, Globe, Tag, Ticket, CalendarPlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsAdmin } from "@/hooks/useReports";
 import { useLanguage } from "@/i18n/LanguageContext";
 import reichmanStars from "@/assets/reichman-stars.png";
 
@@ -12,6 +13,7 @@ const TicketsNavbar = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
+  const { data: isAdmin = false } = useIsAdmin();
   const { lang, setLang, t } = useLanguage();
 
   const handleSignOut = async () => {
@@ -66,6 +68,19 @@ const TicketsNavbar = () => {
               </Link>
             </Button>
 
+            {isAdmin && (
+              <Button
+                size="sm"
+                asChild
+                variant="ghost"
+                className="text-white hover:bg-white/10 hover:text-white"
+              >
+                <Link to="/admin/events">
+                  <CalendarPlus className="mr-1 h-4 w-4" />
+                  {t("adminEvents")}
+                </Link>
+              </Button>
+            )}
             {loading ? null : user ? (
               <>
                 <Link
@@ -135,6 +150,16 @@ const TicketsNavbar = () => {
                   >
                     {t("brand")}
                   </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin/events"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-primary hover:bg-blue-50"
+                    >
+                      <CalendarPlus className="h-4 w-4" />
+                      {t("adminEvents")}
+                    </Link>
+                  )}
                   <button
                     onClick={toggleLang}
                     className="flex items-center gap-2 rounded px-3 py-2.5 text-left text-sm font-medium text-primary hover:bg-blue-50"
