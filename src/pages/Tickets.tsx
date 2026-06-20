@@ -45,6 +45,7 @@ const Tickets = () => {
                       src={event.imageUrl}
                       alt={event.title}
                       loading="lazy"
+                      referrerPolicy="no-referrer"
                       className="h-32 w-full object-cover"
                     />
                   ) : (

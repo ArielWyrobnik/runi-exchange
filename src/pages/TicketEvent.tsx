@@ -116,6 +116,7 @@ const TicketEvent = () => {
             <img
               src={event.imageUrl}
               alt={event.title}
+              referrerPolicy="no-referrer"
               className="h-48 w-full object-cover sm:h-64"
             />
           )}

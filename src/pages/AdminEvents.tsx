@@ -194,6 +194,7 @@ const AdminEvents = () => {
               <img
                 src={draft.imageUrl}
                 alt={draft.title}
+                referrerPolicy="no-referrer"
                 className="mb-4 h-40 w-full rounded-md object-cover"
               />
             )}
@@ -290,6 +291,7 @@ const AdminEvents = () => {
                     <img
                       src={event.imageUrl}
                       alt={event.title}
+                      referrerPolicy="no-referrer"
                       className="h-12 w-12 shrink-0 rounded object-cover"
                     />
                   ) : (
