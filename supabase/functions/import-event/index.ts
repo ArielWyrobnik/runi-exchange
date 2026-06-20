@@ -17,18 +17,7 @@ const jsonResponse = (body: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
-const getServiceKey = () => {
-  const legacyKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (legacyKey) return legacyKey;
-  const secretKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
-  if (!secretKeys) return undefined;
-  try {
-    const parsed = JSON.parse(secretKeys) as Record<string, string>;
-    return parsed.default ?? Object.values(parsed)[0];
-  } catch {
-    return undefined;
-  }
-};
+const getServiceKey = () => Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
 // ---------- HTML metadata parsing (defensive: OpenGraph + JSON-LD) ----------
 
@@ -267,18 +256,27 @@ serve(async (req) => {
   if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405);
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceKey = getServiceKey();
-  if (!supabaseUrl || !serviceKey) {
+  if (!supabaseUrl || !supabaseAnonKey || !serviceKey) {
     return jsonResponse({ error: "Supabase service credentials are not configured" }, 500);
   }
-  const admin = createClient(supabaseUrl, serviceKey);
 
   // --- authenticate + authorize (admins only) ---
-  const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
-  if (!token) return jsonResponse({ error: "Unauthorized" }, 401);
-  const { data: userData, error: userErr } = await admin.auth.getUser(token);
-  if (userErr || !userData?.user) return jsonResponse({ error: "Unauthorized" }, 401);
-  const userId = userData.user.id;
+  // Standard pattern: use the user's own JWT to verify identity, then service role for DB ops.
+  const authHeader = req.headers.get("Authorization") ?? "";
+  if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
+  const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } },
+    auth: { persistSession: false },
+  });
+  const { data: { user }, error: userErr } = await userClient.auth.getUser();
+  if (userErr || !user) return jsonResponse({ error: "Unauthorized" }, 401);
+  const userId = user.id;
+
+  const admin = createClient(supabaseUrl, serviceKey, {
+    auth: { persistSession: false },
+  });
   const { data: roleRow } = await admin
     .from("user_roles")
     .select("role")
