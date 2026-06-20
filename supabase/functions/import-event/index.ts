@@ -287,10 +287,17 @@ serve(async (req) => {
     }
 
     // Copy the cover image into our own storage so it stays stable.
-    let imageUrl: string | null = null;
+    // Falls back to the original URL if the copy fails (e.g. CDN hotlink protection).
+    let imageUrl: string | null = sourceImageUrl || null;
     if (sourceImageUrl) {
       try {
-        const imgRes = await fetch(sourceImageUrl, { headers: BROWSER_HEADERS, redirect: "follow" });
+        const imgSourceUrl = new URL(sourceImageUrl);
+        const imageHeaders = {
+          ...BROWSER_HEADERS,
+          Referer: `${imgSourceUrl.protocol}//${imgSourceUrl.hostname}/`,
+          Origin: `${imgSourceUrl.protocol}//${imgSourceUrl.hostname}`,
+        };
+        const imgRes = await fetch(sourceImageUrl, { headers: imageHeaders, redirect: "follow" });
         if (imgRes.ok) {
           const buf = new Uint8Array(await imgRes.arrayBuffer());
           if (buf.byteLength > 0 && buf.byteLength <= MAX_IMAGE_BYTES) {
@@ -310,11 +317,16 @@ serve(async (req) => {
               imageUrl = admin.storage.from("event-images").getPublicUrl(path).data.publicUrl;
             } else {
               console.error("Event image upload failed", uploadErr);
+              // imageUrl stays as the original source URL (fallback)
             }
           }
+        } else {
+          console.error("Event image fetch failed with status", imgRes.status);
+          // imageUrl stays as the original source URL (fallback)
         }
       } catch (err) {
-        console.error("Event image fetch failed", err);
+        console.error("Event image fetch/upload error", err);
+        // imageUrl stays as the original source URL (fallback)
       }
     }
 
