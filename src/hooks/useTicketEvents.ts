@@ -102,15 +102,34 @@ export const useParseEvent = () =>
     },
   });
 
-/** Copy the cover image into storage and create the event. Admin only. */
+/**
+ * Create the event directly via the client (admin RLS allows the insert).
+ * The cover image is stored as the original source URL — the same URL the
+ * review form already previews, so it is guaranteed to render. This avoids
+ * depending on the import-event edge function being (re)deployed for the
+ * create path; only the `parse` action still needs the edge function.
+ */
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateEventInput) => {
-      const { data, error } = await supabase.functions.invoke("import-event", {
-        body: { action: "create", ...input },
-      });
-      if (error) throw new Error(await functionErrorMessage(error, "Failed to create the event"));
+      const { data: userData } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("events")
+        .insert({
+          title: input.title,
+          description: input.description || null,
+          venue: input.venue || null,
+          emoji: input.emoji,
+          image_url: input.imageUrl,
+          starts_at: input.startsAt,
+          ends_at: input.endsAt,
+          source_url: input.sourceUrl || null,
+          created_by: userData?.user?.id ?? null,
+        })
+        .select()
+        .single();
+      if (error) throw error;
       return data;
     },
     onSuccess: () => {
