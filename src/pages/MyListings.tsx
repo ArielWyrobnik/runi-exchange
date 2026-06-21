@@ -16,7 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Package, Pencil, Tag, Trash2, RotateCcw } from "lucide-react";
+import { Loader2, Package, Pencil, Tag, Trash2, RotateCcw, MapPin } from "lucide-react";
+import { pickupLabelKey } from "@/lib/pickup";
 
 const MyListings = () => {
   const { t, tCategory, tCondition } = useLanguage();
@@ -98,6 +99,10 @@ const MyListings = () => {
                         </Badge>
                         <Badge variant="outline" className="text-xs">
                           {tCategory(listing.category)}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          <MapPin className="mr-1 h-3 w-3 rtl:ml-1 rtl:mr-0" />
+                          {t(pickupLabelKey(listing.pickup_location))}
                         </Badge>
                       </div>
                     </div>

@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart } from "lucide-react";
+import { Heart, MapPin } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { useListingTranslation } from "@/hooks/useListingTranslation";
 import { useWatchlistIds, useToggleWatchlist } from "@/hooks/useWatchlist";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { cn } from "@/lib/utils";
+import { pickupLabelKey } from "@/lib/pickup";
 import type { ListingWithImages } from "@/hooks/useListings";
 
 const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
@@ -84,6 +85,10 @@ const ListingCard = ({ listing }: { listing: ListingWithImages }) => {
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Badge variant="secondary" className="text-xs">{tCondition(listing.condition)}</Badge>
             <Badge variant="outline" className="text-xs">{tCategory(listing.category)}</Badge>
+            <Badge variant="outline" className="text-xs">
+              <MapPin className="mr-1 h-3 w-3 rtl:ml-1 rtl:mr-0" />
+              {t(pickupLabelKey(listing.pickup_location))}
+            </Badge>
           </div>
           <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
             <span>

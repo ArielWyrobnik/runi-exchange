@@ -38,6 +38,7 @@ export interface ListingFilters {
   search?: string;
   category?: string;
   condition?: string;
+  pickup?: string;
   priceMin?: number;
   priceMax?: number;
   sort?: ListingSort;
@@ -51,6 +52,7 @@ export interface ListingWithImages {
   price: number;
   category: string;
   condition: string;
+  pickup_location: string;
   status: string;
   seller_id: string;
   created_at: string;
@@ -84,6 +86,9 @@ export const useListings = (filters: ListingFilters = {}) => {
       }
       if (filters.condition) {
         query = query.eq("condition", filters.condition);
+      }
+      if (filters.pickup) {
+        query = query.eq("pickup_location", filters.pickup);
       }
       if (filters.priceMin !== undefined) {
         query = query.gte("price", filters.priceMin);
@@ -144,7 +149,12 @@ export const useUpdateListing = () => {
   return useMutation({
     mutationFn: async ({
       id,
-      ...fields
+      title,
+      description,
+      price,
+      category,
+      condition,
+      pickupLocation,
     }: {
       id: string;
       title: string;
@@ -152,8 +162,12 @@ export const useUpdateListing = () => {
       price: number;
       category: string;
       condition: string;
+      pickupLocation: string;
     }) => {
-      const { error } = await supabase.from("listings").update(fields).eq("id", id);
+      const { error } = await supabase
+        .from("listings")
+        .update({ title, description, price, category, condition, pickup_location: pickupLocation })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: (_, vars) => {
@@ -271,6 +285,7 @@ export const useCreateListing = () => {
       price,
       category,
       condition,
+      pickupLocation,
       images,
     }: {
       title: string;
@@ -278,6 +293,7 @@ export const useCreateListing = () => {
       price: number;
       category: string;
       condition: string;
+      pickupLocation: string;
       images: File[];
     }) => {
       if (!user) throw new Error("Must be logged in");
@@ -285,7 +301,15 @@ export const useCreateListing = () => {
       // Create listing
       const { data: listing, error: listingError } = await supabase
         .from("listings")
-        .insert({ seller_id: user.id, title, description, price, category, condition })
+        .insert({
+          seller_id: user.id,
+          title,
+          description,
+          price,
+          category,
+          condition,
+          pickup_location: pickupLocation,
+        })
         .select()
         .single();
 

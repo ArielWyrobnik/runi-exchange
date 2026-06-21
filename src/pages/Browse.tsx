@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants";
+import { PICKUP_LOCATIONS, pickupLabelKey } from "@/lib/pickup";
 import { Search, Package, Loader2 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -22,6 +23,7 @@ const Browse = () => {
   const [search, setSearch] = useState(urlSearch);
   const [category, setCategory] = useState<string>(urlCategory);
   const [condition, setCondition] = useState<string>("");
+  const [pickup, setPickup] = useState<string>("");
   const [priceMin, setPriceMin] = useState<string>("");
   const [priceMax, setPriceMax] = useState<string>("");
   const [sort, setSort] = useState<ListingSort>("newest");
@@ -59,6 +61,7 @@ const Browse = () => {
     search: debouncedSearch || undefined,
     category: category || undefined,
     condition: condition || undefined,
+    pickup: pickup || undefined,
     priceMin: priceMin ? Number(priceMin) : undefined,
     priceMax: priceMax ? Number(priceMax) : undefined,
     sort,
@@ -108,6 +111,18 @@ const Browse = () => {
               <SelectItem value="all">{t("allConditions")}</SelectItem>
               {CONDITIONS.map((c) => (
                 <SelectItem key={c} value={c}>{tCondition(c)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={pickup} onValueChange={(v) => setPickup(v === "all" ? "" : v)}>
+            <SelectTrigger className="w-[190px]">
+              <SelectValue placeholder={t("pickupLocation")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("pickupAll")}</SelectItem>
+              {PICKUP_LOCATIONS.map((loc) => (
+                <SelectItem key={loc} value={loc}>{t(pickupLabelKey(loc))}</SelectItem>
               ))}
             </SelectContent>
           </Select>

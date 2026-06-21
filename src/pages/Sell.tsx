@@ -7,6 +7,7 @@ import Layout from "@/components/layout/Layout";
 import { useCreateListing } from "@/hooks/useListings";
 import { toast } from "@/hooks/use-toast";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants";
+import { PICKUP_LOCATIONS, pickupLabelKey } from "@/lib/pickup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +23,7 @@ type FormValues = {
   price: number;
   category: string;
   condition: string;
+  pickupLocation: string;
 };
 
 const Sell = () => {
@@ -36,11 +38,12 @@ const Sell = () => {
     price: z.coerce.number().min(0, t("priceMin")),
     category: z.string().min(1, t("categoryRequired")),
     condition: z.string().min(1, t("conditionRequired")),
+    pickupLocation: z.string().min(1, t("pickupLocationRequired")),
   }), [t]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { title: "", description: "", price: 0, category: "", condition: "" },
+    defaultValues: { title: "", description: "", price: 0, category: "", condition: "", pickupLocation: "" },
   });
 
   const onSubmit = async (values: FormValues) => {
@@ -51,6 +54,7 @@ const Sell = () => {
         price: values.price,
         category: values.category,
         condition: values.condition,
+        pickupLocation: values.pickupLocation,
         images,
       });
       toast({ title: t("listingPosted") });
@@ -112,6 +116,22 @@ const Sell = () => {
                     {CONDITIONS.map((c) => <SelectItem key={c} value={c}>{tCondition(c)}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
+
+            <FormField control={form.control} name="pickupLocation" render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("pickupLocation")}</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl><SelectTrigger><SelectValue placeholder={t("selectPickupLocation")} /></SelectTrigger></FormControl>
+                  <SelectContent>
+                    {PICKUP_LOCATIONS.map((loc) => (
+                      <SelectItem key={loc} value={loc}>{t(pickupLabelKey(loc))}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">{t("pickupLocationHint")}</p>
                 <FormMessage />
               </FormItem>
             )} />

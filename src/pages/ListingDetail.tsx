@@ -21,7 +21,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, MessageCircle, Package, Heart, Flag } from "lucide-react";
+import { Loader2, MessageCircle, Package, Heart, Flag, MapPin } from "lucide-react";
+import { pickupLabelKey } from "@/lib/pickup";
 import { formatDistanceToNow } from "date-fns";
 import { he as heLocale } from "date-fns/locale";
 
@@ -174,6 +175,11 @@ const ListingDetail = () => {
               {listing.status === "sold" && <Badge variant="destructive">{t("sold")}</Badge>}
               <Badge variant="secondary">{tCondition(listing.condition)}</Badge>
               <Badge variant="outline">{tCategory(listing.category)}</Badge>
+            </div>
+
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4 shrink-0" />
+              <span>{t(pickupLabelKey(listing.pickup_location))}</span>
             </div>
 
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">

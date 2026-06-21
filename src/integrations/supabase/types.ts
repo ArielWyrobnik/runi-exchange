@@ -141,6 +141,7 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          pickup_location: string
           price: number
           seller_id: string
           status: string
@@ -154,6 +155,7 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          pickup_location?: string
           price: number
           seller_id: string
           status?: string
@@ -167,6 +169,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          pickup_location?: string
           price?: number
           seller_id?: string
           status?: string

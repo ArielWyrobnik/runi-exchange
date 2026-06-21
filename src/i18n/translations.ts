@@ -72,6 +72,16 @@ export const en = {
   conditionRequired: "Select condition",
   dropImages: "Drop images here or click to upload",
 
+  // Pickup / handover location
+  pickupLocation: "Handover location",
+  pickupOnCampus: "Handover on campus",
+  pickupOffCampus: "Pickup off campus",
+  selectPickupLocation: "Select handover option",
+  pickupLocationRequired: "Choose where the item can be handed over",
+  pickupLocationHint:
+    "Lets buyers without a car know if they can pick it up on campus.",
+  pickupAll: "Any location",
+
   // Auth
   welcomeBack: "Welcome back",
   loginSubtitle: "Log in to your RUNI Market account",
@@ -311,6 +321,15 @@ export const he: Record<TranslationKey, string> = {
   categoryRequired: "יש לבחור קטגוריה",
   conditionRequired: "יש לבחור מצב",
   dropImages: "גררו תמונות לכאן או לחצו להעלאה",
+
+  // Pickup / handover location
+  pickupLocation: "מקום מסירה",
+  pickupOnCampus: "מסירה בקמפוס",
+  pickupOffCampus: "איסוף מחוץ לקמפוס",
+  selectPickupLocation: "בחרו אופן מסירה",
+  pickupLocationRequired: "בחרו היכן ניתן למסור את הפריט",
+  pickupLocationHint: "מאפשר לקונים בלי רכב לדעת אם אפשר לאסוף את הפריט בקמפוס.",
+  pickupAll: "כל המיקומים",
 
   // Auth
   welcomeBack: "ברוכים השבים",

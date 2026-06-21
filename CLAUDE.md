@@ -42,12 +42,12 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 | Route | Page | Auth |
 |---|---|---|
 | `/` | Index — compact hero, 3 info cards, Recent Listings (8 newest) | public |
-| `/browse` | Browse — search (reads `?search=` from navbar, 300ms debounce), category/condition/price filters, sort (newest/price asc/desc), pagination (24 + Load more) | public |
+| `/browse` | Browse — search (reads `?search=` from navbar, 300ms debounce), category/condition/pickup/price filters, sort (newest/price asc/desc), pagination (24 + Load more) | public |
 | `/tickets` | Tickets — red-themed event overview grid (date, venue, offer count, lowest price); uses `TicketsLayout` | public |
 | `/tickets/:id` | TicketEvent — event detail + StockX-style market view (lowest ask, highest bid), public offers and public bids; viewing is public, placing bids/selling tickets requires login | public view; actions require auth |
 | `/listing/:id` | ListingDetail — gallery w/ thumbnails, badges, watch heart, watch count, posted-by (links to seller), Contact Seller (hidden when sold), Report dialog, Edit button for owner | public |
 | `/listing/:id/edit` | EditListing — fields + photo add/remove (instant) | owner |
-| `/sell` | Sell — create listing (zod, ≤3 photos) | protected |
+| `/sell` | Sell — create listing (zod, ≤3 photos, required on/off-campus handover) | protected |
 | `/my-listings` | MyListings — status badge, Mark as Sold/Relist, Edit, Delete (confirm) | protected |
 | `/watchlist` | Watchlist — saved listings grid | protected |
 | `/seller/:id` | SellerProfile — avatar initial, member since, active listings; own profile: inline name edit (syncs profiles + auth metadata), Delete account | public |
@@ -60,7 +60,8 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 - `Layout` (`fullHeight` prop pins to viewport, hides footer), `Navbar` (lang toggle EN/עברית, unread badge on Messages — realtime, admin Reports + Events links, user name links to own profile), `Footer` (`variant="market" | "tickets"`; no logo; tickets variant differs only in copy — both use the same Reichman-blue styling).
 - `TicketsLayout` + `TicketsNavbar` — blue-themed layout for all `/tickets/*` routes (same Reichman blue as RUNI Market); brand shows "RUNI Tickets"; no search bar (events are browsed, not searched); layout renders `Footer variant="tickets"`. `TicketsNavbar` shows a **"Manage Events"** admin link (→ `/admin/events`, gated on `useIsAdmin`) in both the desktop nav and the mobile Sheet; `/tickets` itself also has an admin-only "Add event" button.
 - `ListingCard`: image, heart toggle (top corner, hidden on own listings), title, price ₪, badges, relative upload time + watch count.
-- `hooks/useListings.ts`: `useListings(filters{search,category,condition,priceMin/Max,sort,limit})`, `useListing(id)`, `useMyListings`, `useCreateListing`, `useUpdateListing`, `useSetListingStatus`, `useDeleteListing` (also removes storage files), `useAddListingImages`, `useDeleteListingImage`. Shared `uploadListingImages` compresses via `lib/image.ts` (max 1200px, JPEG 80%).
+- `hooks/useListings.ts`: `useListings(filters{search,category,condition,pickup,priceMin/Max,sort,limit})`, `useListing(id)`, `useMyListings`, `useCreateListing`, `useUpdateListing`, `useSetListingStatus`, `useDeleteListing` (also removes storage files), `useAddListingImages`, `useDeleteListingImage`. Shared `uploadListingImages` compresses via `lib/image.ts` (max 1200px, JPEG 80%). Create/update map the form's camelCase `pickupLocation` → the `pickup_location` column.
+- **Pickup / handover location** (`lib/pickup.ts`, pure + tested): every listing carries `pickup_location` ∈ `{on_campus, off_campus}` (stored English, translated for display via `pickupLabelKey` → a `t()` key). The Sell/Edit forms require an explicit choice; ListingDetail, ListingCard and MyListings show it with a `MapPin` badge/line; Browse filters on it. Helps carless dorm students find items they can actually collect on campus.
 - `hooks/useMessages.ts`: `useConversations` (single batched messages query → latest_message + unread_count per convo), `useMessages` (realtime INSERT subscription), `useUnreadCount` (global badge, realtime), `useMarkConversationRead` (marks incoming read when chat open), `useSendMessage`, `useCreateConversation` (dedupes existing).
 - `hooks/useWatchlist.ts`: `useWatchlistIds` (Set for heart state), `useWatchlist`, `useToggleWatchlist` (invalidates listing queries — watch_count lives on listings).
 - `hooks/useReports.ts`: `useIsAdmin`, `useReports`, `useSubmitReport`, `useDismissReport`.
@@ -71,12 +72,12 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 - ChatWindow scrolls only its own list (`scrollTop`), never `scrollIntoView` (that scrolled the whole page).
 
 ## Database (supabase/migrations/ — chronological)
-Tables: `profiles`, `listings` (+`watch_count`), `listing_images`, `conversations`, `messages`, `watchlist`, `reports`, `user_roles`, `events`.
+Tables: `profiles`, `listings` (+`watch_count`, +`pickup_location`), `listing_images`, `conversations`, `messages`, `watchlist`, `reports`, `user_roles`, `events`.
 
 Key server-side rules (all enforced by migrations, not just frontend):
 - **Signup domain**: trigger on `auth.users` rejects non-`@post.runi.ac.il` emails (insert + email change).
 - **Public read**: active listings, their images, and profiles of active sellers are readable by anon; sellers/conversation participants/admins see more. Writes require auth.
-- **Validation CHECKs**: message 1–2000 chars; listing title ≤100, description ≤2000, price 0–1,000,000; profile name ≤100.
+- **Validation CHECKs**: message 1–2000 chars; listing title ≤100, description ≤2000, price 0–1,000,000, `pickup_location` ∈ {`on_campus`,`off_campus`} (NOT NULL, default `on_campus` backfills pre-existing rows); profile name ≤100.
 - **Message integrity**: trigger freezes content/sender/conversation/created_at on UPDATE; `is_read` can only go false→true.
 - **watch_count**: maintained by triggers on watchlist insert/delete.
 - **Limits**: max 20 active listings/user, max 3 images/listing (triggers).
@@ -105,7 +106,7 @@ Ticket exchange for RUNI campus events. Shares the marketplace's Reichman-blue i
 ## Known Open Items / Next Ideas
 - **Email notifications for new messages** — deliberately not built: needs an external provider (e.g. Resend) API key + Supabase Edge Function. User would need to create the account first.
 - No reviews/ratings. Marketplace item offers/bidding remain intentionally out of scope; RUNI Tickets now has a scaffolded public bid/ask market view only.
-- ~23 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper, event end-time/`datetime-local` helpers in `src/lib/eventTime.ts`); no E2E yet.
+- ~26 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper, event end-time/`datetime-local` helpers in `src/lib/eventTime.ts`, pickup-location labels in `src/lib/pickup.ts`); no E2E yet.
 
 ## Constraints
 - English + Hebrew interface (full parity enforced by test)
