@@ -25,12 +25,17 @@ import Messages from "./pages/Messages";
 
 const queryClient = new QueryClient();
 
+// Vite injects BASE_URL from `base` in vite.config ("/" on Lovable/dev,
+// "/runi-exchange/" on the GitHub Pages build). React Router wants the
+// basename without a trailing slash (but never empty).
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <LanguageProvider>
         <AuthProvider>
           <Routes>
