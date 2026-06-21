@@ -37,6 +37,7 @@ const Footer = ({ variant = "market" }: FooterProps) => {
 
         <div className="mt-8 border-t border-primary-foreground/20 pt-6 text-center text-xs text-primary-foreground/60">
           © {new Date().getFullYear()} {isTickets ? t("ticketsFooterCopyright") : t("footerCopyright")}
+          <span className="mt-1 block">{t("footerDisclaimer")}</span>
         </div>
       </div>
     </footer>

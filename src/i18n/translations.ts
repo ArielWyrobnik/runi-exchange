@@ -21,6 +21,8 @@ export const en = {
   footerCopyright: "RUNI Market · Reichman University, Herzliya",
   ticketsFooterTagline: "Campus events, student to student.",
   ticketsFooterCopyright: "RUNI Tickets · Reichman University, Herzliya",
+  footerDisclaimer:
+    "Student-run side project — not an official Reichman University initiative.",
 
   // Home
   heroTitle: "Buy & Sell Within Your Campus Community",
@@ -222,6 +224,8 @@ export const en = {
   placeBid: "Place public bid",
   bidPerTicket: "bid per ticket",
   noBidsYet: "No public bids for this event yet.",
+  ticketMarketPreviewNotice:
+    "Preview: bids shown here aren't saved yet — live ticket trading is coming soon.",
 
   // Admin: event management / import
   adminEvents: "Manage Events",
@@ -274,6 +278,7 @@ export const he: Record<TranslationKey, string> = {
   footerCopyright: "רייכמן מרקט · אוניברסיטת רייכמן, הרצליה",
   ticketsFooterTagline: "אירועי קמפוס, מסטודנט לסטודנט.",
   ticketsFooterCopyright: "כרטיסי RUNI · אוניברסיטת רייכמן, הרצליה",
+  footerDisclaimer: "פרויקט סטודנטיאלי — לא יוזמה רשמית של אוניברסיטת רייכמן.",
 
   // Home
   heroTitle: "קונים ומוכרים בתוך קהילת הקמפוס",
@@ -470,6 +475,7 @@ export const he: Record<TranslationKey, string> = {
   placeBid: "פרסום הצעת קנייה",
   bidPerTicket: "הצעת קנייה לכרטיס",
   noBidsYet: "עדיין אין הצעות קנייה ציבוריות לאירוע זה.",
+  ticketMarketPreviewNotice: "תצוגה מקדימה: הצעות הקנייה כאן עדיין לא נשמרות — מסחר בכרטיסים יגיע בקרוב.",
 
   // Admin: event management / import
   adminEvents: "ניהול אירועים",

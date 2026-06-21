@@ -46,7 +46,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: window.location.origin,
+        // Include Vite's BASE_URL so the confirmation link returns to the app
+        // itself: "/" on Lovable/dev, "/runi-exchange/" on GitHub Pages.
+        // (window.location.origin alone would drop the project subpath on Pages.)
+        emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
       },
     });
     return { error: error?.message ?? null };
