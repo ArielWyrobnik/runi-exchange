@@ -183,12 +183,23 @@ export const useSendMessage = () => {
   return useMutation({
     mutationFn: async ({ conversationId, content }: { conversationId: string; content: string }) => {
       if (!user) throw new Error("Must be logged in");
-      const { error } = await supabase.from("messages").insert({
-        conversation_id: conversationId,
-        sender_id: user.id,
-        content,
-      });
+      const { data, error } = await supabase
+        .from("messages")
+        .insert({
+          conversation_id: conversationId,
+          sender_id: user.id,
+          content,
+        })
+        .select("id")
+        .single();
       if (error) throw error;
+
+      // Fire-and-forget email notification for the recipient. Never block
+      // or fail the chat on this — if the edge fn isn't deployed or Resend
+      // isn't configured, messaging keeps working without emails.
+      supabase.functions
+        .invoke("notify-message", { body: { messageId: data.id } })
+        .catch(() => {});
     },
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["messages", vars.conversationId] });

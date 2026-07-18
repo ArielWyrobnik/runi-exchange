@@ -104,8 +104,12 @@ Ticket exchange for RUNI campus events. Shares the marketplace's Reichman-blue i
 - **Next steps not yet built**: `ticket_offers`/`ticket_bids` DB tables + persistent ticket-posting/bid flows for students; parser currently scoped to `go-out.co` only.
 - `src/lib/email.ts` (pure email helpers) and `src/lib/conversations.ts` (pure aggregation) are testable pure functions extracted from hooks.
 
+## Email (Resend)
+- **New-message notifications**: edge fn `supabase/functions/notify-message` (user-JWT auth pattern like `import-event`; service role for DB + `auth.admin.getUserById` for the recipient email). Invoked **fire-and-forget from `useSendMessage`** after the insert (`.catch(() => {})` — chat never blocks/fails on it; without deployment or `RESEND_API_KEY` it's a silent no-op). Anti-burst rule: skips the email if the recipient already has an **older unread** message in the conversation (one email per unread burst). Secrets: `RESEND_API_KEY` (required), `NOTIFY_FROM_EMAIL` (optional, default `RUNI Market <notifications@runimarket.org>`). Sender content is HTML-escaped; preview truncated to 160 chars; CTA links `https://runimarket.org/messages?c=<id>`.
+- **Branded auth emails**: `supabase/templates/confirm-signup.html` is the branded "Confirm signup" template (blue header, og-image logo, EN+HE) — paste into Dashboard → Auth → Email Templates. Custom sender address requires Custom SMTP (Resend) + domain verification for runimarket.org (DNS at Porkbun).
+- ⚠️ Deploy reminder: pushing to main does NOT deploy edge fns — `notify-message` must be deployed via Dashboard/CLI, secrets set in Dashboard.
+
 ## Known Open Items / Next Ideas
-- **Email notifications for new messages** — deliberately not built: needs an external provider (e.g. Resend) API key + Supabase Edge Function. User would need to create the account first.
 - No reviews/ratings. Marketplace item offers/bidding remain intentionally out of scope; RUNI Tickets now has a scaffolded public bid/ask market view only.
 - ~26 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper, event end-time/`datetime-local` helpers in `src/lib/eventTime.ts`, pickup-location labels in `src/lib/pickup.ts`); no E2E yet.
 

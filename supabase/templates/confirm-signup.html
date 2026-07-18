@@ -1,0 +1,59 @@
+<!--
+  Branded "Confirm signup" email for RUNI Market.
+  Paste into: Supabase Dashboard → Authentication → Email Templates →
+  "Confirm signup" (subject suggestion: "Confirm your RUNI Market account ✨").
+  {{ .ConfirmationURL }} is filled in by Supabase Auth.
+-->
+<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background-color:#f4f5f7;font-family:'Segoe UI',Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7;padding:24px 0;">
+      <tr><td align="center">
+        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
+          <tr>
+            <td style="background-color:#102C97;padding:20px 24px;" align="center">
+              <img src="https://runimarket.org/og-image.png" width="48" height="48" alt="RUNI Market" style="border-radius:10px;display:block;margin:0 auto 8px;" />
+              <div style="color:#ffffff;font-size:18px;font-weight:700;">RUNI Market</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 24px 8px;">
+              <h1 style="margin:0 0 4px;font-size:18px;color:#111827;">Welcome to RUNI Market! 🎉</h1>
+              <p dir="rtl" style="margin:0 0 16px;font-size:14px;color:#6b7280;">ברוכים הבאים לרייכמן מרקט</p>
+              <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.5;">
+                You're one click away from buying and selling within the
+                Reichman University community. Confirm your email address to
+                activate your account:
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:0 24px 24px;">
+              <a href="{{ .ConfirmationURL }}"
+                 style="display:inline-block;background-color:#102C97;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:12px 32px;border-radius:8px;">
+                Confirm my email · אישור
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 24px 24px;">
+              <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.5;">
+                If the button doesn't work, copy this link into your browser:<br />
+                <a href="{{ .ConfirmationURL }}" style="color:#102C97;word-break:break-all;">{{ .ConfirmationURL }}</a>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 24px;border-top:1px solid #e5e7eb;" align="center">
+              <p style="margin:0;font-size:12px;color:#9ca3af;">
+                RUNI Market · Reichman University, Herzliya<br />
+                Student-run side project — not an official university initiative.<br />
+                Didn't sign up? You can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+  </body>
+</html>
