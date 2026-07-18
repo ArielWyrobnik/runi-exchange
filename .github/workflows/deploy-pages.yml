@@ -1,11 +1,11 @@
 name: Deploy to GitHub Pages
 
-# Builds the Vite app and publishes dist/ to GitHub Pages. This is independent
-# of Lovable: Lovable keeps deploying main with base "/", while this workflow
-# builds with GITHUB_PAGES=true so the app works under /runi-exchange/.
+# Builds the Vite app and publishes dist/ to GitHub Pages, served at the
+# custom domain runimarket.org (public/CNAME). Independent of Lovable, which
+# keeps deploying the same code to its own preview URL.
 #
 # One-time setup in the repo: Settings → Pages → Build and deployment →
-# Source → "GitHub Actions".
+# Source → "GitHub Actions". Settings → Pages → Custom domain → runimarket.org.
 
 on:
   push:
@@ -39,8 +39,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          GITHUB_PAGES: "true"
 
       - name: SPA fallback
         # GitHub Pages serves 404.html for unknown paths; reusing index.html

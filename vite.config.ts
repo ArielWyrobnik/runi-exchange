@@ -5,10 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // Lovable (and dev) serve from the domain root ("/"); the GitHub Pages
-  // build serves from the project subpath. The workflow sets GITHUB_PAGES=true
-  // so only that build gets the "/runi-exchange/" base — Lovable stays on "/".
-  base: process.env.GITHUB_PAGES === "true" ? "/runi-exchange/" : "/",
+  // Custom domain (runimarket.org, via CNAME) serves GitHub Pages from the
+  // root, same as Lovable and dev — so base is "/" everywhere now.
+  base: "/",
   server: {
     host: "::",
     port: 8080,
