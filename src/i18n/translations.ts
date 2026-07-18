@@ -526,6 +526,7 @@ export const categoryNames: Record<Language, Record<string, string>> = {
     Clothes: "בגדים",
     "Kitchen & Appliances": "מטבח ומכשירי חשמל",
     "Sports & Outdoors": "ספורט ופנאי",
+    Transportation: "תחבורה",
     Other: "אחר",
   },
 };
