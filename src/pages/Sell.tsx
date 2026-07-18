@@ -6,7 +6,7 @@ import { z } from "zod";
 import Layout from "@/components/layout/Layout";
 import { useCreateListing } from "@/hooks/useListings";
 import { toast } from "@/hooks/use-toast";
-import { CATEGORIES, CONDITIONS } from "@/lib/constants";
+import { ACTIVE_CATEGORIES, CONDITIONS } from "@/lib/constants";
 import { PICKUP_LOCATIONS, pickupLabelKey } from "@/lib/pickup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -100,7 +100,7 @@ const Sell = () => {
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl><SelectTrigger><SelectValue placeholder={t("selectCategory")} /></SelectTrigger></FormControl>
                   <SelectContent>
-                    {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{tCategory(c)}</SelectItem>)}
+                    {ACTIVE_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{tCategory(c)}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <FormMessage />

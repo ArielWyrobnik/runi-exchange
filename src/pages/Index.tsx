@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useListings } from "@/hooks/useListings";
 import ListingCard from "@/components/listings/ListingCard";
+import { TICKETS_ENABLED } from "@/lib/constants";
 
 const categoryLinks = [
-  { icon: Ticket, category: "Tickets", sublabel: "RUNI Tickets", to: "/tickets", isSpecial: true },
+  ...(TICKETS_ENABLED
+    ? [{ icon: Ticket, category: "Tickets", sublabel: "RUNI Tickets", to: "/tickets", isSpecial: true }]
+    : []),
   { icon: Armchair, category: "Furniture", to: "/browse?category=Furniture" },
   { icon: Tablet, category: "Electronics", to: "/browse?category=Electronics" },
   { icon: Package, category: "Dorm Accessories", to: "/browse?category=Dorm%20Accessories" },
@@ -35,7 +38,11 @@ const Index = () => {
       {/* Category shortcuts */}
       <section className="border-t bg-secondary/50 py-8">
         <div className="container">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <div
+            className={`grid grid-cols-2 gap-3 ${
+              categoryLinks.length === 5 ? "sm:grid-cols-3 lg:grid-cols-5" : "sm:grid-cols-4"
+            }`}
+          >
             {categoryLinks.map((category) => (
               <Link
                 key={category.category}

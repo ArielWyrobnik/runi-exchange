@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUnreadCount } from "@/hooks/useMessages";
 import { useIsAdmin } from "@/hooks/useReports";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { TICKETS_ENABLED } from "@/lib/constants";
 import reichmanStars from "@/assets/reichman-stars.png";
 
 const Navbar = () => {
@@ -92,7 +93,7 @@ const Navbar = () => {
                     </Link>
                   </Button>
                 )}
-                {isAdmin && (
+                {isAdmin && TICKETS_ENABLED && (
                   <Button
                     size="sm"
                     asChild
@@ -227,7 +228,7 @@ const Navbar = () => {
                           {t("adminReports")}
                         </Link>
                       )}
-                      {isAdmin && (
+                      {isAdmin && TICKETS_ENABLED && (
                         <Link
                           to="/admin/events"
                           onClick={() => setMobileOpen(false)}

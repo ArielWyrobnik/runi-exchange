@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import { TICKETS_ENABLED } from "@/lib/constants";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -43,15 +44,15 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/browse" element={<Browse />} />
-            <Route path="/tickets" element={<Tickets />} />
-            <Route path="/tickets/:id" element={<TicketEvent />} />
+            {TICKETS_ENABLED && <Route path="/tickets" element={<Tickets />} />}
+            {TICKETS_ENABLED && <Route path="/tickets/:id" element={<TicketEvent />} />}
             <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="/listing/:id/edit" element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
             <Route path="/my-listings" element={<ProtectedRoute><MyListings /></ProtectedRoute>} />
             <Route path="/watchlist" element={<ProtectedRoute><Watchlist /></ProtectedRoute>} />
             <Route path="/seller/:id" element={<SellerProfile />} />
             <Route path="/admin/reports" element={<ProtectedRoute><AdminReports /></ProtectedRoute>} />
-            <Route path="/admin/events" element={<ProtectedRoute><AdminEvents /></ProtectedRoute>} />
+            {TICKETS_ENABLED && <Route path="/admin/events" element={<ProtectedRoute><AdminEvents /></ProtectedRoute>} />}
             <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
             <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

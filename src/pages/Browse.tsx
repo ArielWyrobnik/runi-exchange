@@ -6,12 +6,12 @@ import { useListings, type ListingFilters, type ListingSort } from "@/hooks/useL
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CATEGORIES, CONDITIONS } from "@/lib/constants";
+import { ACTIVE_CATEGORIES, CONDITIONS, TICKETS_ENABLED } from "@/lib/constants";
 import { PICKUP_LOCATIONS, pickupLabelKey } from "@/lib/pickup";
 import { Search, Package, Loader2 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
-const standardCategories = CATEGORIES.filter((category) => category !== "Tickets");
+const standardCategories = ACTIVE_CATEGORIES.filter((category) => category !== "Tickets");
 
 const Browse = () => {
   const { t, tCategory, tCondition } = useLanguage();
@@ -36,7 +36,11 @@ const Browse = () => {
 
   useEffect(() => {
     if (urlCategory === "Tickets") {
-      navigate("/tickets", { replace: true });
+      if (TICKETS_ENABLED) {
+        navigate("/tickets", { replace: true });
+      } else {
+        setCategory("");
+      }
       return;
     }
     setCategory(urlCategory);
@@ -44,7 +48,7 @@ const Browse = () => {
 
   const handleCategoryChange = (value: string) => {
     if (value === "Tickets") {
-      navigate("/tickets");
+      if (TICKETS_ENABLED) navigate("/tickets");
       return;
     }
     setCategory(value === "all" ? "" : value);
@@ -93,9 +97,11 @@ const Browse = () => {
               <SelectValue placeholder={t("category")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Tickets" className="font-medium text-primary focus:text-primary">
-                {tCategory("Tickets")}
-              </SelectItem>
+              {TICKETS_ENABLED && (
+                <SelectItem value="Tickets" className="font-medium text-primary focus:text-primary">
+                  {tCategory("Tickets")}
+                </SelectItem>
+              )}
               <SelectItem value="all">{t("allCategories")}</SelectItem>
               {standardCategories.map((c) => (
                 <SelectItem key={c} value={c}>{tCategory(c)}</SelectItem>
