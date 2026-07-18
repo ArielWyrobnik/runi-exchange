@@ -37,7 +37,7 @@ const Index = () => {
       </section>
 
       {/* Category shortcuts */}
-      <section className="border-t bg-secondary/50 py-8">
+      <section className="border-b border-t bg-secondary/50 py-8">
         <div className="container">
           <div
             className={`grid grid-cols-2 gap-3 ${
