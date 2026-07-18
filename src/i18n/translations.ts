@@ -121,7 +121,7 @@ export const en = {
   // Listing detail
   contactSeller: "Contact Seller",
   yourListing: "This is your listing",
-  postedBy: "Posted by",
+  posted: "Posted",
   listingNotFound: "Listing not found",
   backToBrowse: "Back to Browse",
   sold: "Sold",
@@ -373,7 +373,7 @@ export const he: Record<TranslationKey, string> = {
   // Listing detail
   contactSeller: "צרו קשר עם המוכר",
   yourListing: "זו המודעה שלכם",
-  postedBy: "פורסם על ידי",
+  posted: "פורסם",
   listingNotFound: "המודעה לא נמצאה",
   backToBrowse: "חזרה לעיון",
   sold: "נמכר",

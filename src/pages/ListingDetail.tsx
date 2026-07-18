@@ -187,14 +187,7 @@ const ListingDetail = () => {
             </p>
 
             <div className="text-sm text-muted-foreground">
-              {t("postedBy")} {" "}
-              <Link
-                to={`/seller/${listing.seller_id}`}
-                className="font-medium text-foreground hover:text-primary hover:underline"
-              >
-                {listing.profiles?.full_name ?? t("unknown")}
-              </Link>{" "}
-              ·{" "}
+              {t("posted")} {" "}
               {formatDistanceToNow(new Date(listing.created_at), {
                 addSuffix: true,
                 locale: lang === "he" ? heLocale : undefined,
