@@ -87,6 +87,12 @@ const Browse = () => {
             className="pl-10 rtl:pl-3 rtl:pr-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            enterKeyHint="search"
+            // Search is live (debounced), so Enter has nothing to submit —
+            // just dismiss the mobile keyboard.
+            onKeyDown={(e) => {
+              if (e.key === "Enter") e.currentTarget.blur();
+            }}
           />
         </div>
 

@@ -28,6 +28,9 @@ const Navbar = () => {
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
+    // Dismiss the mobile keyboard even when the navigation is a no-op
+    // (e.g. searching the same term again while already on /browse).
+    (document.activeElement as HTMLElement | null)?.blur?.();
     const q = search.trim();
     navigate(q ? `/browse?search=${encodeURIComponent(q)}` : "/browse");
   };
@@ -324,6 +327,7 @@ const Navbar = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t("searchPlaceholder")}
+                enterKeyHint="search"
                 className="h-11 rounded-full pl-10 pr-4 border-2 border-primary/30 focus-visible:border-primary rtl:pl-4 rtl:pr-10"
               />
             </div>
