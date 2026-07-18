@@ -37,6 +37,13 @@ export type ListingStatus = (typeof LISTING_STATUSES)[number];
  */
 export const TICKETS_ENABLED = false;
 
+/**
+ * Auto-translation of listing titles/descriptions (translate-listing edge fn
+ * + OPENAI_API_KEY) is not part of the first launch. While false the
+ * translation hook never fires and listings always show their original text.
+ */
+export const AUTO_TRANSLATE_ENABLED = false;
+
 /** Categories selectable in the UI — "Tickets" only while RUNI Tickets is live. */
 export const ACTIVE_CATEGORIES: readonly Category[] = TICKETS_ENABLED
   ? CATEGORIES

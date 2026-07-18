@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { AUTO_TRANSLATE_ENABLED } from "@/lib/constants";
 import type { ListingWithImages } from "@/hooks/useListings";
 
 interface ListingTranslationResponse {
@@ -33,7 +34,7 @@ export const useListingTranslation = (
 
   const query = useQuery({
     queryKey: ["listing-translation", listing?.id, lang],
-    enabled: !!listing && shouldTranslate,
+    enabled: AUTO_TRANSLATE_ENABLED && !!listing && shouldTranslate,
     staleTime: 24 * 60 * 60 * 1000,
     retry: 1,
     queryFn: async () => {
