@@ -1,6 +1,6 @@
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Armchair, Dumbbell, Package, Tablet, Ticket } from "lucide-react";
+import { ArrowRight, Armchair, CookingPot, Dumbbell, Package, Tablet, Ticket } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useListings } from "@/hooks/useListings";
@@ -15,6 +15,7 @@ const categoryLinks = [
   { icon: Tablet, category: "Electronics", to: "/browse?category=Electronics" },
   { icon: Package, category: "Dorm Accessories", to: "/browse?category=Dorm%20Accessories" },
   { icon: Dumbbell, category: "Sports & Outdoors", to: "/browse?category=Sports%20%26%20Outdoors" },
+  { icon: CookingPot, category: "Kitchen & Appliances", to: "/browse?category=Kitchen%20%26%20Appliances" },
 ];
 
 const Index = () => {
@@ -40,7 +41,7 @@ const Index = () => {
         <div className="container">
           <div
             className={`grid grid-cols-2 gap-3 ${
-              categoryLinks.length === 5 ? "sm:grid-cols-3 lg:grid-cols-5" : "sm:grid-cols-4"
+              categoryLinks.length === 6 ? "sm:grid-cols-3 lg:grid-cols-6" : "sm:grid-cols-3 lg:grid-cols-5"
             }`}
           >
             {categoryLinks.map((category) => (
