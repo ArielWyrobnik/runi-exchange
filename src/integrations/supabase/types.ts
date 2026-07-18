@@ -134,6 +134,41 @@ export type Database = {
           },
         ]
       }
+      listing_translations: {
+        Row: {
+          created_at: string
+          description: string
+          language: string
+          listing_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          language: string
+          listing_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          language?: string
+          listing_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_translations_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           category: string
@@ -351,14 +386,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      delete_own_account: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      is_admin: {
-        Args: { uid: string }
-        Returns: boolean
-      }
+      delete_own_account: { Args: never; Returns: undefined }
+      is_admin: { Args: { uid: string }; Returns: boolean }
       is_conversation_participant: {
         Args: { conv_id: string }
         Returns: boolean
