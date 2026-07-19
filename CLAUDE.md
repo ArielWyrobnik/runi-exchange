@@ -6,15 +6,21 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 ## Tech Stack
 - **Frontend**: React 18 + TypeScript (strict mode ON) + Vite
 - **Styling**: Tailwind CSS + shadcn/ui component library
-- **Backend**: Supabase (via Lovable Cloud) — PostgreSQL, Auth, Storage, Realtime
+- **Backend**: Supabase (project `ijyzspjvxffbuspdidkv`) — PostgreSQL, Auth, Storage, Realtime, Edge Functions
 - **State**: TanStack React Query for server state
 - **Routing**: React Router DOM v6
 - **Forms**: React Hook Form + Zod validation
 - **Tests**: Vitest (`npx vitest run`); typecheck with `npx tsc -p tsconfig.app.json --noEmit`
 
+## Hosting & Domain — LIVE at https://runimarket.org
+- **Production is GitHub Pages, NOT Lovable.** `.github/workflows/deploy-pages.yml` builds on every push to `main` and deploys `dist/` to Pages. Custom domain `runimarket.org` is pinned by `public/CNAME` (survives redeploys); GitHub issued the TLS cert, **Enforce HTTPS** is on. `vite.config.ts` `base` is `/` everywhere now (the old `/runi-exchange/` subpath + `GITHUB_PAGES` build flag are gone since the custom domain serves from root).
+- **Lovable is now only a live preview** the user watches while changes land; the public site is runimarket.org. The develop→merge-to-main flow still applies (main is what Pages deploys).
+- **DNS is at Porkbun**: root `ALIAS`/A → GitHub Pages, `www` `CNAME` → `arielwyrobnik.github.io`. Resend email DNS (DKIM `resend._domainkey`, SPF/MX on `send`, `_dmarc`) also live here.
+- **Supabase Auth URL config** (Site URL + Redirect URLs) must point at `https://runimarket.org/`. `useAuth` sets `emailRedirectTo` to `window.location.origin` + `BASE_URL`, so confirmation links return to whatever origin the user signed up on.
+
 ## Development Workflow (IMPORTANT)
-- Lovable deploys **`main`**. Migrations in `supabase/migrations/` are applied to the live DB on deploy.
-- Established convention in this project: develop on the designated `claude/*` working branch, commit, push, then **merge into `main` and push main** so the user sees changes in Lovable (the user has explicitly approved this flow).
+- **`main` is deployed to runimarket.org via GitHub Actions** (see Hosting & Domain). Lovable also builds `main` for its preview. Migrations in `supabase/migrations/` are NOT auto-applied by either — see the ⚠️ note below.
+- Established convention in this project: develop on the designated `claude/*` working branch, commit, push, then **merge into `main` and push main** so it deploys (the user has explicitly approved this flow).
 - Always run typecheck + build + tests before pushing.
 - The Supabase types file `src/integrations/supabase/types.ts` is normally generated; when a migration adds tables/functions, manually add matching types (done for watchlist, reports, user_roles, watch_count, is_admin, delete_own_account).
 - **⚠️ Lovable deploy is unreliable for migrations + edge functions.** Pushing to `main` does NOT reliably (a) apply new SQL migrations or (b) redeploy Supabase **edge functions**. Real-world fallout this caused: the live DB was stuck at the initial 5 tables (no `user_roles`/`watchlist`/`reports`/`events`), and edge-fn code changes shipped but never deployed (stale function returned 401). Recovery playbook:
@@ -22,6 +28,22 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
   - **Stale edge function** → the user must redeploy it via the Supabase Dashboard → Edge Functions (or CLI); a git push alone won't do it.
   - **Prefer client-side over edge-fn** when admin RLS already allows the operation (see `useCreateEvent`, which inserts directly instead of relying on the edge fn being deployed).
 - **Admin seeding gotcha**: the seed `INSERT` into `user_roles` only takes effect if the admin's `auth.users` row already exists. The original seed ran before the account was created, so `ariel.wyrobnik@post.runi.ac.il` was never made admin. Fixed with an idempotent re-seed migration (`20260620000000_reseed_admin.sql`, `SELECT … FROM auth.users WHERE email = … ON CONFLICT DO NOTHING`). Re-run it (or the catch-up SQL) any time the admin role goes missing.
+
+## Launch Feature Flags (`src/lib/constants.ts`)
+Two deliberately-inverted launch flags gate not-ready features. All code stays in the repo; flip to `true` to re-enable.
+- **`TICKETS_ENABLED = false`** — hides all of RUNI Tickets (see the RUNI Tickets section for the full list of hidden entry points).
+- **`AUTO_TRANSLATE_ENABLED = false`** — disables listing auto-translation (see Auto-translation section). While false, `useListingTranslation` never fires and listings always show their original text.
+- **`ACTIVE_CATEGORIES`** = `CATEGORIES` minus `Tickets` while tickets are off; drives the Sell/Edit/Browse category selects.
+- **`CATEGORIES`**: Tickets, Furniture, Electronics, Dorm Accessories, Books & Study Materials, Clothes, Kitchen & Appliances, Sports & Outdoors, **Transportation**, Other. (`Transportation`, Hebrew תחבורה, added at launch — bikes/scooters are classic move-out sales.)
+- **Homepage category tiles** (`src/pages/Index.tsx`): Furniture, Electronics, Dorm Accessories, Sports & Outdoors, Kitchen & Appliances, Transportation (bike icon). Grid is 5-col normally; 6-col when the Tickets tile returns. On mobile it's 2 columns (even fill).
+
+## Seller Anonymity (launch growth tactic)
+- **ListingDetail no longer shows the seller** — the "Posted by <name>" line + link to the seller profile was removed; it now shows only "Posted <relative time>" + watch count. Rationale: at launch the founder seeds many listings and doesn't want it obvious every item is from one person. The seller is only revealed once a buyer clicks **Contact Seller** (the chat shows the name). `postedBy` i18n key became `posted`.
+- ⚠️ Partial hide: the `/seller/:id` `SellerProfile` page still exists and still aggregates a seller's active listings, and the Navbar still links the logged-in user to their **own** profile. There is just no in-app link to *other* sellers' profiles anymore. If full anonymity is ever needed, block `/seller/:id` for non-owners too.
+
+## Auto-translation (`translate-listing`) — DISABLED for launch
+- Listing titles/descriptions can auto-translate EN↔HE: `useListingTranslation` (`src/hooks/useListingTranslation.ts`) detects when the display language differs from the text and calls the `translate-listing` edge fn, which caches results in the `listing_translations` table (cleared by trigger when a seller edits title/description). Rendered by `ListingCard` + `ListingDetail`.
+- **Gated off via `AUTO_TRANSLATE_ENABLED = false`** — needs the `translate-listing` edge fn deployed + `OPENAI_API_KEY` secret, out of scope for v1. The hook falls back to original text, so nothing breaks. Flip the flag + deploy the fn to enable. (Table migration `20260611193000_add_listing_translations.sql`; setup notes in README.)
 
 ## Internationalization (EN/HE)
 - Custom lightweight i18n in `src/i18n/` — `translations.ts` (flat key dictionaries `en`/`he`, typed so missing Hebrew keys fail compile) and `LanguageContext.tsx` (`useLanguage()` → `lang`, `setLang`, `t`, `tCategory`, `tCondition`). Persisted in localStorage.
@@ -36,24 +58,25 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 - **RUNI Market Navbar**: blue (`bg-primary`) with inverted (white) text/buttons; white search bar row below (eBay style); blue footer — blue frame around white content.
 - **RUNI Tickets Navbar/Footer**: same Reichman blue (`bg-primary`) with white text/buttons; blue-tinted sub-bar (`bg-blue-50/60`) with quick links; shows "RUNI Tickets" branding. Uses `TicketsNavbar` + `TicketsLayout` components and `Footer variant="tickets"` (separate from the main `Navbar`/`Layout`; the variant now differs only in copy, not color).
 - **Logo**: `src/assets/reichman-stars.png` — white star crescent on transparent background (extracted programmatically from the official wordmark; the bottom star group was repositioned to close the gap where the wordmark text sat). Blends seamlessly into the blue bar. On the Tickets navbar the same PNG is shown with `filter: brightness(0) invert(1)` to stay crisp white on blue.
-- Mobile-first; mobile nav is a Sheet (hamburger).
+- **Favicon + social image**: `public/favicon.ico` (multi-size) and `public/og-image.png` (512×512) are the star crescent on a Reichman-blue tile, generated from `reichman-stars.png`. `index.html` carries full OpenGraph + Twitter (`summary_large_image`) meta + canonical, all pointing at `https://runimarket.org/og-image.png`, so shared links preview with the brand. (Replaced the Lovable template's default heart favicon.)
+- Mobile-first; mobile nav is a Sheet (hamburger). Search inputs (`Browse`, `Navbar`) set `enterKeyHint="search"` and blur on Enter/submit so the iOS keyboard dismisses (live search has nothing to "submit").
 
 ## Pages & Routes (src/pages/)
 | Route | Page | Auth |
 |---|---|---|
 | `/` | Index — compact hero, 3 info cards, Recent Listings (8 newest) | public |
 | `/browse` | Browse — search (reads `?search=` from navbar, 300ms debounce), category/condition/pickup/price filters, sort (newest/price asc/desc), pagination (24 + Load more) | public |
-| `/tickets` | Tickets — red-themed event overview grid (date, venue, offer count, lowest price); uses `TicketsLayout` | public |
-| `/tickets/:id` | TicketEvent — event detail + StockX-style market view (lowest ask, highest bid), public offers and public bids; viewing is public, placing bids/selling tickets requires login | public view; actions require auth |
-| `/listing/:id` | ListingDetail — gallery w/ thumbnails, badges, watch heart, watch count, posted-by (links to seller), Contact Seller (hidden when sold), Report dialog, Edit button for owner | public |
+| `/tickets` | Tickets — blue-themed event overview grid; uses `TicketsLayout`. **DISABLED (`TICKETS_ENABLED=false`) → NotFound** | public |
+| `/tickets/:id` | TicketEvent — event detail + StockX-style market view. **DISABLED → NotFound** | public view; actions require auth |
+| `/listing/:id` | ListingDetail — gallery w/ thumbnails, badges, watch heart, watch count, **"Posted <time>" (seller name hidden — see Seller Anonymity)**, Contact Seller (hidden when sold), Report dialog, Edit button for owner | public |
 | `/listing/:id/edit` | EditListing — fields + photo add/remove (instant) | owner |
 | `/sell` | Sell — create listing (zod, ≤3 photos, required on/off-campus handover) | protected |
 | `/my-listings` | MyListings — status badge, Mark as Sold/Relist, Edit, Delete (confirm) | protected |
 | `/watchlist` | Watchlist — saved listings grid | protected |
-| `/seller/:id` | SellerProfile — avatar initial, member since, active listings; own profile: inline name edit (syncs profiles + auth metadata), Delete account | public |
+| `/seller/:id` | SellerProfile — avatar initial, member since, active listings; own profile: inline name edit (syncs profiles + auth metadata), Delete account. (No in-app link from other listings anymore — see Seller Anonymity) | public |
 | `/messages` | Messages — `?c=<id>` selects conversation (survives reloads; do NOT use router state, it gets lost in the Lovable preview). Viewport-pinned layout (`<Layout fullHeight>`): no page scroll, no footer; sidebar and thread scroll independently. Chat header: listing photo + title + price (links to listing), person name in gray below | protected |
 | `/admin/reports` | AdminReports — open reports w/ dismiss + delete-listing | admin |
-| `/admin/events` | AdminEvents — import an event from a go-out.co link (parse → review form → publish), list + delete events | admin |
+| `/admin/events` | AdminEvents — import an event from a go-out.co link (parse → review form → publish), list + delete events. **DISABLED → NotFound** | admin |
 | `/login`, `/signup` | Auth pages | public |
 
 ## Key Components & Hooks
@@ -62,7 +85,7 @@ RUNI Market is a campus marketplace web application built exclusively for Reichm
 - `ListingCard`: image, heart toggle (top corner, hidden on own listings), title, price ₪, badges, relative upload time + watch count.
 - `hooks/useListings.ts`: `useListings(filters{search,category,condition,pickup,priceMin/Max,sort,limit})`, `useListing(id)`, `useMyListings`, `useCreateListing`, `useUpdateListing`, `useSetListingStatus`, `useDeleteListing` (also removes storage files), `useAddListingImages`, `useDeleteListingImage`. Shared `uploadListingImages` compresses via `lib/image.ts` (max 1200px, JPEG 80%). Create/update map the form's camelCase `pickupLocation` → the `pickup_location` column.
 - **Pickup / handover location** (`lib/pickup.ts`, pure + tested): every listing carries `pickup_location` ∈ `{on_campus, off_campus}` (stored English, translated for display via `pickupLabelKey` → a `t()` key). The Sell/Edit forms require an explicit choice; ListingDetail, ListingCard and MyListings show it with a `MapPin` badge/line; Browse filters on it. Helps carless dorm students find items they can actually collect on campus.
-- `hooks/useMessages.ts`: `useConversations` (single batched messages query → latest_message + unread_count per convo), `useMessages` (realtime INSERT subscription), `useUnreadCount` (global badge, realtime), `useMarkConversationRead` (marks incoming read when chat open), `useSendMessage`, `useCreateConversation` (dedupes existing).
+- `hooks/useMessages.ts`: `useConversations` (single batched messages query → latest_message + unread_count per convo), `useMessages` (realtime INSERT subscription), `useUnreadCount` (global badge, realtime), `useMarkConversationRead` (marks incoming read when chat open), `useSendMessage` (inserts the message, returns its id, then **fire-and-forget invokes the `notify-message` edge fn** for the recipient email — see Email section), `useCreateConversation` (dedupes existing).
 - `hooks/useWatchlist.ts`: `useWatchlistIds` (Set for heart state), `useWatchlist`, `useToggleWatchlist` (invalidates listing queries — watch_count lives on listings).
 - `hooks/useReports.ts`: `useIsAdmin`, `useReports`, `useSubmitReport`, `useDismissReport`.
 - `hooks/useTicketEvents.ts`: DB-backed (Supabase `events`). `useTicketEvents` (public, only `ends_at > now()`), `useTicketEvent(id)`, `useAdminEvents` (all events, admin), `useParseEvent` (calls `import-event` edge fn, action `parse`), `useCreateEvent`, `useDeleteEvent`. **`useCreateEvent` inserts directly via the Supabase client** (admin RLS allows it) rather than calling the edge fn — the cover image is already copied into the `event-images` bucket during the `parse` step, so the review form previews and stores the stable bucket URL. This keeps the create path working even if Lovable hasn't (re)deployed the edge fn. `data/ticketEvents.ts` keeps the `TicketEvent`/`TicketOffer`/`TicketBid` types, `mapEventRow` (row→UI), and `lowestOfferPrice`; offers/bids are still UI-local scaffold (no tables yet) so imported events start empty.
@@ -104,10 +127,11 @@ Ticket exchange for RUNI campus events. Shares the marketplace's Reichman-blue i
 - **Next steps not yet built**: `ticket_offers`/`ticket_bids` DB tables + persistent ticket-posting/bid flows for students; parser currently scoped to `go-out.co` only.
 - `src/lib/email.ts` (pure email helpers) and `src/lib/conversations.ts` (pure aggregation) are testable pure functions extracted from hooks.
 
-## Email (Resend)
-- **New-message notifications**: edge fn `supabase/functions/notify-message` (user-JWT auth pattern like `import-event`; service role for DB + `auth.admin.getUserById` for the recipient email). Invoked **fire-and-forget from `useSendMessage`** after the insert (`.catch(() => {})` — chat never blocks/fails on it; without deployment or `RESEND_API_KEY` it's a silent no-op). Anti-burst rule: skips the email if the recipient already has an **older unread** message in the conversation (one email per unread burst). Secrets: `RESEND_API_KEY` (required), `NOTIFY_FROM_EMAIL` (optional, default `RUNI Market <notifications@runimarket.org>`). Sender content is HTML-escaped; preview truncated to 160 chars; CTA links `https://runimarket.org/messages?c=<id>`.
-- **Branded auth emails**: `supabase/templates/confirm-signup.html` is the branded "Confirm signup" template (blue header, og-image logo, EN+HE) — paste into Dashboard → Auth → Email Templates. Custom sender address requires Custom SMTP (Resend) + domain verification for runimarket.org (DNS at Porkbun).
-- ⚠️ Deploy reminder: pushing to main does NOT deploy edge fns — `notify-message` must be deployed via Dashboard/CLI, secrets set in Dashboard.
+## Email (Resend) — LIVE
+- **Provider**: Resend, sending from the **verified** domain `runimarket.org` (DKIM/SPF/DMARC DNS at Porkbun). Free tier is plenty for transactional volume.
+- **Auth emails via Custom SMTP**: Supabase → Project Settings → Auth → SMTP is set to `smtp.resend.com:465`, user `resend`, password = Resend API key, sender `noreply@runimarket.org` / "RUNI Market". This replaces Supabase's built-in sender (which is rate-limited to a few/hour — would have choked on launch-day signup bursts). `supabase/templates/confirm-signup.html` is the branded "Confirm signup" template (blue header, og-image logo, EN+HE) — pasted into Dashboard → Auth → Email Templates. Only "Confirm signup" is branded; other auth templates (reset password, magic link) are still default.
+- **New-message notifications**: edge fn `supabase/functions/notify-message` — **deployed & live**. User-JWT auth pattern like `import-event`; service role for DB + `auth.admin.getUserById` for the recipient email. The branded blue HTML (EN+HE, sender name, listing title, message preview, "Open chat" CTA to `runimarket.org/messages?c=<id>`) is **built in code** (`buildEmailHtml`), not a dashboard template. Invoked **fire-and-forget from `useSendMessage`** after the insert (`.catch(() => {})` — chat never blocks/fails on it). Anti-burst rule: skips the email if the recipient already has an **older unread** message in the conversation (one email per unread burst). Secrets: `RESEND_API_KEY` (set), `NOTIFY_FROM_EMAIL` (optional, default `RUNI Market <notifications@runimarket.org>`). Sender content is HTML-escaped; preview truncated to 160 chars.
+- ⚠️ Deploy reminder: pushing to main does NOT deploy edge fns — if `notify-message` code changes, redeploy it via Dashboard/CLI. All three edge fns (`import-event`, `translate-listing`, `notify-message`) currently show as deployed.
 
 ## Known Open Items / Next Ideas
 - No reviews/ratings. Marketplace item offers/bidding remain intentionally out of scope; RUNI Tickets now has a scaffolded public bid/ask market view only.
