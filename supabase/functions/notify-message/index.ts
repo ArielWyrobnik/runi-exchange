@@ -53,9 +53,9 @@ const buildEmailHtml = (opts: {
       <tr><td align="center">
         <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
           <tr>
-            <td style="background-color:${BRAND_BLUE};padding:20px 24px;" align="center">
-              <img src="${LOGO_URL}" width="48" height="48" alt="RUNI Market" style="border-radius:10px;display:block;margin:0 auto 8px;" />
-              <div style="color:#ffffff;font-size:18px;font-weight:700;">RUNI Market</div>
+            <td style="background-color:${BRAND_BLUE};padding:24px 24px 20px;" align="center">
+              <img src="${LOGO_URL}" width="56" height="56" alt="RUNI Market" border="0" style="display:block;width:56px;height:56px;margin:0 auto 10px auto;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;border-radius:12px;" />
+              <div style="color:#ffffff;font-size:18px;font-weight:700;line-height:1.2;font-family:'Segoe UI',Arial,sans-serif;">RUNI Market</div>
             </td>
           </tr>
           <tr>
@@ -83,7 +83,7 @@ const buildEmailHtml = (opts: {
             <td style="padding:16px 24px;border-top:1px solid #e5e7eb;" align="center">
               <p style="margin:0;font-size:12px;color:#9ca3af;">
                 RUNI Market · Reichman University, Herzliya<br />
-                Student-run side project — not an official university initiative.
+                Student-run side project, not an official university initiative.
               </p>
             </td>
           </tr>
