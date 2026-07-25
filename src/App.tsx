@@ -23,6 +23,7 @@ import AdminReports from "./pages/AdminReports";
 import AdminEvents from "./pages/AdminEvents";
 import Sell from "./pages/Sell";
 import Messages from "./pages/Messages";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
             {TICKETS_ENABLED && <Route path="/admin/events" element={<ProtectedRoute><AdminEvents /></ProtectedRoute>} />}
             <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
             <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+            <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

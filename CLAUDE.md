@@ -77,6 +77,7 @@ Two deliberately-inverted launch flags gate not-ready features. All code stays i
 | `/messages` | Messages — `?c=<id>` selects conversation (survives reloads; do NOT use router state, it gets lost in the Lovable preview). Viewport-pinned layout (`<Layout fullHeight>`): no page scroll, no footer; sidebar and thread scroll independently. Chat header: listing photo + title + price (links to listing), person name in gray below | protected |
 | `/admin/reports` | AdminReports — open reports w/ dismiss + delete-listing | admin |
 | `/admin/events` | AdminEvents — import an event from a go-out.co link (parse → review form → publish), list + delete events. **DISABLED → NotFound** | admin |
+| `/privacy` | Privacy — privacy policy, EN/HE (see Privacy Policy section) | public |
 | `/login`, `/signup` | Auth pages | public |
 
 ## Key Components & Hooks
@@ -111,6 +112,15 @@ Key server-side rules (all enforced by migrations, not just frontend):
 - **Events (RUNI Tickets)**: `events` table (`title`, `description`, `venue`, `emoji`, `image_url`, `starts_at`, `ends_at`, `source_url`, `created_by`). Public SELECT is just `ends_at > now()` — deliberately **no `is_admin()`** in this anon-facing policy (anon lacks EXECUTE on the SECURITY DEFINER fn and it isn't inlinable; same lesson as the listings fix). INSERT/UPDATE/DELETE are admin-only (`is_admin`, only ever hit by authenticated, which retains EXECUTE). Ended events are purged within minutes so admins don't need a "see ended" SELECT branch. **Auto-deletion**: a `pg_cron` job (`purge-expired-ticket-events`, every 15 min) hard-deletes rows past `ends_at`; the RLS predicate already hides them instantly, so the UI behaves correctly even if pg_cron is unavailable (wrapped in a defensive `DO`/exception block). `event-images` public bucket holds cover images (written only by the `import-event` edge fn via service role); AFTER DELETE trigger `delete_event_image_object` frees the storage object on event delete/purge.
 - Realtime publication includes `messages` (RLS-filtered delivery).
 
+## Privacy Policy (`/privacy`)
+- Legally required: the app processes personal data (uni email, name, chat content, photos) and is subject to Israel's Privacy Protection Law (Amendment 13) and the GDPR for EEA students.
+- **Content lives in `src/i18n/privacyPolicy.ts`**, NOT in `translations.ts` — that file is a flat dictionary for UI chrome, the policy is long-form structured prose (`PolicyContent` = title + lastUpdated + intro[] + sections[{heading, body[], bullets?[]}]). `src/test/privacyPolicy.test.ts` enforces EN/HE structural parity (section count, per-section body/bullet counts, no empty strings, contact address present in both).
+- Rendered by `src/pages/Privacy.tsx`; linked from the `Footer` (both variants) and from a consent line under the Signup submit button. UI chrome keys in `translations.ts`: `privacyPolicy`, `lastUpdated`, `signupPrivacyNotice`, `signupPrivacyLink`.
+- **Bidi gotcha**: LTR tokens inside Hebrew RTL prose need a bidi isolate or they reorder — `@post.runi.ac.il` renders as `post.runi.ac.il@` without one. The `ltr()` helper in `privacyPolicy.ts` wraps them in U+2066/U+2069; those Hebrew entries must be template literals, not plain strings. Same trick applies to any future Hebrew copy containing emails/domains/handles.
+- **The policy describes what the code actually does** (no analytics, no tracking cookies, no payment data; only functional localStorage = auth session + language; processors = Supabase, Resend, GitHub Pages). If data handling changes — a new processor, analytics, a new table holding personal data — update the text AND bump `lastUpdated` in both languages.
+- Contact address is `privacy@runimarket.org`, defined once as `PRIVACY_CONTACT_EMAIL` and auto-linkified as `mailto:` wherever it appears in the text. ⚠️ **Needs a working mail forward at Porkbun/Resend** or privacy requests go nowhere.
+- Data controller is named as just "RUNI Market" (user's explicit choice; no natural person named).
+
 ## Security Status
 Lovable security scan addressed (see migrations `*_security_hardening.sql`, `*_public_read_listings.sql`). Remaining accepted/manual items:
 - **Leaked password protection**: Supabase Dashboard → Auth → Attack Protection (likely Pro-plan only; org is on Free tier — accepted).
@@ -139,7 +149,9 @@ Ticket exchange for RUNI campus events. Shares the marketplace's Reichman-blue i
 
 ## Known Open Items / Next Ideas
 - No reviews/ratings. Marketplace item offers/bidding remain intentionally out of scope; RUNI Tickets now has a scaffolded public bid/ask market view only.
-- ~26 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper, event end-time/`datetime-local` helpers in `src/lib/eventTime.ts`, pickup-location labels in `src/lib/pickup.ts`); no E2E yet.
+- **`privacy@runimarket.org` mail forwarding is not set up yet** — the privacy policy publishes that address, so route it to a real inbox (Porkbun forward or a Resend inbound route).
+- No Terms of Service page yet; only the privacy policy exists.
+- ~30 unit tests (email domain rule in `src/lib/email.ts`, conversation aggregation in `src/lib/conversations.ts`, i18n parity, storage path helper, event end-time/`datetime-local` helpers in `src/lib/eventTime.ts`, pickup-location labels in `src/lib/pickup.ts`); no E2E yet.
 
 ## Constraints
 - English + Hebrew interface (full parity enforced by test)

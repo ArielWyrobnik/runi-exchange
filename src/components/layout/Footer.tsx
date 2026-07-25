@@ -32,6 +32,9 @@ const Footer = ({ variant = "market" }: FooterProps) => {
             <Link to="/messages" className="transition-opacity hover:opacity-80">
               {t("messages")}
             </Link>
+            <Link to="/privacy" className="transition-opacity hover:opacity-80">
+              {t("privacyPolicy")}
+            </Link>
           </nav>
         </div>
 

@@ -24,6 +24,12 @@ export const en = {
   footerDisclaimer:
     "Student-run side project — not an official Reichman University initiative.",
 
+  // Privacy policy
+  privacyPolicy: "Privacy",
+  lastUpdated: "Last updated",
+  signupPrivacyNotice: "By signing up you agree to our",
+  signupPrivacyLink: "Privacy Policy",
+
   // Home
   heroTitle: "Buy & Sell Within Your Campus Community",
   heroSubtitle:
@@ -279,6 +285,12 @@ export const he: Record<TranslationKey, string> = {
   ticketsFooterTagline: "אירועי קמפוס, מסטודנט לסטודנט.",
   ticketsFooterCopyright: "כרטיסי RUNI · אוניברסיטת רייכמן, הרצליה",
   footerDisclaimer: "פרויקט סטודנטיאלי — לא יוזמה רשמית של אוניברסיטת רייכמן.",
+
+  // Privacy policy
+  privacyPolicy: "פרטיות",
+  lastUpdated: "עודכן לאחרונה",
+  signupPrivacyNotice: "בהרשמה אתם מסכימים ל",
+  signupPrivacyLink: "מדיניות הפרטיות",
 
   // Home
   heroTitle: "קונים ומוכרים בתוך קהילת הקמפוס",

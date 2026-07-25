@@ -105,6 +105,12 @@ const Signup = () => {
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {t("signUp")}
               </Button>
+              <p className="text-center text-xs text-muted-foreground">
+                {t("signupPrivacyNotice")}{" "}
+                <Link to="/privacy" className="font-medium text-primary hover:underline">
+                  {t("signupPrivacyLink")}
+                </Link>
+              </p>
               <p className="text-sm text-muted-foreground">
                 {t("alreadyHaveAccount")}{" "}
                 <Link to="/login" className="font-medium text-primary hover:underline">
